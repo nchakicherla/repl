@@ -1,7 +1,11 @@
 #include <stdio.h>
 
+#include "common.h"
+
 #include "scanner.h"
 #include "file.h"
+#include "vm.h"
+#include "table.h"
 
 int main(void) {
 	char *source = read_file("./resources/test.tl");

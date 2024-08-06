@@ -13,7 +13,7 @@ bool scanner_at_end(void) {
 }
 
 char advance(void) {
-	scanner.current++;
+scanner.current++;
 	return scanner.current[-1];
 }
 

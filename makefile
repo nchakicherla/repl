@@ -11,6 +11,8 @@ MAIN = 	./obj/main.o
 
 OBJS = 	./obj/scanner.o \
 		./obj/file.o \
+		./obj/vm.o \
+		./obj/table.o \
 
 default: reset $(BIN)
 ifeq ($(OS),Darwin) 
@@ -30,7 +32,7 @@ link: $(OBJS) $(MAIN)
 ./obj/%.o: ./src/%.c ./src/%.h #./src/common.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-./obj/main.o: ./src/main.c
+./obj/main.o: ./src/main.c ./src/common.h
 	$(CC) $(CFLAGS) -c ./src/main.c -o ./obj/main.o
 	
 clear: clear-bin clear-obj
