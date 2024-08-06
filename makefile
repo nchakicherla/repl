@@ -9,7 +9,8 @@ BIN = ./bin/main.run
 
 MAIN = 	./obj/main.o
 
-OBJS = 
+OBJS = 	./obj/scanner.o \
+		./obj/file.o \
 
 default: reset $(BIN)
 ifeq ($(OS),Darwin) 
@@ -26,7 +27,7 @@ run: reset $(BIN)
 link: $(OBJS) $(MAIN)
 	$(CC) $(CFLAGS) $(OBJS) $(MAIN) -o $(BIN)
 
-./obj/%.o: ./src/%.c ./src/%.h ./src/nc_common.h
+./obj/%.o: ./src/%.c ./src/%.h #./src/common.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 ./obj/main.o: ./src/main.c
