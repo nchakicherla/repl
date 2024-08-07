@@ -2,6 +2,7 @@
 #define MEMORY_H
 
 #include <stdlib.h>
+#include <string.h>
 
 struct s_Block;
 
@@ -27,5 +28,9 @@ int initMemPool(MemPool *pool, size_t block_size);
 int freeMemPool(MemPool *pool);
 
 void *palloc(MemPool *pool, size_t size);
+
+char *newStrCopy(char *str, MemPool *pool);
+
+// int memSwap(void *ptr1, void *ptr2, size_t size);
 
 #endif // MEMORY_H

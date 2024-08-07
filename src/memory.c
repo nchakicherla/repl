@@ -6,6 +6,7 @@
 #define MEMORY_HOG_FACTOR 0.5
 
 static Block *getLastBlock(MemPool *pool) {
+	
 	Block *current = pool->block;
 	Block *next = current->next;
 
@@ -17,10 +18,12 @@ static Block *getLastBlock(MemPool *pool) {
 }
 
 static Block *newInitBlock(size_t block_size) {
-	Block *block =  calloc(1, sizeof(Block));
-	block->data = calloc(block_size, 1);
+	
+	Block *block =  malloc(sizeof(Block));
+	block->data = malloc(block_size);
 	block->data_size = block_size;
-	// block->next = NULL;
+	block->next = NULL;
+	
 	return block;
 }
 
@@ -29,8 +32,8 @@ int initMemPool(MemPool *pool, size_t block_size) {
 	pool->block = calloc(1, sizeof(Block));
 	if(!pool->block) return 1;
 	
-	// pool->block->data = calloc(block_size, 1);
-	pool->block->data = malloc(block_size);
+	pool->block->data = calloc(block_size, 1);
+	// pool->block->data = malloc(block_size);
 	if(!pool->block->data) return 2;
 
 	pool->block->data_size = block_size;
@@ -59,6 +62,7 @@ int freeMemPool(MemPool *pool) {
 }
 
 void *palloc(MemPool *pool, size_t size) {
+	
 	Block *last_block = getLastBlock(pool);
 	Block *new_block = NULL;
 
@@ -88,3 +92,31 @@ void *palloc(MemPool *pool, size_t size) {
 
 	return output;
 }
+
+char *newStrCopy(char *str, MemPool *pool) {
+	
+	char *output = NULL;
+	size_t len = strlen(str);
+
+	output = palloc(pool, len + 1);
+	if(!output) return NULL;
+
+	for(size_t i = 0; i < len; i++) {
+		output[i] = str[i];
+	}
+	output[len] = '\0';
+	return output;
+}
+
+/*
+int memSwap(void *ptr1, void *ptr2, size_t size, MemPool *mPool) {
+	void *temp = palloc(mPool, size);
+	if(!temp) return 1;
+
+	memcpy(temp, ptr1, size);
+	memcpy(ptr1, ptr2, size);
+	memcpy(ptr2, temp, size);
+
+	return 0;
+}
+*/

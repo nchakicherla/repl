@@ -37,7 +37,7 @@ int main(void) {
 	MemPool pool;
 	initMemPool(&pool, 1024);
 
-#define BIGNUM 10000000
+#define BIGNUM 100
 
 	struct testStruct **ptrs = palloc(&pool, BIGNUM * sizeof(struct testStruct *));
 
@@ -47,10 +47,54 @@ int main(void) {
 		//ptrs[i]->test = i * 5000;
 		//ptrs[i]->test2 = i * 10000;
 		printf("%zu\n", i + 1);
-		printf("addresses: %p, %p, %p\n", 	(void *)ptrs[i], (void *)&ptrs[i]->test, (void *)&ptrs[i]->test2);
+		printf("addresses: %p, %p, %p\n", (void *)ptrs[i], (void *)&ptrs[i]->test, (void *)&ptrs[i]->test2);
 		//printf("values: %zu, %zu\n", ptrs[i]->test, ptrs[i]->test2);
 	}
 	printf("%p\n", (void *)ptrs);
+
+	Table table;
+	init_table(&table, &pool);
+
+
+	char *teststr = "teststr";
+	int64_t a = 5;
+	double testdbl = 1.200;
+
+	insert_key(&table, "test", &a, INT_TYPE);
+	insert_key(&table, "test2", &a, INT_TYPE);
+	insert_key(&table, "test3", &a, INT_TYPE);
+	insert_key(&table, "test4", &a, INT_TYPE);
+	insert_key(&table, "test5", &a, INT_TYPE);
+	insert_key(&table, "test7", &testdbl, DBL_TYPE);
+	insert_key(&table, "test7", &a, INT_TYPE);
+	insert_key(&table, "test7", &a, INT_TYPE);
+	insert_key(&table, "test8", &a, INT_TYPE);
+	insert_key(&table, "test9", &a, INT_TYPE);
+	insert_key(&table, "test0", teststr, STR_TYPE);
+
+	Object *obj = NULL;
+	getObject(&table, "test", &obj);
+	printf("%ld\n", obj->val.itr);
+	getObject(&table, "test2", &obj);
+	printf("%ld\n", obj->val.itr);
+	getObject(&table, "test3", &obj);
+	printf("%ld\n", obj->val.itr);
+	getObject(&table, "test4", &obj);
+	printf("%ld\n", obj->val.itr);
+	getObject(&table, "test5", &obj);
+	printf("%ld\n", obj->val.itr);
+	getObject(&table, "test6", &obj);
+	printf("%ld\n", obj->val.itr);
+	getObject(&table, "test7", &obj);
+	printf("%f\n", obj->val.dbl);
+	getObject(&table, "test8", &obj);
+	printf("%ld\n", obj->val.itr);
+	getObject(&table, "test9", &obj);
+	printf("%ld\n", obj->val.itr);
+	getObject(&table, "test0", &obj);
+	printf("%s\n", obj->val.str);
+	//free_table(&table);
+
 	freeMemPool(&pool);
 	return 0;
 }
