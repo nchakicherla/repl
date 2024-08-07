@@ -62,7 +62,7 @@ void *palloc(MemPool *pool, size_t size) {
 	Block *last_block = getLastBlock(pool);
 	Block *new_block = NULL;
 
-	if(pool->next_free_size < size) {
+	if(pool->next_free_size <= size) {
 		size_t new_block_size = pool->last_block_size;
 
 		while(new_block_size < size * MEMORY_HOG_FACTOR * 8) {
@@ -85,5 +85,6 @@ void *palloc(MemPool *pool, size_t size) {
 	void *output = pool->next_free;
 	pool->next_free = (char *)pool->next_free + size;
 	pool->next_free_size  = pool->next_free_size - size;
+
 	return output;
 }
