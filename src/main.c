@@ -7,6 +7,7 @@
 #include "vm.h"
 #include "table.h"
 #include "memory.h"
+#include "ast.h"
 
 struct testStruct {
 	size_t test[100];

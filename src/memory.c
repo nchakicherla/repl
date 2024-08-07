@@ -47,17 +47,36 @@ int initMemPool(MemPool *pool, size_t block_size) {
 
 int freeMemPool(MemPool *pool) {
 
-	Block *current = pool->block;
+	Block *curr = pool->block;
 	Block *next = NULL;
 
-	while(current) {
-		next = current->next;
-		free(current->data);
-		free(current);
-		current = next;	 
+	while(curr) {
+		next = curr->next;
+		free(curr->data);
+		free(curr);
+		curr = next;	 
 	}
 
-	// free(pool);
+	return 0;
+}
+
+int wipeMemPool(MemPool *pool) {
+
+	Block *curr = pool->block;
+	Block *next = NULL;
+
+	while(curr) {
+		next = curr->next;
+		free(curr->data);
+		free(curr);
+		curr = next;
+	}
+
+	pool->block = newInitBlock(pool->last_block_size);
+
+	pool->next_free = pool->block->data;
+	pool->next_free_size = pool->block->data_size;
+	// pool->last_block_size = pool->block->data_size;
 	return 0;
 }
 

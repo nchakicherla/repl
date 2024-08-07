@@ -14,6 +14,7 @@ OBJS = 	./obj/scanner.o \
 		./obj/vm.o \
 		./obj/table.o \
 		./obj/memory.o \
+		./obj/ast.o \
 
 default: reset $(BIN)
 ifeq ($(OS),Darwin) 

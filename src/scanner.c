@@ -148,14 +148,14 @@ TOKEN_TYPE identifierType(void) {
 				switch (scanner.start[1]) {
 					case 'a': return checkKeyword(2, 3, "lse", TK_FALSE);
 					case 'n': return TK_FN;
-					case 'o': return checkKeyword(2, 1, "o", TK_FOR);
+					case 'o': return checkKeyword(2, 1, "r", TK_FOR);
 				}
 			}
 		}
 		case 'i': return checkKeyword(1, 1, "f", TK_IF);
 		case 'n': return checkKeyword(1, 2, "il", TK_NIL);
 		case 'o': return checkKeyword(1, 2, "r", TK_OR);
-		case 'p': return checkKeyword(1, 2, "rint", TK_PRINT);
+		//case 'p': return checkKeyword(1, 2, "rint", TK_PRINT);
 		case 'r': return checkKeyword(1, 2, "eturn", TK_RETURN);
 		case 's': return checkKeyword(1, 2, "uper", TK_SUPER);
 		case 't': {

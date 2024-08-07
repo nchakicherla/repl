@@ -9,17 +9,13 @@ struct s_Block;
 typedef struct s_MemPool {
 	void *next_free;
 	size_t next_free_size;
-
 	size_t last_block_size;
-
 	struct s_Block *block;
 } MemPool;
 
 typedef struct s_Block {
-	
 	void *data;
 	size_t data_size;
-
 	struct s_Block *next;
 } Block;
 
