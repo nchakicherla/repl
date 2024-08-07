@@ -2,8 +2,10 @@
 #include "memory.h"
 #include "string.h"
 
-#define DEF_N_BUCKETS 128
+#define DEF_N_BUCKETS 64
+
 #include <stdio.h>
+
 // https://bpa.st/4P7Q 
 uint32_t FNV_1a_hash(char *str) {
 
@@ -35,31 +37,31 @@ typedef struct {
     Entry *entry;
 } Sortee;
 
+void _printSortee(Sortee *sortee, size_t n) {
+    for(size_t i = 0; i < n; i++) {
+        printf("i: %zu, key: %s, entry addr: %p\n", i, sortee[i].key, (void *)sortee[i].entry);
+    }
+}
+
 Sortee *makeSortee(Entry *head, MemPool *pool, size_t *counter) {
 
     size_t n = 1;
     Entry *curr = head;
     if(!curr) return NULL;
     
-    Entry *next = curr->next;
-
-    while(next) {
+    while(curr->next) {
         n++;
-        curr = next;
-        next = next->next;
+        curr = curr->next;
     }
     *counter = n;
 
     Sortee *sorting = palloc(pool, n * sizeof(Sortee));
 
     curr = head;
-    next = curr->next;
-
     for(size_t i = 0; i < n; i++) {
         sorting[i].key = curr->key;
         sorting[i].entry = curr;
         curr = curr->next;
-        //next = next->next;
     }
     return sorting;
 }
@@ -94,11 +96,11 @@ int sort_entries_by_key(Sortee *sorting, size_t n, MemPool *pool) { // quicksort
     if(n <= 1) {
         return 0;
     }
-
     size_t pivot_idx = SIZE_MAX;
     char *pivot = sorting[n - 1].key;
 
-    for(size_t j = 0; j < n; j++) {
+    for(size_t j = 0; j < n - 1; j++) {
+
         if(str_in_order(sorting[j].key, pivot)) {
             pivot_idx++;
             swapSortees(&sorting[j], &sorting[pivot_idx]);
@@ -123,32 +125,29 @@ int insert_key(Table *table, char *key, void *value, OBJ_TYPE type) {
     }
 
     uint32_t hash = FNV_1a_hash(key);
-    // table->entries[hash % table->capacity];
     size_t bucket = hash % table->n_buckets;    
 
     size_t n_entries_in_bucket = 0;
     Sortee *sorting = NULL;
 
     if(table->entries[bucket]) {
+
         sorting = makeSortee(table->entries[bucket], table->pool, &n_entries_in_bucket);
-    }
-
-    sort_entries_by_key(sorting, n_entries_in_bucket, table->pool);
-
-    for(size_t i = 0; i < n_entries_in_bucket; i++) {
-        if(0 == strcmp(key, sorting[i].key)) {
-            return 1;
+        sort_entries_by_key(sorting, n_entries_in_bucket, table->pool);
+        
+        for(size_t i = 0; i < n_entries_in_bucket; i++) {
+            if(0 == strcmp(key, sorting[i].key)) {
+                return 1;
+            }
         }
     }
 
     Entry *curr = table->entries[bucket];
-    //Entry *next = curr->next;
     Entry *prev = NULL;
 
     if(curr) {
-        while(str_in_order(curr->key, key)) {
+        while(curr && str_in_order(curr->key, key)) {
             prev = curr;
-            //curr = next;
             curr = curr->next;
         }
     }
@@ -156,7 +155,6 @@ int insert_key(Table *table, char *key, void *value, OBJ_TYPE type) {
     Entry *new_entry = palloc(table->pool, sizeof(Entry));
     new_entry->key = newStrCopy(key, table->pool);
 
-    ///new_entry->obj = palloc(table->pool, sizeof(Object));
     new_entry->obj.type = type;
     switch(type) {
         case STR_TYPE:
@@ -173,10 +171,11 @@ int insert_key(Table *table, char *key, void *value, OBJ_TYPE type) {
     new_entry->hash = hash;
     new_entry->next = NULL;
 
-    if(table->entries[bucket]) {
+    if(prev) {
         prev->next = new_entry;
         new_entry->next = curr;
     } else {
+        new_entry->next = curr;
         table->entries[bucket] = new_entry;
     }
     table->count += 1;
@@ -197,6 +196,7 @@ int getObject(Table *table, char *key, Object **obj) {
             *obj = &curr->obj;
             return 0;
         }
+        curr = curr->next;
     }
     return 3;
 }

@@ -94,7 +94,6 @@ int main(void) {
 	getObject(&table, "test0", &obj);
 	printf("%s\n", obj->val.str);
 	//free_table(&table);
-
 	freeMemPool(&pool);
 	return 0;
 }
