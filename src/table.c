@@ -161,6 +161,9 @@ int insertKey(Table *table, char *key, void *value, OBJ_TYPE type) {
 
     new_entry->obj.type = type;
     switch(type) {
+        case PTR_TYPE:
+            new_entry->obj.val.ptr = (void *)value;
+            break;
         case STR_TYPE:
             new_entry->obj.val.str = (char *)value;
             break;
@@ -211,28 +214,20 @@ int removeKey(Table *table, char *key) {
 }
 
 
-int getObject(Table *table, char *key, Object **obj) {
-    if(table->count == 0) {
-        *obj = NULL;
-        return 1;
-    }
+Object *getObject(Table *table, char *key) {
+    if(table->count == 0) return NULL;
 
     uint32_t hash = FNV_1a_hash(key);
     size_t bucket = hash % table->n_buckets;
 
-    if(!table->entries[bucket]) {
-        *obj = NULL;
-        return 2;
-    }
+    if(!table->entries[bucket]) return NULL;
 
     Entry *curr = table->entries[bucket];
     while(curr) {
         if(0 == strcmp(curr->key, key)) {
-            *obj = &curr->obj;
-            return 0;
+            return &curr->obj;
         }
         curr = curr->next;
     }
-    *obj = NULL;
-    return 3;
+    return NULL;
 }

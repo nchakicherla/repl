@@ -74,32 +74,32 @@ int main(void) {
 	insertKey(&table, "test0", teststr, STR_TYPE);
 
 	Object *obj = NULL;
-	getObject(&table, "test", &obj);
+	obj = getObject(&table, "test");
 	printf("%ld\n", obj->val.itr);
-	getObject(&table, "test2", &obj);
+	obj = getObject(&table, "test2");
 	printf("%ld\n", obj->val.itr);
-	getObject(&table, "test3", &obj);
+	obj = getObject(&table, "test3");
 	printf("%ld\n", obj->val.itr);
-	getObject(&table, "test4", &obj);
+	obj = getObject(&table, "test4");
 	printf("%ld\n", obj->val.itr);
-	getObject(&table, "test5", &obj);
+	obj = getObject(&table, "test5");
 	printf("%ld\n", obj->val.itr);
-	getObject(&table, "test6", &obj);
+	obj = getObject(&table, "test6");
 	printf("%f\n", obj->val.dbl);
-	getObject(&table, "test7", &obj);
+	obj = getObject(&table, "test7");
 	printf("%f\n", obj->val.dbl);
-	getObject(&table, "test8", &obj);
+	obj = getObject(&table, "test8");
 	printf("%ld\n", obj->val.itr);
-	getObject(&table, "test9", &obj);
+	obj = getObject(&table, "test9");
 	printf("%ld\n", obj->val.itr);
-	getObject(&table, "test0", &obj);
+	obj = getObject(&table, "test0");
 	printf("%s\n", obj->val.str);
 	//free_table(&table);
 
 	int ret = removeKey(&table, "test0");
 	printf("removal ret: %d\n", ret);
 
-	getObject(&table, "test0", &obj);
+	obj = getObject(&table, "test0");
 	if(!obj) {
 		printf("was removed!\n");
 	}

@@ -13,12 +13,14 @@ typedef enum {
 	STR_TYPE,
 	ITR_TYPE,
 	DBL_TYPE,
+	PTR_TYPE,
 } OBJ_TYPE;
 
 union Value {
 	char *str;
 	int64_t itr;
 	double dbl;
+	void *ptr;
 };
 
 typedef struct {
@@ -50,6 +52,6 @@ int insertKey(Table *table, char *key, void *value, OBJ_TYPE type);
 
 int removeKey(Table *table, char *key);
 
-int getObject(Table *table, char *key, Object **obj);
+Object *getObject(Table *table, char *key);
 
 #endif // TABLE_H
