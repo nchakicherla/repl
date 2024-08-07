@@ -9,8 +9,8 @@
 #include "memory.h"
 
 struct testStruct {
-	char *test;
-	char *test2;
+	size_t test;
+	size_t test2;
 };
 
 int main(void) {
@@ -37,13 +37,19 @@ int main(void) {
 	MemPool pool;
 	initMemPool(&pool, 1024);
 
-#define BIGNUM 100000000 // * 8 = 8000000000 = 8GB
+#define BIGNUM 100000000
 
 	struct testStruct **ptrs = palloc(&pool, BIGNUM * sizeof(struct testStruct *));
 
 	for(int i = 0; i < BIGNUM; i++) {
-		ptrs[i] = palloc(&pool, sizeof(struct testStruct));
-	}
 
+		ptrs[i] = palloc(&pool, sizeof(struct testStruct));
+		ptrs[i]->test = i * 5000;
+		ptrs[i]->test2 = i * 10000;
+		printf("addresses: %p, %p, %p\n", (void *)ptrs[i], (void *)ptrs[i]->test, (void *)ptrs[i]->test2);
+
+	}
+	printf("%p\n", (void *)ptrs);
 	freeMemPool(&pool);
+	return 0;
 }

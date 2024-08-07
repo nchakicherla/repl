@@ -3,6 +3,8 @@
 #include "memory.h"
 #include <stdio.h>
 
+#define MEMORY_HOG_FACTOR 0.5
+
 static Block *getLastBlock(MemPool *pool) {
 	Block *current = pool->block;
 	Block *next = current->next;
@@ -27,7 +29,8 @@ int initMemPool(MemPool *pool, size_t block_size) {
 	pool->block = calloc(1, sizeof(Block));
 	if(!pool->block) return 1;
 	
-	pool->block->data = calloc(block_size, 1);
+	// pool->block->data = calloc(block_size, 1);
+	pool->block->data = malloc(block_size);
 	if(!pool->block->data) return 2;
 
 	pool->block->data_size = block_size;
@@ -62,7 +65,7 @@ void *palloc(MemPool *pool, size_t size) {
 	if(pool->next_free_size < size) {
 		size_t new_block_size = pool->last_block_size;
 
-		while(new_block_size < size * 8) {
+		while(new_block_size < size * MEMORY_HOG_FACTOR * 8) {
 			new_block_size = new_block_size * 2;
 		}
 
@@ -74,8 +77,8 @@ void *palloc(MemPool *pool, size_t size) {
 		last_block = new_block;
 
 		pool->last_block_size = new_block_size;
-		pool->next_free = last_block->data;
-		pool->next_free_size = new_block_size;
+		pool->next_free = (char *)last_block->data + size;
+		pool->next_free_size = new_block_size - size;
 
 		return last_block->data;
 	}
