@@ -60,16 +60,16 @@ int main(void) {
 	int64_t a = 5;
 	double testdbl = 1.200;
 
-	insert_key(&table, "test", &a, INT_TYPE);
-	insert_key(&table, "test2", &a, INT_TYPE);
-	insert_key(&table, "test3", &a, INT_TYPE);
-	insert_key(&table, "test4", &a, INT_TYPE);
-	insert_key(&table, "test5", &a, INT_TYPE);
+	insert_key(&table, "test", &a, ITR_TYPE);
+	insert_key(&table, "test2", &a, ITR_TYPE);
+	insert_key(&table, "test3", &a, ITR_TYPE);
+	insert_key(&table, "test4", &a, ITR_TYPE);
+	insert_key(&table, "test5", &a, ITR_TYPE);
 	insert_key(&table, "test7", &testdbl, DBL_TYPE);
-	insert_key(&table, "test7", &a, INT_TYPE);
-	insert_key(&table, "test7", &a, INT_TYPE);
-	insert_key(&table, "test8", &a, INT_TYPE);
-	insert_key(&table, "test9", &a, INT_TYPE);
+	insert_key(&table, "test7", &a, ITR_TYPE);
+	insert_key(&table, "test7", &a, ITR_TYPE);
+	insert_key(&table, "test8", &a, ITR_TYPE);
+	insert_key(&table, "test9", &a, ITR_TYPE);
 	insert_key(&table, "test0", teststr, STR_TYPE);
 
 	Object *obj = NULL;

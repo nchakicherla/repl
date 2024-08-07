@@ -162,7 +162,7 @@ int insert_key(Table *table, char *key, void *value, OBJ_TYPE type) {
         case STR_TYPE:
             new_entry->obj.val.str = (char *)value;
             break;
-        case INT_TYPE:
+        case ITR_TYPE:
             new_entry->obj.val.itr = *(int64_t *)value;
             break;
         case DBL_TYPE:

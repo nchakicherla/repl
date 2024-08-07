@@ -11,7 +11,7 @@ struct s_Entry;
 
 typedef enum {
 	STR_TYPE,
-	INT_TYPE,
+	ITR_TYPE,
 	DBL_TYPE,
 } OBJ_TYPE;
 
