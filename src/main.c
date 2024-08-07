@@ -95,6 +95,15 @@ int main(void) {
 	getObject(&table, "test0", &obj);
 	printf("%s\n", obj->val.str);
 	//free_table(&table);
+
+	int ret = removeKey(&table, "test0");
+	printf("removal ret: %d\n", ret);
+
+	getObject(&table, "test0", &obj);
+	if(!obj) {
+		printf("was removed!\n");
+	}
+
 	freeMemPool(&pool);
 	return 0;
 }

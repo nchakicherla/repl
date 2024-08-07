@@ -48,6 +48,8 @@ void initTable(Table *table, MemPool *pool);
 
 int insertKey(Table *table, char *key, void *value, OBJ_TYPE type);
 
+int removeKey(Table *table, char *key);
+
 int getObject(Table *table, char *key, Object **obj);
 
 #endif // TABLE_H

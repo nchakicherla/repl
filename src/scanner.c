@@ -157,7 +157,7 @@ TOKEN_TYPE identifierType(void) {
 		case 'o': return checkKeyword(1, 2, "r", TK_OR);
 		//case 'p': return checkKeyword(1, 2, "rint", TK_PRINT);
 		case 'r': return checkKeyword(1, 2, "eturn", TK_RETURN);
-		case 's': return checkKeyword(1, 2, "uper", TK_SUPER);
+		//case 's': return checkKeyword(1, 2, "uper", TK_SUPER);
 		case 't': {
 			if (scanner.current - scanner.start > 1) {
 				switch (scanner.start[1]) {

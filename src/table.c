@@ -182,17 +182,48 @@ int insertKey(Table *table, char *key, void *value, OBJ_TYPE type) {
         new_entry->next = curr;
         table->entries[bucket] = new_entry;
     }
-    table->count += 1;
+    table->count++;
     return 0;
 }
 
-int getObject(Table *table, char *key, Object **obj) {
+int removeKey(Table *table, char *key) {
+    uint32_t hash = FNV_1a_hash(key);
+    size_t bucket = hash % table->n_buckets;
+
     if(table->count == 0) return 1;
+    if(!table->entries[bucket]) return 2;
+
+    Entry *curr = table->entries[bucket];
+    Entry *prev = NULL;
+    while(curr) {
+        if(0 == strcmp(curr->key, key)) {
+            if(prev) {
+                prev->next = curr->next;
+            } else {
+                table->entries[bucket] = curr->next;
+            }
+            return 0;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+    return 3;
+}
+
+
+int getObject(Table *table, char *key, Object **obj) {
+    if(table->count == 0) {
+        *obj = NULL;
+        return 1;
+    }
 
     uint32_t hash = FNV_1a_hash(key);
     size_t bucket = hash % table->n_buckets;
 
-    if(!table->entries[bucket]) return 2;
+    if(!table->entries[bucket]) {
+        *obj = NULL;
+        return 2;
+    }
 
     Entry *curr = table->entries[bucket];
     while(curr) {
@@ -202,5 +233,6 @@ int getObject(Table *table, char *key, Object **obj) {
         }
         curr = curr->next;
     }
+    *obj = NULL;
     return 3;
 }
