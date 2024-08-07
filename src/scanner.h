@@ -41,7 +41,7 @@ typedef struct Token {
 
 void init_scanner(char *source);
 
-bool scanner_at_end(void);
+bool is_at_end(void);
 
 char advance(void);
 

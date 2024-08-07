@@ -8,7 +8,7 @@ void init_scanner(char *source) {
 	scanner.line = 1;
 }
 
-bool scanner_at_end(void) {
+bool is_at_end(void) {
 	return *scanner.current == '\0';
 }
 
@@ -22,14 +22,14 @@ char peek(void) {
 }
 
 char peek_next(void) {
-	if (scanner_at_end()) {
+	if (is_at_end()) {
 		return '\0';
 	}
 	return scanner.current[1];
 }
 
 bool match(char expect) {
-	if (scanner_at_end())  {
+	if (is_at_end())  {
 		return false;
 	}
 	if (*scanner.current != expect)  {
@@ -73,7 +73,7 @@ void skip_whitespace(void) {
 				break;
 			case '/':
 				if (peek_next() == '/') {
-					while (peek() != '\n' && !scanner_at_end()) {
+					while (peek() != '\n' && !is_at_end()) {
 						advance();
 					}
 				} else {
@@ -87,14 +87,14 @@ void skip_whitespace(void) {
 }
 
 Token string(void) {
-	while (peek() != '"' && !scanner_at_end()) {
-		if (peek() == '\n') {
+	while (peek() != '"' && !is_at_end()) {
+		if (peek() == '\n') { // strings can be multi-line
 			scanner.line++;
 		}
 		advance();
 	}
 
-	if (scanner_at_end()) {
+	if (is_at_end()) {
 		return make_error_token("unterminated string");
 	}
 
@@ -185,7 +185,7 @@ Token scan_token(void) {
 
 	scanner.start = scanner.current;
 
-	if (scanner_at_end()) return make_token(TK_EOF);
+	if (is_at_end()) return make_token(TK_EOF);
 
 	char c = advance();
 

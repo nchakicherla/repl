@@ -1,0 +1,31 @@
+#ifndef MEMORY_H
+#define MEMORY_H
+
+#include <stdlib.h>
+
+struct s_Block;
+
+typedef struct s_MemPool {
+	void *next_free;
+	size_t next_free_size;
+
+	size_t last_block_size;
+
+	struct s_Block *block;
+} MemPool;
+
+typedef struct s_Block {
+	
+	void *data;
+	size_t data_size;
+
+	struct s_Block *next;
+} Block;
+
+int initMemPool(MemPool *pool, size_t block_size);
+
+int freeMemPool(MemPool *pool);
+
+void *palloc(MemPool *pool, size_t size);
+
+#endif // MEMORY_H

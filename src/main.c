@@ -6,6 +6,12 @@
 #include "file.h"
 #include "vm.h"
 #include "table.h"
+#include "memory.h"
+
+struct testStruct {
+	char *test;
+	char *test2;
+};
 
 int main(void) {
 	char *source = read_file("./resources/test.tl");
@@ -27,4 +33,17 @@ int main(void) {
 	}
 
 	free(source);
+
+	MemPool pool;
+	initMemPool(&pool, 1024);
+
+#define BIGNUM 100000000 // * 8 = 8000000000 = 8GB
+
+	struct testStruct **ptrs = palloc(&pool, BIGNUM * sizeof(struct testStruct *));
+
+	for(int i = 0; i < BIGNUM; i++) {
+		ptrs[i] = palloc(&pool, sizeof(struct testStruct));
+	}
+
+	freeMemPool(&pool);
 }
