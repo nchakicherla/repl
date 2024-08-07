@@ -39,39 +39,39 @@ typedef struct Token {
 	size_t line;
 } Token;
 
-void init_scanner(char *source);
+void initScanner(char *source);
 
-bool is_at_end(void);
+bool isAtEnd(void);
 
 char advance(void);
 
 char peek(void);
 
-char peek_next(void);
+char peekNext(void);
 
 bool match(char expect);
 
-Token make_token(TOKEN_TYPE type);
+Token makeToken(TOKEN_TYPE type);
 
-Token make_error_token(char *message);
+Token makeErrorToken(char *message);
 
-void skip_whitespace(void);
+void skipWhitespace(void);
 
 Token string(void);
 
-bool is_digit(char c);
+bool isDigit(char c);
 
 Token number(void);
 
-bool is_alpha(char c);
+bool isAlpha(char c);
 
-TOKEN_TYPE check_keyword(size_t start, size_t len, char *rest, TOKEN_TYPE type);
+TOKEN_TYPE checkKeyword(size_t start, size_t len, char *rest, TOKEN_TYPE type);
 
-TOKEN_TYPE identifier_type(void);
+TOKEN_TYPE identifierType(void);
 
 Token identifier(void);
 
-Token scan_token(void);
+Token scanToken(void);
 
 
 #endif // SCANNER_H

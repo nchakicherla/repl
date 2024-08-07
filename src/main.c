@@ -16,11 +16,11 @@ struct testStruct {
 int main(void) {
 	char *source = read_file("./resources/test.tl");
 
-	init_scanner(source);
+	initScanner(source);
 
 	size_t line = -1;
 	for (;;) {
-		Token token = scan_token();
+		Token token = scanToken();
 		if (token.line != line) {
 			printf("%4zu ", token.line);
 			line = token.line;
@@ -53,24 +53,24 @@ int main(void) {
 	printf("%p\n", (void *)ptrs);
 
 	Table table;
-	init_table(&table, &pool);
+	initTable(&table, &pool);
 
 
 	char *teststr = "teststr";
 	int64_t a = 5;
 	double testdbl = 1.200;
 
-	insert_key(&table, "test", &a, ITR_TYPE);
-	insert_key(&table, "test2", &a, ITR_TYPE);
-	insert_key(&table, "test3", &a, ITR_TYPE);
-	insert_key(&table, "test4", &a, ITR_TYPE);
-	insert_key(&table, "test5", &a, ITR_TYPE);
-	insert_key(&table, "test7", &testdbl, DBL_TYPE);
-	insert_key(&table, "test7", &a, ITR_TYPE);
-	insert_key(&table, "test7", &a, ITR_TYPE);
-	insert_key(&table, "test8", &a, ITR_TYPE);
-	insert_key(&table, "test9", &a, ITR_TYPE);
-	insert_key(&table, "test0", teststr, STR_TYPE);
+	insertKey(&table, "test", &a, ITR_TYPE);
+	insertKey(&table, "test2", &a, ITR_TYPE);
+	insertKey(&table, "test3", &a, ITR_TYPE);
+	insertKey(&table, "test4", &a, ITR_TYPE);
+	insertKey(&table, "test5", &a, ITR_TYPE);
+	insertKey(&table, "test6", &testdbl, DBL_TYPE);
+	insertKey(&table, "test7", &testdbl, DBL_TYPE);
+	insertKey(&table, "test7", &a, ITR_TYPE);
+	insertKey(&table, "test8", &a, ITR_TYPE);
+	insertKey(&table, "test9", &a, ITR_TYPE);
+	insertKey(&table, "test0", teststr, STR_TYPE);
 
 	Object *obj = NULL;
 	getObject(&table, "test", &obj);
@@ -84,7 +84,7 @@ int main(void) {
 	getObject(&table, "test5", &obj);
 	printf("%ld\n", obj->val.itr);
 	getObject(&table, "test6", &obj);
-	printf("%ld\n", obj->val.itr);
+	printf("%f\n", obj->val.dbl);
 	getObject(&table, "test7", &obj);
 	printf("%f\n", obj->val.dbl);
 	getObject(&table, "test8", &obj);

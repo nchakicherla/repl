@@ -42,11 +42,11 @@ typedef struct {
 
 uint32_t FNV_1a_hash(char* str);
 
-void init_table(Table *table, MemPool *pool);
+void initTable(Table *table, MemPool *pool);
 
-void free_table(Table *table);
+// void free_table(Table *table);
 
-int insert_key(Table *table, char *key, void *value, OBJ_TYPE type);
+int insertKey(Table *table, char *key, void *value, OBJ_TYPE type);
 
 int getObject(Table *table, char *key, Object **obj);
 

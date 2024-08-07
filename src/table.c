@@ -20,18 +20,18 @@ uint32_t FNV_1a_hash(char *str) {
     return h ^ (h >> 16);
 }
 
-void init_table(Table *table, MemPool *pool) {
+void initTable(Table *table, MemPool *pool) {
 	table->count = 0;
 	table->n_buckets = 0;
 	table->entries = NULL;
     table->pool = pool;
 }
-
+/*
 void free_table(Table *table) {
 	free(table->entries);
 	//free(table);
 }
-
+*/
 typedef struct {
     char *key;
     Entry *entry;
@@ -43,7 +43,7 @@ void _printSortee(Sortee *sortee, size_t n) {
     }
 }
 
-Sortee *makeSortee(Entry *head, MemPool *pool, size_t *counter) {
+Sortee *makeSorteeArray(Entry *head, MemPool *pool, size_t *counter) {
 
     size_t n = 1;
     Entry *curr = head;
@@ -74,7 +74,7 @@ void swapSortees(Sortee *s1, Sortee *s2) {
     s2->entry = temp.entry;
 }
 
-bool str_in_order(char *str1, char *str2) {
+bool areStrsInOrder(char *str1, char *str2) {
     char *it1 = str1;
     char *it2 = str2;
 
@@ -88,34 +88,38 @@ bool str_in_order(char *str1, char *str2) {
             it2++;
         }
     }
-    return true;
+    if(*it1 < *it2) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
-int sort_entries_by_key(Sortee *sorting, size_t n, MemPool *pool) { // quicksort
+int sortEntriesByKey(Sortee *array, size_t n, MemPool *pool) { // quicksort
 
     if(n <= 1) {
         return 0;
     }
     size_t pivot_idx = SIZE_MAX;
-    char *pivot = sorting[n - 1].key;
+    char *pivot = array[n - 1].key;
 
     for(size_t j = 0; j < n - 1; j++) {
 
-        if(str_in_order(sorting[j].key, pivot)) {
+        if(areStrsInOrder(array[j].key, pivot)) {
             pivot_idx++;
-            swapSortees(&sorting[j], &sorting[pivot_idx]);
+            swapSortees(&array[j], &array[pivot_idx]);
         }
     }
     pivot_idx++;
-    swapSortees(&sorting[pivot_idx], &sorting[n - 1]);
+    swapSortees(&array[pivot_idx], &array[n - 1]);
 
-    sort_entries_by_key(sorting, pivot_idx, pool);
-    sort_entries_by_key(&sorting[pivot_idx + 1], n - pivot_idx - 1, pool);
+    sortEntriesByKey(array, pivot_idx, pool);
+    sortEntriesByKey(&array[pivot_idx + 1], n - pivot_idx - 1, pool);
 
     return 0;
 }
 
-int insert_key(Table *table, char *key, void *value, OBJ_TYPE type) {
+int insertKey(Table *table, char *key, void *value, OBJ_TYPE type) {
     if(table->entries == NULL) {
         table->entries = palloc(table->pool, DEF_N_BUCKETS * sizeof(Entry *));
         for(size_t i = 0; i < DEF_N_BUCKETS; i++) {
@@ -132,8 +136,8 @@ int insert_key(Table *table, char *key, void *value, OBJ_TYPE type) {
 
     if(table->entries[bucket]) {
 
-        sorting = makeSortee(table->entries[bucket], table->pool, &n_entries_in_bucket);
-        sort_entries_by_key(sorting, n_entries_in_bucket, table->pool);
+        sorting = makeSorteeArray(table->entries[bucket], table->pool, &n_entries_in_bucket);
+        sortEntriesByKey(sorting, n_entries_in_bucket, table->pool);
         
         for(size_t i = 0; i < n_entries_in_bucket; i++) {
             if(0 == strcmp(key, sorting[i].key)) {
@@ -146,7 +150,7 @@ int insert_key(Table *table, char *key, void *value, OBJ_TYPE type) {
     Entry *prev = NULL;
 
     if(curr) {
-        while(curr && str_in_order(curr->key, key)) {
+        while(curr && areStrsInOrder(curr->key, key)) {
             prev = curr;
             curr = curr->next;
         }
