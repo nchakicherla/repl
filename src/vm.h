@@ -3,4 +3,10 @@
 
 #include "common.h"
 
+
+
+typedef struct {
+	int test;
+} Chunk;
+
 #endif // VM_H

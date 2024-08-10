@@ -10,8 +10,8 @@
 #include "ast.h"
 
 struct testStruct {
-	size_t test[100];
-	size_t test2[100];
+	size_t *test;
+	size_t *test2;
 };
 
 int main(void) {
@@ -38,17 +38,21 @@ int main(void) {
 	MemPool pool;
 	initMemPool(&pool, 1024);
 
-#define BIGNUM 100
+#define BIGNUM 100000
 
-	struct testStruct **ptrs = palloc(&pool, BIGNUM * sizeof(struct testStruct *));
+	struct testStruct *ptrs = palloc(&pool, BIGNUM * sizeof(struct testStruct));
 
 	for(size_t i = 0; i < BIGNUM; i++) {
 
-		ptrs[i] = palloc(&pool, sizeof(struct testStruct));
-		//ptrs[i]->test = i * 5000;
-		//ptrs[i]->test2 = i * 10000;
-		printf("%zu\n", i + 1);
-		printf("addresses: %p, %p, %p\n", (void *)ptrs[i], (void *)&ptrs[i]->test, (void *)&ptrs[i]->test2);
+		// ptrs[i] = palloc(&pool, sizeof(struct testStruct));
+		ptrs[i].test = palloc(&pool, 1000 * sizeof(size_t));
+		ptrs[i].test2 = palloc(&pool, 1000 * sizeof(size_t));
+		for(size_t j = 0; j < 1000; j++) {
+			ptrs[i].test[j] = j + 1;
+			ptrs[i].test2[j] = 2 * (j + 1);
+		}
+		//printf("%zu\n", i + 1);
+		//printf("addresses: %p, %p, %p\n", (void *)ptrs[i], (void *)&ptrs[i]->test, (void *)&ptrs[i]->test2);
 		//printf("values: %zu, %zu\n", ptrs[i]->test, ptrs[i]->test2);
 	}
 	printf("%p\n", (void *)ptrs);
@@ -105,5 +109,12 @@ int main(void) {
 	}
 
 	freeMemPool(&pool);
+
+	int32_t *test = realloc(NULL, 16 * sizeof(int32_t));
+	printf("%p\n", (void *)test);
+	test = realloc(test, 8 * sizeof(int32_t));
+	printf("%p\n", (void *)test);
+	free(test);
+
 	return 0;
 }

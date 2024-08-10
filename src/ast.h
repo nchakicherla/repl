@@ -35,8 +35,10 @@ typedef enum {
 	BLCK_TYPE_SCOPE,
 	BLCK_TYPE_CLASS,
 	BLCK_TYPE_FN,
+	
 	BLCK_TYPE_IF,
 	BLCK_TYPE_WHILE,
+	BLCK_TYPE_DOWHILE,
 	BLCK_TYPE_FOR,
 	BLCK_TYPE_RANGE,
 
@@ -46,16 +48,18 @@ typedef enum {
 	STMT_TYPE_RETURN,
 	STMT_TYPE_EXIT,
 
+	EXPR_TYPE_FNCALL,
+	EXPR_TYPE_VAR,
 	EXPR_TYPE_ECHO,
 	EXPR_TYPE_MATH,
 	EXPR_TYPE_TRUTHY,
-	EXPR_TYPE_FNCALL,
 	EXPR_TYPE_UNARY,
 } NODE_TYPE;
 
 typedef struct s_Node {
 	NODE_TYPE type;
-	struct s_Node *eval;
+	size_t n_eval;
+	struct s_Node **eval;
 } Node;
 
 #endif // AST_H
