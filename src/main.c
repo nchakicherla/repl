@@ -15,6 +15,9 @@ struct testStruct {
 };
 
 int main(void) {
+
+	// part 1
+	
 	char *source = read_file("./resources/test.tl");
 
 	initScanner(source);
@@ -34,6 +37,8 @@ int main(void) {
 	}
 
 	free(source);
+
+	// part 2
 
 	MemPool pool;
 	initMemPool(&pool, 1024);
@@ -113,8 +118,14 @@ int main(void) {
 	int32_t *test = realloc(NULL, 16 * sizeof(int32_t));
 	printf("%p\n", (void *)test);
 	test = realloc(test, 8 * sizeof(int32_t));
+	// pointer changes in Valgrind likely due to re-defining realloc()
+	// pointer remains the same when run normally
 	printf("%p\n", (void *)test);
+
 	free(test);
+
+	printf("IDX_MAX: %zu\n", IDX_MAX);
+	printf("IDX_ERROR: %zu\n", IDX_ERROR);
 
 	return 0;
 }

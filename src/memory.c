@@ -5,7 +5,7 @@
 
 #define MEMORY_HOG_FACTOR 0.5
 
-static Block *getLastBlock(MemPool *pool) {
+static inline Block *getLastBlock(MemPool *pool) {
 	
 	Block *current = pool->block;
 	Block *next = current->next;
@@ -42,6 +42,7 @@ int initMemPool(MemPool *pool, size_t block_size) {
 	pool->next_free = pool->block->data;
 	pool->next_free_size = pool->block->data_size;
 	pool->last_block_size = block_size;
+	pool->last_block = pool->block;
 	return 0;
 }
 
@@ -73,6 +74,7 @@ int wipeMemPool(MemPool *pool) {
 	}
 
 	pool->block = newInitBlock(pool->last_block_size);
+	pool->last_block = pool->block;
 
 	pool->next_free = pool->block->data;
 	pool->next_free_size = pool->block->data_size;
@@ -82,7 +84,8 @@ int wipeMemPool(MemPool *pool) {
 
 void *palloc(MemPool *pool, size_t size) {
 	
-	Block *last_block = getLastBlock(pool);
+	// Block *last_block = getLastBlock(pool);
+	Block *last_block = pool->last_block;
 	Block *new_block = NULL;
 
 	if(pool->next_free_size <= size) {
@@ -99,6 +102,7 @@ void *palloc(MemPool *pool, size_t size) {
 		last_block->next = new_block;
 		last_block = new_block;
 
+		pool->last_block = new_block;
 		pool->last_block_size = new_block_size;
 		pool->next_free = (char *)last_block->data + size;
 		pool->next_free_size = new_block_size - size;

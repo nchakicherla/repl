@@ -10,6 +10,7 @@ typedef struct s_MemPool {
 	void *next_free;
 	size_t next_free_size;
 	size_t last_block_size;
+	struct s_Block *last_block;
 	struct s_Block *block;
 } MemPool;
 

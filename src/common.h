@@ -5,4 +5,7 @@
 #include <stdbool.h>
 #include <inttypes.h>
 
+#define IDX_MAX 	(SIZE_MAX - 1)
+#define IDX_ERROR 	(SIZE_MAX)
+
 #endif // COMMON_H
