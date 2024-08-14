@@ -48,6 +48,7 @@ int initMemPool(MemPool *pool, size_t provided_size) {
 	pool->block->data_size = block_size;
 	// pool->block->next = NULL;
 
+	pool->bytes_used = 0;
 	pool->next_free = pool->block->data;
 	pool->next_free_size = pool->block->data_size;
 	pool->last_block_size = block_size;
@@ -88,6 +89,8 @@ int wipeMemPool(MemPool *pool) {
 	pool->next_free = pool->block->data;
 	pool->next_free_size = pool->block->data_size;
 	// pool->last_block_size = pool->block->data_size;
+
+	pool->bytes_used = 0;
 	return 0;
 }
 
@@ -116,11 +119,15 @@ void *palloc(MemPool *pool, size_t size) {
 		pool->next_free = (char *)last_block->data + size;
 		pool->next_free_size = new_block_size - size;
 
+		pool->bytes_used += size;
+
 		return last_block->data;
 	}
 	void *output = pool->next_free;
 	pool->next_free = (char *)pool->next_free + size;
 	pool->next_free_size  = pool->next_free_size - size;
+
+	pool->bytes_used += size;
 
 	return output;
 }
@@ -138,6 +145,10 @@ char *newStrCopy(char *str, MemPool *pool) {
 	}
 	output[len] = '\0';
 	return output;
+}
+
+size_t getBytesUsed(MemPool *pool) {
+	return pool->bytes_used;
 }
 
 /*
