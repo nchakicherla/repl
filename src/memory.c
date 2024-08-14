@@ -3,7 +3,8 @@
 #include "memory.h"
 #include <stdio.h>
 
-#define MEMORY_HOG_FACTOR 0.5
+#define MEMORY_HOG_FACTOR 8
+#define DEF_BLOCK_INIT_SIZE 1024
 
 static inline Block *getLastBlock(MemPool *pool) {
 	
@@ -27,13 +28,21 @@ static Block *newInitBlock(size_t block_size) {
 	return block;
 }
 
-int initMemPool(MemPool *pool, size_t block_size) {
+int initMemPool(MemPool *pool, size_t provided_size) {
 	
-	pool->block = calloc(1, sizeof(Block));
+	size_t block_size;
+	if (provided_size != 0) {
+		block_size = provided_size;
+	} else {
+		block_size = DEF_BLOCK_INIT_SIZE;
+	}
+
+	//pool->block = calloc(1, sizeof(Block));
+	pool->block = malloc(sizeof(Block));
 	if(!pool->block) return 1;
 	
-	pool->block->data = calloc(block_size, 1);
-	// pool->block->data = malloc(block_size);
+	// pool->block->data = calloc(block_size, 1);
+	pool->block->data = malloc(block_size);
 	if(!pool->block->data) return 2;
 
 	pool->block->data_size = block_size;
@@ -91,7 +100,7 @@ void *palloc(MemPool *pool, size_t size) {
 	if(pool->next_free_size <= size) {
 		size_t new_block_size = pool->last_block_size;
 
-		while(new_block_size < size * MEMORY_HOG_FACTOR * 8) {
+		while(new_block_size < size * MEMORY_HOG_FACTOR) {
 			new_block_size = new_block_size * 2;
 		}
 
@@ -122,7 +131,7 @@ char *newStrCopy(char *str, MemPool *pool) {
 	size_t len = strlen(str);
 
 	output = palloc(pool, len + 1);
-	if(!output) return NULL;
+	// if(!output) return NULL;
 
 	for(size_t i = 0; i < len; i++) {
 		output[i] = str[i];

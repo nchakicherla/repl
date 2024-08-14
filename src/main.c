@@ -41,9 +41,9 @@ int main(void) {
 	// part 2
 
 	MemPool pool;
-	initMemPool(&pool, 1024);
+	initMemPool(&pool, 0);
 
-#define BIGNUM 100000
+#define BIGNUM 1000000
 
 	struct testStruct *ptrs = palloc(&pool, BIGNUM * sizeof(struct testStruct));
 
