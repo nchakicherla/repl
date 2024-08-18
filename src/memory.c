@@ -3,7 +3,7 @@
 #include "memory.h"
 #include <stdio.h>
 
-#define MEMORY_HOG_FACTOR 8
+#define MEMORY_HOG_FACTOR 3
 #define DEF_BLOCK_INIT_SIZE 1024
 
 static inline Block *getLastBlock(MemPool *pool) {
@@ -49,6 +49,7 @@ int initMemPool(MemPool *pool, size_t provided_size) {
 	// pool->block->next = NULL;
 
 	pool->bytes_used = 0;
+	pool->bytes_allocd = sizeof(MemPool) + sizeof(Block) + block_size;
 	pool->next_free = pool->block->data;
 	pool->next_free_size = pool->block->data_size;
 	pool->last_block_size = block_size;
@@ -91,6 +92,7 @@ int wipeMemPool(MemPool *pool) {
 	// pool->last_block_size = pool->block->data_size;
 
 	pool->bytes_used = 0;
+	pool->bytes_allocd = sizeof(MemPool) + sizeof(Block) + pool->last_block_size;
 	return 0;
 }
 
@@ -120,6 +122,7 @@ void *palloc(MemPool *pool, size_t size) {
 		pool->next_free_size = new_block_size - size;
 
 		pool->bytes_used += size;
+		pool->bytes_allocd += sizeof(Block) + new_block_size;
 
 		return last_block->data;
 	}
@@ -149,6 +152,10 @@ char *newStrCopy(char *str, MemPool *pool) {
 
 size_t getBytesUsed(MemPool *pool) {
 	return pool->bytes_used;
+}
+
+size_t getBytesAllocd(MemPool *pool) {
+	return pool->bytes_allocd;
 }
 
 /*

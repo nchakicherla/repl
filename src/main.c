@@ -43,7 +43,7 @@ int main(void) {
 	MemPool pool;
 	initMemPool(&pool, 0);
 
-#define BIGNUM 100000
+#define BIGNUM 500000
 
 	struct testStruct *ptrs = palloc(&pool, BIGNUM * sizeof(struct testStruct));
 
@@ -114,7 +114,9 @@ int main(void) {
 	}
 
 	printf("pool bytes used: %zu\n", getBytesUsed(&pool));
-	printf("mem used by pool GB: %f\n", (double) getBytesUsed(&pool) / (1024 * 1024 * 1024));
+	printf("bytes used (GB): %f\n", (double) getBytesUsed(&pool) / (1024 * 1024 * 1024));
+	printf("pool bytes allocd: %zu\n", getBytesAllocd(&pool));
+	printf("bytes allocd (GB): %f\n", (double) getBytesAllocd(&pool) / (1024 * 1024 * 1024));
 	freeMemPool(&pool);
 
 	int32_t *test = realloc(NULL, 16 * sizeof(int32_t));

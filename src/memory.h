@@ -8,6 +8,8 @@ struct s_Block;
 
 typedef struct s_MemPool {
 	size_t bytes_used;
+	size_t bytes_allocd;
+
 	void *next_free;
 	size_t next_free_size;
 	size_t last_block_size;
@@ -30,6 +32,8 @@ void *palloc(MemPool *pool, size_t size);
 char *newStrCopy(char *str, MemPool *pool);
 
 size_t getBytesUsed(MemPool *pool);
+
+size_t getBytesAllocd(MemPool *pool);
 
 // int memSwap(void *ptr1, void *ptr2, size_t size);
 
