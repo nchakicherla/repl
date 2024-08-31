@@ -14,7 +14,7 @@ typedef struct s_MemPool {
 	size_t next_free_size;
 	size_t last_block_size;
 	struct s_Block *last_block;
-	struct s_Block *block;
+	struct s_Block *first_block;
 } MemPool;
 
 typedef struct s_Block {
@@ -23,7 +23,7 @@ typedef struct s_Block {
 	struct s_Block *next;
 } Block;
 
-int initMemPool(MemPool *pool, size_t block_size);
+int initMemPool(MemPool *pool);
 
 int freeMemPool(MemPool *pool);
 

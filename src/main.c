@@ -9,6 +9,10 @@
 #include "memory.h"
 #include "ast.h"
 
+#include "tree.h"
+
+#define BIGNUM 500000
+
 struct testStruct {
 	size_t *test;
 	size_t *test2;
@@ -16,6 +20,17 @@ struct testStruct {
 
 int main(void) {
 
+	const int32_t testTreeVals[] = { 7, 42, 13, 18, 2, 66, 29, 33, 34, 10 };
+
+	for(int i = 0; i < 10; i++) {
+		printf("%d\n", testTreeVals[i]);
+	}
+
+	
+
+	return 0;
+}
+	/*
 	// part 1
 	
 	char *source = read_file("./resources/test.tl");
@@ -23,7 +38,7 @@ int main(void) {
 	initScanner(source);
 
 	size_t line = -1;
-	for (;;) {
+	while (true) {
 		Token token = scanToken();
 		if (token.line != line) {
 			printf("%4zu ", token.line);
@@ -41,9 +56,7 @@ int main(void) {
 	// part 2
 
 	MemPool pool;
-	initMemPool(&pool, 0);
-
-#define BIGNUM 500000
+	initMemPool(&pool);
 
 	struct testStruct *ptrs = palloc(&pool, BIGNUM * sizeof(struct testStruct));
 
@@ -130,6 +143,4 @@ int main(void) {
 
 	printf("IDX_MAX: %zu\n", IDX_MAX);
 	printf("IDX_ERROR: %zu\n", IDX_ERROR);
-
-	return 0;
-}
+	*/

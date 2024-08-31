@@ -55,6 +55,9 @@ typedef enum {
 	EXPR_TYPE_TRUTHY,
 	// EXPR_TYPE_VAR,
 	EXPR_TYPE_MATH,
+	EXPR_TYPE_FACTOR,
+
+	EXPR_TYPE_TERM,
 	// EXPR_TYPE_UNARY,
 
 	// arithmetic

@@ -13,7 +13,7 @@ bool isAtEnd(void) {
 }
 
 char advance(void) {
-scanner.current++;
+	scanner.current++;
 	return scanner.current[-1];
 }
 
@@ -89,7 +89,8 @@ void skipWhitespace(void) {
 Token string(void) {
 	while (peek() != '"' && !isAtEnd()) {
 		if (peek() == '\n') { // strings can be multi-line
-			scanner.line++;
+			// scanner.line++;
+			return makeErrorToken("unterminated string");
 		}
 		advance();
 	}
@@ -212,7 +213,7 @@ Token scanToken(void) {
 		case '*': return makeToken(TK_STAR);
 		case ':': return makeToken(TK_COLON);
 
-		case '1':
+		case '!':
 			return makeToken (
 				match('=') ? TK_BANG_EQUAL : TK_BANG);
 		case '=':

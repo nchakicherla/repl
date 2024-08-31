@@ -9,3 +9,5 @@ a = 3
 b = test_fn (3, "test")
 
 print("a was: " + a + ", b is now: " + b)
+
+testString = "this is a test string"

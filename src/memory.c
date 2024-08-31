@@ -3,12 +3,12 @@
 #include "memory.h"
 #include <stdio.h>
 
-#define MEMORY_HOG_FACTOR 3
+#define MEMORY_HOG_FACTOR 8
 #define DEF_BLOCK_INIT_SIZE 1024
 
 static inline Block *getLastBlock(MemPool *pool) {
 	
-	Block *current = pool->block;
+	Block *current = pool->first_block;
 	Block *next = current->next;
 
 	while(next) {
@@ -28,38 +28,40 @@ static Block *newInitBlock(size_t block_size) {
 	return block;
 }
 
-int initMemPool(MemPool *pool, size_t provided_size) {
+int initMemPool(MemPool *pool) {
 	
-	size_t block_size;
+	size_t block_size = DEF_BLOCK_INIT_SIZE;
+	/*
 	if (provided_size != 0) {
 		block_size = provided_size;
 	} else {
 		block_size = DEF_BLOCK_INIT_SIZE;
 	}
+	*/
 
 	//pool->block = calloc(1, sizeof(Block));
-	pool->block = malloc(sizeof(Block));
-	if(!pool->block) return 1;
+	pool->first_block = malloc(sizeof(Block));
+	if(!pool->first_block) return 1;
 	
 	// pool->block->data = calloc(block_size, 1);
-	pool->block->data = malloc(block_size);
-	if(!pool->block->data) return 2;
+	pool->first_block->data = malloc(block_size);
+	if(!pool->first_block->data) return 2;
 
-	pool->block->data_size = block_size;
+	pool->first_block->data_size = block_size;
 	// pool->block->next = NULL;
 
 	pool->bytes_used = 0;
 	pool->bytes_allocd = sizeof(MemPool) + sizeof(Block) + block_size;
-	pool->next_free = pool->block->data;
-	pool->next_free_size = pool->block->data_size;
+	pool->next_free = pool->first_block->data;
+	pool->next_free_size = pool->first_block->data_size;
 	pool->last_block_size = block_size;
-	pool->last_block = pool->block;
+	pool->last_block = pool->first_block;
 	return 0;
 }
 
 int freeMemPool(MemPool *pool) {
 
-	Block *curr = pool->block;
+	Block *curr = pool->first_block;
 	Block *next = NULL;
 
 	while(curr) {
@@ -74,7 +76,7 @@ int freeMemPool(MemPool *pool) {
 
 int wipeMemPool(MemPool *pool) {
 
-	Block *curr = pool->block;
+	Block *curr = pool->first_block;
 	Block *next = NULL;
 
 	while(curr) {
@@ -84,11 +86,11 @@ int wipeMemPool(MemPool *pool) {
 		curr = next;
 	}
 
-	pool->block = newInitBlock(pool->last_block_size);
-	pool->last_block = pool->block;
+	pool->first_block = newInitBlock(pool->last_block_size);
+	pool->last_block = pool->first_block;
 
-	pool->next_free = pool->block->data;
-	pool->next_free_size = pool->block->data_size;
+	pool->next_free = pool->first_block->data;
+	pool->next_free_size = pool->first_block->data_size;
 	// pool->last_block_size = pool->block->data_size;
 
 	pool->bytes_used = 0;
@@ -99,10 +101,11 @@ int wipeMemPool(MemPool *pool) {
 void *palloc(MemPool *pool, size_t size) {
 	
 	// Block *last_block = getLastBlock(pool);
-	Block *last_block = pool->last_block;
-	Block *new_block = NULL;
 
 	if(pool->next_free_size <= size) {
+		Block *last_block = pool->last_block;
+		Block *new_block = NULL;
+
 		size_t new_block_size = pool->last_block_size;
 
 		while(new_block_size < size * MEMORY_HOG_FACTOR) {
@@ -126,6 +129,7 @@ void *palloc(MemPool *pool, size_t size) {
 
 		return last_block->data;
 	}
+
 	void *output = pool->next_free;
 	pool->next_free = (char *)pool->next_free + size;
 	pool->next_free_size  = pool->next_free_size - size;
