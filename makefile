@@ -16,6 +16,7 @@ OBJS = 	./obj/scanner.o \
 		./obj/memory.o \
 		./obj/ast.o \
 		./obj/tree.o \
+		./obj/random.o \
 
 default: reset $(BIN)
 ifeq ($(OS),Darwin) 

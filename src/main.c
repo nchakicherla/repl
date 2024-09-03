@@ -8,10 +8,11 @@
 #include "table.h"
 #include "memory.h"
 #include "ast.h"
-
 #include "tree.h"
 
-#define BIGNUM 500000
+#include "random.h"
+
+#define BIGNUM 0xFFFFFFFF // 2^20
 
 struct testStruct {
 	size_t *test;
@@ -20,13 +21,19 @@ struct testStruct {
 
 int main(void) {
 
-	const int32_t testTreeVals[] = { 7, 42, 13, 18, 2, 66, 29, 33, 34, 10 };
+	MemPool pool;
+	initMemPool(&pool);
 
-	for(int i = 0; i < 10; i++) {
-		printf("%d\n", testTreeVals[i]);
+	int64_t *arr = palloc(&pool, BIGNUM *sizeof(int64_t));
+
+	fillI64ArrRand(arr, BIGNUM, INT64_MAX);
+/*
+*/
+	for(size_t i = 0; i < BIGNUM; i++) {
+		printf("%" PRId64 "\n", arr[i]);
 	}
-
-	
+	printf("bytes allocd: %zu, bytes used: %zu\n", getBytesAllocd(&pool), getBytesUsed(&pool));
+	termMemPool(&pool);
 
 	return 0;
 }
@@ -130,7 +137,7 @@ int main(void) {
 	printf("bytes used (GB): %f\n", (double) getBytesUsed(&pool) / (1024 * 1024 * 1024));
 	printf("pool bytes allocd: %zu\n", getBytesAllocd(&pool));
 	printf("bytes allocd (GB): %f\n", (double) getBytesAllocd(&pool) / (1024 * 1024 * 1024));
-	freeMemPool(&pool);
+	termMemPool(&pool);
 
 	int32_t *test = realloc(NULL, 16 * sizeof(int32_t));
 	printf("%p\n", (void *)test);

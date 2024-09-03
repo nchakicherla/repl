@@ -25,7 +25,7 @@ typedef struct s_Block {
 
 int initMemPool(MemPool *pool);
 
-int freeMemPool(MemPool *pool);
+int termMemPool(MemPool *pool);
 
 void *palloc(MemPool *pool, size_t size);
 
