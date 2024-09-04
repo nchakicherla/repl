@@ -26,13 +26,13 @@ typedef enum {
 	TK_ERROR, TK_EOF
 } TOKEN_TYPE;
 
-typedef struct Scanner {
+typedef struct s_Scanner {
 	char *start;
 	char *current;
 	size_t line;
 } Scanner;
 
-typedef struct Token {
+typedef struct s_Token {
 	TOKEN_TYPE type;
 	char *start;
 	size_t len;

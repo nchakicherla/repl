@@ -2,7 +2,6 @@
 #define TABLE_H
 
 #include "common.h"
-
 #include "memory.h"
 
 #include <stdlib.h>
@@ -44,7 +43,9 @@ typedef struct {
 
 uint32_t FNV_1a_hash(char* str);
 
-void initTable(Table *table, MemPool *pool);
+int initTable(Table *table);
+
+int termTable(Table *table);
 
 // void free_table(Table *table);
 

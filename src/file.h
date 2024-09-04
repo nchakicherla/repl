@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char *read_file(char *);
+#include "memory.h"
+
+char *readFile(char *name, MemPool *pool);
 
 #endif // FILE_H

@@ -3,7 +3,7 @@
 #include "memory.h"
 #include <stdio.h>
 
-#define MEMORY_HOG_FACTOR 3
+#define MEMORY_HOG_FACTOR 8
 #define DEF_BLOCK_INIT_SIZE 1024
 
 static inline Block *getLastBlock(MemPool *pool) {
@@ -39,18 +39,17 @@ static Block *newInitBlock(size_t block_size) {
 }
 
 int initMemPool(MemPool *pool) {
-	
 	size_t block_size = DEF_BLOCK_INIT_SIZE;
 
 	//pool->block = calloc(1, sizeof(Block));
 	pool->first_block = malloc(sizeof(Block));
 	if(!pool->first_block) return 1;
-	
 	// pool->block->data = calloc(block_size, 1);
 	pool->first_block->data = malloc(block_size);
 	if(!pool->first_block->data) return 2;
 
-	pool->first_block->data_size = block_size;
+	pool->first_block->data_size = DEF_BLOCK_INIT_SIZE;
+	pool->first_block->next = NULL;
 	// pool->block->next = NULL;
 
 	pool->bytes_used = 0;
@@ -73,7 +72,6 @@ int termMemPool(MemPool *pool) {
 		free(curr);
 		curr = next;	 
 	}
-
 	return 0;
 }
 

@@ -1,11 +1,11 @@
 #include "file.h"
 
-char *read_file(char *file_name) {
+char *readFile(char *name, MemPool *pool) {
 	FILE* file = NULL;
 	char *output = NULL;
 	long size;
 
-	file = fopen(file_name, "r");
+	file = fopen(name, "r");
 	if (!file)
 		return NULL;
 
@@ -15,10 +15,15 @@ char *read_file(char *file_name) {
 	fseek(file, 0, SEEK_SET);
 	
 	// read file into calloc'd buffer and terminate with null
-	output = calloc(size + 1, sizeof(char));
+	if(pool) {
+		output = palloc(pool, size + 1);
+	} else {
+		fclose(file);
+		return NULL;
+	}
 	fread(output, size, 1, file);
 	output[size] = '\0';
-			
+
 	fclose(file);
 	return output;
 }

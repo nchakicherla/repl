@@ -9,14 +9,15 @@ BIN = ./bin/main.run
 
 MAIN = 	./obj/main.o
 
-OBJS = 	./obj/scanner.o \
-		./obj/file.o \
-		./obj/vm.o \
+OBJS = 	./obj/file.o \
 		./obj/table.o \
 		./obj/memory.o \
+		./obj/scanner.o \
 		./obj/ast.o \
 		./obj/tree.o \
 		./obj/random.o \
+		./obj/chunk.o \
+		./obj/vm.o \
 
 default: reset $(BIN)
 ifeq ($(OS),Darwin) 

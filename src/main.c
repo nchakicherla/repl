@@ -9,10 +9,11 @@
 #include "memory.h"
 #include "ast.h"
 #include "tree.h"
+#include "chunk.h"
 
 #include "random.h"
 
-#define BIGNUM 0xFFFFFFFF // 2^20
+#define BIGNUM 0x00FFFF // 2^20
 
 struct testStruct {
 	size_t *test;
@@ -20,20 +21,33 @@ struct testStruct {
 };
 
 int main(void) {
-
 	MemPool pool;
 	initMemPool(&pool);
 
-	int64_t *arr = palloc(&pool, BIGNUM *sizeof(int64_t));
+	int64_t *arr = palloc(&pool, BIGNUM * sizeof(int64_t));
 
 	fillI64ArrRand(arr, BIGNUM, INT64_MAX);
 /*
-*/
 	for(size_t i = 0; i < BIGNUM; i++) {
 		printf("%" PRId64 "\n", arr[i]);
 	}
 	printf("bytes allocd: %zu, bytes used: %zu\n", getBytesAllocd(&pool), getBytesUsed(&pool));
-	termMemPool(&pool);
+*/
+	termMemPool(&pool); // source uses this
+
+	Chunk chunk;
+	initChunk(&chunk);
+
+	char *source = readFile("./resources/test2.tl", &(chunk.pool)); // readFile uses Chunk's MemPool
+
+	scanTokensFromSource(&chunk, source);
+
+	printTokens(&chunk);
+
+	termChunk(&chunk);
+
+
+	//free(source);
 
 	return 0;
 }

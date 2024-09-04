@@ -2,7 +2,7 @@
 #include "memory.h"
 #include "string.h"
 
-#define DEF_N_BUCKETS 64
+#define DEF_N_BUCKETS 512
 
 #include <stdio.h>
 
@@ -20,11 +20,12 @@ uint32_t FNV_1a_hash(char *str) {
     return h ^ (h >> 16);
 }
 
-void initTable(Table *table, MemPool *pool) {
+int initTable(Table *table) {
 	table->count = 0;
 	table->n_buckets = 0;
 	table->entries = NULL;
-    table->pool = pool;
+    initMemPool(table->pool);
+    return 0;
 }
 /*
 void free_table(Table *table) {
@@ -32,6 +33,11 @@ void free_table(Table *table) {
 	//free(table);
 }
 */
+int termTable(Table *table) {
+    termMemPool(table->pool);
+    return 0;
+}
+
 typedef struct {
     char *key;
     Entry *entry;
