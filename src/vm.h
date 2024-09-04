@@ -12,4 +12,8 @@ typedef struct s_VM {
 	MemPool *pool;
 } *VM;
 
+int scanTokensFromSource(Chunk *chunk, char *source);
+
+void printTokens(Chunk *chunk);
+
 #endif // VM_H

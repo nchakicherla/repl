@@ -38,7 +38,7 @@ typedef struct {
 	size_t count;
 	size_t n_buckets;
 	Entry **entries;
-	MemPool *pool;
+	MemPool pool;
 } Table;
 
 uint32_t FNV_1a_hash(char* str);

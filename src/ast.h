@@ -2,7 +2,7 @@
 #define AST_H
 
 #include "scanner.h"
-
+#include "memory.h"
 //typedef struct s_Block;
 //typedef struct s_Statement;
 //typedef struct s_Expression;
@@ -99,6 +99,8 @@ typedef struct s_Node {
 	NODE_TYPE type;
 	size_t n_children;
 	struct s_Node **children;
+
+	
 } Node;
 
 #endif // AST_H

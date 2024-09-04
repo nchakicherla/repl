@@ -21,10 +21,10 @@ struct testStruct {
 };
 
 int main(void) {
-	MemPool scope_pool;
-	initMemPool(&scope_pool);
+	MemPool pool;
+	initMemPool(&pool);
 
-	int64_t *arr = palloc(&scope_pool, BIGNUM * sizeof(int64_t));
+	int64_t *arr = palloc(&pool, BIGNUM * sizeof(int64_t));
 
 	fillI64ArrRand(arr, BIGNUM, INT64_MAX);
 /*
@@ -33,7 +33,7 @@ int main(void) {
 	}
 	printf("bytes allocd: %zu, bytes used: %zu\n", getBytesAllocd(&pool), getBytesUsed(&pool));
 */
-	termMemPool(&scope_pool);
+	termMemPool(&pool);
 
 	Chunk chunk;
 	initChunk(&chunk);
@@ -45,6 +45,56 @@ int main(void) {
 	printTokens(&chunk);
 
 	termChunk(&chunk);
+
+	Table table;
+	initTable(&table);
+
+	char *teststr = "teststr";
+	int64_t a = 5;
+	double testdbl = 1.200;
+
+	insertKey(&table, "test", &a, ITR_TYPE);
+	insertKey(&table, "test2", &a, ITR_TYPE);
+	insertKey(&table, "test3", &a, ITR_TYPE);
+	insertKey(&table, "test4", &a, ITR_TYPE);
+	insertKey(&table, "test5", &a, ITR_TYPE);
+	insertKey(&table, "test6", &testdbl, DBL_TYPE);
+	insertKey(&table, "test7", &testdbl, DBL_TYPE);
+	insertKey(&table, "test7", &a, ITR_TYPE);
+	insertKey(&table, "test8", &a, ITR_TYPE);
+	insertKey(&table, "test9", &a, ITR_TYPE);
+	insertKey(&table, "test0", teststr, STR_TYPE);
+
+	Object *obj = NULL;
+	obj = getObject(&table, "test");
+	printf("%ld\n", obj->val.itr);
+	obj = getObject(&table, "test2");
+	printf("%ld\n", obj->val.itr);
+	obj = getObject(&table, "test3");
+	printf("%ld\n", obj->val.itr);
+	obj = getObject(&table, "test4");
+	printf("%ld\n", obj->val.itr);
+	obj = getObject(&table, "test5");
+	printf("%ld\n", obj->val.itr);
+	obj = getObject(&table, "test6");
+	printf("%f\n", obj->val.dbl);
+	obj = getObject(&table, "test7");
+	printf("%f\n", obj->val.dbl);
+	obj = getObject(&table, "test8");
+	printf("%ld\n", obj->val.itr);
+	obj = getObject(&table, "test9");
+	printf("%ld\n", obj->val.itr);
+	obj = getObject(&table, "test0");
+	printf("%s\n", obj->val.str);
+	//free_table(&table);
+
+	int ret = removeKey(&table, "test0");
+	printf("removal ret: %d\n", ret);
+
+	obj = getObject(&table, "test0");
+	if(!obj) {
+		printf("was removed!\n");
+	}	
 
 	return 0;
 }

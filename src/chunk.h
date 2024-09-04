@@ -3,9 +3,10 @@
 
 #include "common.h"
 #include "ast.h"
-#include "scanner.h"
+//#include "scanner.h"
 #include "memory.h"
 #include "file.h"
+#include "scanner.h"
 
 typedef struct s_Chunk {
 	char *source;
@@ -25,9 +26,5 @@ typedef struct s_Chunk {
 int initChunk(Chunk *chunk);
 
 int termChunk(Chunk *chunk);
-
-int scanTokensFromSource(Chunk *chunk, char *source);
-
-void printTokens(Chunk *chunk);
 
 #endif // CHUNK_H

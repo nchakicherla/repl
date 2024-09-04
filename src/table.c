@@ -24,17 +24,12 @@ int initTable(Table *table) {
 	table->count = 0;
 	table->n_buckets = 0;
 	table->entries = NULL;
-    initMemPool(table->pool);
+    initMemPool(&(table->pool));
     return 0;
 }
-/*
-void free_table(Table *table) {
-	free(table->entries);
-	//free(table);
-}
-*/
+
 int termTable(Table *table) {
-    termMemPool(table->pool);
+    termMemPool(&(table->pool));
     return 0;
 }
 
@@ -43,7 +38,7 @@ typedef struct {
     Entry *entry;
 } Sortee;
 
-void _printSortee(Sortee *sortee, size_t n) {
+void printSortee(Sortee *sortee, size_t n) {
     for(size_t i = 0; i < n; i++) {
         printf("i: %zu, key: %s, entry addr: %p\n", i, sortee[i].key, (void *)sortee[i].entry);
     }
@@ -127,7 +122,7 @@ int sortEntriesByKey(Sortee *array, size_t n, MemPool *pool) { // quicksort
 
 int insertKey(Table *table, char *key, void *value, OBJ_TYPE type) {
     if(table->entries == NULL) {
-        table->entries = palloc(table->pool, DEF_N_BUCKETS * sizeof(Entry *));
+        table->entries = palloc(&(table->pool), DEF_N_BUCKETS * sizeof(Entry *));
         for(size_t i = 0; i < DEF_N_BUCKETS; i++) {
             table->entries[i] = NULL;
         }
@@ -142,8 +137,8 @@ int insertKey(Table *table, char *key, void *value, OBJ_TYPE type) {
 
     if(table->entries[bucket]) {
 
-        sorting = makeSorteeArray(table->entries[bucket], table->pool, &n_entries_in_bucket);
-        sortEntriesByKey(sorting, n_entries_in_bucket, table->pool);
+        sorting = makeSorteeArray(table->entries[bucket], &(table->pool), &n_entries_in_bucket);
+        sortEntriesByKey(sorting, n_entries_in_bucket, &(table->pool));
         
         for(size_t i = 0; i < n_entries_in_bucket; i++) {
             if(0 == strcmp(key, sorting[i].key)) {
@@ -162,8 +157,8 @@ int insertKey(Table *table, char *key, void *value, OBJ_TYPE type) {
         }
     }
 
-    Entry *new_entry = palloc(table->pool, sizeof(Entry));
-    new_entry->key = newStrCopy(key, table->pool);
+    Entry *new_entry = palloc(&(table->pool), sizeof(Entry));
+    new_entry->key = newStrCopy(key, &(table->pool));
 
     new_entry->obj.type = type;
     switch(type) {

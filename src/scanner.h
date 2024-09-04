@@ -73,5 +73,4 @@ Token identifier(void);
 
 Token scanToken(void);
 
-
 #endif // SCANNER_H
