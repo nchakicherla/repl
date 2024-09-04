@@ -75,7 +75,7 @@ int termMemPool(MemPool *pool) {
 	return 0;
 }
 
-int wipeMemPool(MemPool *pool) {
+int resetMemPool(MemPool *pool) {
 
 	Block *curr = pool->first_block;
 	Block *next = NULL;

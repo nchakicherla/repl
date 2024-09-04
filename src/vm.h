@@ -21,6 +21,8 @@ void termVM(VM *vm);
 
 int scanTokensFromSource(Chunk *chunk, char *source);
 
-void printTokens(Chunk *chunk);
+void printTokens(VM *vm);
+
+void printSource(VM *vm);
 
 #endif // VM_H

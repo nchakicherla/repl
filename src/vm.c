@@ -46,10 +46,18 @@ int scanTokensFromSource(Chunk *chunk, char *source) {
 	return 0;
 }
 
-void printTokens(Chunk *chunk) {
+void printTokens(VM *vm) {
 
-	for(size_t i = 0; i < chunk->n_tokens; i++) {
-		printf("TK%6zu: TYPE:%3d - \"%.*s\"\n", i, chunk->tokens[i].type, (int)chunk->tokens[i].len, chunk->tokens[i].start);
+	for(size_t i = 0; i < vm->chunk.n_tokens; i++) {
+		printf("TK%6zu: TYPE: %16s - \"%.*s\"\n", 
+			i,
+			getTKTypeLiteral(vm->chunk.tokens[i].type), 
+			(int)vm->chunk.tokens[i].len, vm->chunk.tokens[i].start);
 	}
+	return;
+}
+
+void printSource(VM *vm) {
+	printf("SOURCE:\n\"\n%s\n\"\n", vm->source);
 	return;
 }

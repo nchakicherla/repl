@@ -4,84 +4,52 @@
 #include "scanner.h"
 #include "memory.h"
 #include "table.h"
-//typedef struct s_Block;
-//typedef struct s_Statement;
-//typedef struct s_Expression;
-/*
-typedef enum {
-	BLCK_TYPE_SCOPE,
-	BLCK_TYPE_FN_DECL,
-	BLCK_TYPE_IF,
-	BLCK_TYPE_WHILE,
-	BLCK_TYPE_FOR,
-	BLCK_TYPE_RANGE,
-} BLCK_TYPE;
 
 typedef enum {
-	STMT_TYPE_DECLARE,
-	STMT_TYPE_ASSIGN,
-	STMT_TYPE_RETURN,
-	STMT_TYPE_EXIT,
-} STMT_TYPE;
-
-typedef enum {
-	EXPR_ECHO,
-	EXPR_MATH,
-	EXPR_TRUTHY,
-	EXPR_FNCALL,
-	EXPR_UNARY,
-} EXPR_TYPE;
-*/
-typedef enum {
+	ERR_TYPE,
 	BLCK_TYPE_SCOPE,
-	//BLCK_TYPE_EXEC,
 	
 	BLCK_TYPE_CLASS,
-	BLCK_TYPE_FN,
+	BLCK_TYPE_FNDEF,
 	
 	BLCK_TYPE_IF,
 	BLCK_TYPE_WHILE,
-	BLCK_TYPE_DOWHILE,
 	BLCK_TYPE_FOR,
-	BLCK_TYPE_RANGE,
 
 	STMT_TYPE_DECLARE,
-	// STMT_TYPE_ASSIGN,
 	STMT_TYPE_ASSIGN,
 	STMT_TYPE_INIT,
 	STMT_TYPE_ECHO,
+	STMT_TYPE_BREAK,
 	STMT_TYPE_RETURN,
+
 	STMT_TYPE_EXIT,
-	//STMT_TYPE_FNCALL,
-	//STMT_TYPE_FNCALL,
 
-	//EXPR_TYPE_FNCALL,
-	EXPR_TYPE_EVAL, // EXPR type contains at least 1 term
+	EXPR_TYPE_GROUP,
+	EXPR_TYPE_EVAL,
 	EXPR_TYPE_BOOL,
-	// EXPR_TYPE_VAR,
 
-	TERM_TYPE_PROP,
-	//TERM_TYPE_LABEL,
+	TERM_TYPE_VAR,
 	TERM_TYPE_FNCALL,
+	TERM_TYPE_INDEX,
+	TERM_TYPE_PROP,
 	TERM_TYPE_FACTOR,
 	TERM_TYPE_STRING,
 
-	// EXPR_TYPE_UNARY,
+	LVAL_TYPE_VAR_DECL,
+	LVAL_TYPE_VAR,
+	LVAL_TYPE_PROP,
 
-	// arithmetic
 	OPER_TYPE_MULT,
 	OPER_TYPE_DIV,
 	OPER_TYPE_SUM,
 	OPER_TYPE_DIFF,
+	OPER_TYPE_MOD,
 
-	OPER_TYPE_MODULUS,
-
-	// logical
 	OPER_TYPE_AND,
 	OPER_TYPE_OR,
 	OPER_TYPE_NOT,
 
-	// assignment
 	OPER_TYPE_EQUALS,
 	OPER_TYPE_EQEQUALS,
 	OPER_TYPE_PLUSEQUALS,
@@ -90,31 +58,32 @@ typedef enum {
 	OPER_TYPE_DIVEQUALS,
 	OPER_TYPE_MODEQUALS,
 
-	// postfix increment / decrement
 	OPER_TYPE_INCREMENT,
 	OPER_TYPE_DECREMENT,
 } NODE_TYPE;
 
 /*
-"var a = 3 * (5 + 4);"
+"int a = 3 * (5 + 4);"
 
 	BLCK_TYPE_SCOPE: (main)
-		- STMT_TYPE_DECLARE: "var a = 3 * (5 + 4);"
+		- STMT_TYPE_INIT: "int a = 3 * (5 + 4);"
+			- LVAL_TYPE_VAR "a"
+			- OPER_TYPE_EQUALS "="
 			- EXPR_TYPE_COMPUTE:
+				- TERM_TYPE_PROP "3"
+				- OPER_TYPE_MULT "*""
 				- EXPR_TYPE_COMPUTE:
-					- TERM_TYPE_FACTOR 5
-					- OPER_TYPE_SUM + 
-					- TERM_TYPE_FACTOR 4
-				- OPER_TYPE_MULT *
-				- TERM_TYPE_PROP 3
+					- TERM_TYPE_FACTOR "5"
+					- OPER_TYPE_SUM "+"
+					- TERM_TYPE_FACTOR "4"
 */
 
 
 typedef struct s_Node {
 	NODE_TYPE type;
 
-	Object object;
 	bool evaluated;
+	Object object;
 
 	size_t n_children;
 	struct s_Node *children;

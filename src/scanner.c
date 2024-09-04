@@ -3,6 +3,26 @@
 
 #include <stdio.h>
 
+char *__tk_literals[] = {
+	"TK_LPAREN", "TK_RPAREN", "TK_LBRACE", "TK_RBRACE", "TK_LSQUARE", "TK_RSQUARE",
+	"TK_COMMA", "TK_DOT", "TK_MINUS", "TK_PLUS", "TK_MOD", "TK_SEMICOLON", "TK_FSLASH", "TK_STAR", "TK_COLON",
+
+	// 1- or 2-character
+	"TK_BANG", "TK_BANG_EQUAL",
+	"TK_EQUAL", "TK_EQUAL_EQUAL",
+	"TK_GREATER", "TK_GREATER_EQUAL",
+	"TK_LESS", "TK_LESS_EQUAL",
+
+	// literals
+	"TK_IDENTIFIER", "TK_STRING", "TK_NUM",
+
+	// keywords
+	"TK_AND", "TK_BOOL", "TK_BREAK", "TK_CLASS", "TK_FLT", "TK_ELSE", "TK_EXIT", "TK_FALSE", "TK_FN", "TK_FOR", "TK_IF", "TK_INT", "TK_NIL", 
+	"TK_OR", "TK_RETURN", "TK_STR", "TK_THIS", "TK_TRUE", "TK_WHILE",
+
+	"TK_ERROR", "TK_EOF"
+};
+
 Scanner scanner;
 
 void initScanner(char *source) {
@@ -136,8 +156,8 @@ Token number(void) {
 }
 
 bool isAlpha(char c) {
-   	return (c >= 'a' && c <= 'z') ||
-        (c >= 'A' && c <= 'Z') ||
+	return (c >= 'a' && c <= 'z') ||
+		(c >= 'A' && c <= 'Z') ||
 		c == '_';
 }
 
@@ -154,23 +174,46 @@ TOKEN_TYPE identifierType(void) {
 
 	switch (scanner.start[0]) {
 		case 'a': return checkKeyword(1, 2, "nd", TK_AND);
+		// case 'b': return checkKeyword(1, 3, "ool", TK_BOOL);
+		case 'b':
+			if (scanner.current - scanner.start > 1) {
+				switch (scanner.start[1]) {
+					case 'o': return checkKeyword(2, 2, "ol", TK_BOOL);
+					case 'r': return checkKeyword(2, 3, "eak", TK_BREAK);
+				}
+			}
 		case 'c': return checkKeyword(1, 4, "lass", TK_CLASS);
-		case 'e': return checkKeyword(1, 3, "lse", TK_ELSE);
+		// case 'e': return checkKeyword(1, 3, "lse", TK_ELSE);
+		case 'e':
+			if (scanner.current - scanner.start > 1) {
+				switch (scanner.start[1]) {
+					case 'l': return checkKeyword(2, 2, "se", TK_ELSE);
+					case 'x': return checkKeyword(2, 2, "it", TK_EXIT); 
+				}
+			}
 		case 'f': {
 			if (scanner.current - scanner.start > 1) {
 				switch (scanner.start[1]) {
 					case 'a': return checkKeyword(2, 3, "lse", TK_FALSE);
+					case 'l': return checkKeyword(2, 1, "t", TK_FLT);
 					case 'n': return TK_FN;
 					case 'o': return checkKeyword(2, 1, "r", TK_FOR);
 				}
 			}
 		}
-		case 'i': return checkKeyword(1, 1, "f", TK_IF);
+		case 'i': {
+			if (scanner.current - scanner.start > 1) {
+				switch (scanner.start[1]) {
+					case 'f': return TK_IF;
+					case 'n': return checkKeyword(2, 1, "t", TK_INT);
+				}
+			}
+		}
 		case 'n': return checkKeyword(1, 2, "il", TK_NIL);
 		case 'o': return checkKeyword(1, 2, "r", TK_OR);
 		//case 'p': return checkKeyword(1, 2, "rint", TK_PRINT);
 		case 'r': return checkKeyword(1, 2, "eturn", TK_RETURN);
-		//case 's': return checkKeyword(1, 2, "uper", TK_SUPER);
+		case 's': return checkKeyword(1, 2, "tr", TK_STR);
 		case 't': {
 			if (scanner.current - scanner.start > 1) {
 				switch (scanner.start[1]) {
@@ -179,7 +222,7 @@ TOKEN_TYPE identifierType(void) {
 				}
 			}
 		}
-		case 'v': return checkKeyword(1, 2, "ar", TK_AND);
+		//case 'v': return checkKeyword(1, 2, "ar", TK_VAR);
 		case 'w': return checkKeyword(1, 2, "hile", TK_AND);
 	}
 	return TK_IDENTIFIER;
@@ -223,6 +266,7 @@ Token scanToken(void) {
 		case ';': return makeToken(TK_SEMICOLON);
 		case '/': return makeToken(TK_FSLASH);
 		case '*': return makeToken(TK_STAR);
+		case '%': return makeToken(TK_MOD);
 		case ':': return makeToken(TK_COLON);
 
 		case '!':
@@ -241,4 +285,8 @@ Token scanToken(void) {
 			return string();
 	}
 	return makeErrorToken("unexpected character");
+}
+
+char *getTKTypeLiteral(TOKEN_TYPE type) {
+	return __tk_literals[type];
 }

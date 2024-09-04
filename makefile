@@ -18,6 +18,7 @@ OBJS = 	./obj/file.o \
 		./obj/random.o \
 		./obj/chunk.o \
 		./obj/vm.o \
+		./obj/object.o \
 
 default: reset $(BIN)
 ifeq ($(OS),Darwin) 
@@ -28,7 +29,7 @@ endif
 
 reset: clear $(BIN)
 
-run: $(BIN)
+run: reset $(BIN)
 	$(BIN)
 
 $(BIN): $(OBJS) $(MAIN)

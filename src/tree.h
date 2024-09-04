@@ -2,11 +2,10 @@
 #define TREE_H
 
 #include "common.h"
+#include "ast.h"
 
-typedef struct s_BNode {
-	int32_t val;
-	struct s_BNode *left;
-	struct s_BNode *right;
-} BNode;
+typedef struct s_Tree {
+	int test;
+} Tree;
 
 #endif // TREE_H

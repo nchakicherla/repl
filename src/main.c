@@ -19,7 +19,8 @@ int main(void) {
 	initVM(&vm, "./resources/test2.tl");
 
 	scanTokensFromSource(&(vm.chunk), vm.source);
-	printTokens(&(vm.chunk));
+	printSource(&vm);
+	printTokens(&vm);
 	termVM(&vm);
 
 	return 0;

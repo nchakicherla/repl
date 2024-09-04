@@ -3,29 +3,11 @@
 
 #include "common.h"
 #include "memory.h"
+#include "object.h"
 
 #include <stdlib.h>
 
 struct s_Entry;
-
-typedef enum {
-	STR_TYPE,
-	ITR_TYPE,
-	DBL_TYPE,
-	PTR_TYPE,
-} OBJ_TYPE;
-
-union Value {
-	char *str;
-	int64_t itr;
-	double dbl;
-	void *ptr;
-};
-
-typedef struct {
-	OBJ_TYPE type;
-	union Value val;
-} Object;
 
 typedef struct s_Entry {
 	char *key;
@@ -34,7 +16,7 @@ typedef struct s_Entry {
 	struct s_Entry *next;
 } Entry;
 
-typedef struct {
+typedef struct s_Table {
 	size_t count;
 	size_t n_buckets;
 	Entry **entries;

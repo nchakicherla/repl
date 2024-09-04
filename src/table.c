@@ -162,6 +162,9 @@ int insertKey(Table *table, char *key, void *value, OBJ_TYPE type) {
 
     new_entry->obj.type = type;
     switch(type) {
+        case NIL_TYPE:
+            new_entry->obj.val.ptr = NULL;
+            break;
         case STR_TYPE:
             new_entry->obj.val.str = (char *)value;
             break;
@@ -170,6 +173,9 @@ int insertKey(Table *table, char *key, void *value, OBJ_TYPE type) {
             break;
         case DBL_TYPE:
             new_entry->obj.val.dbl = *(double *)value;
+            break;
+        case BLN_TYPE:
+            new_entry->obj.val.bln = *(bool *)value;
             break;
         case PTR_TYPE:
             new_entry->obj.val.ptr = (void *)value;
