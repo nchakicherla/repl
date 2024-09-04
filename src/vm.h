@@ -8,9 +8,16 @@
 #include "chunk.h"
 
 typedef struct s_VM {
-	Chunk *chunk;
-	MemPool *pool;
+	Chunk chunk;
+	Table table;
+	MemPool pool;
+	char *name;
+	char *source;
 } VM;
+
+void initVM(VM *vm, char *script);
+
+void termVM(VM *vm);
 
 int scanTokensFromSource(Chunk *chunk, char *source);
 

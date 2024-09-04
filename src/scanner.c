@@ -52,6 +52,15 @@ Token makeToken(TOKEN_TYPE type) {
 	return token;
 }
 
+Token makeTokenWPool(TOKEN_TYPE type) {
+	Token token;
+	token.type = type;
+	token.start = scanner.start;
+	token.len = (size_t)(scanner.current - scanner.start);
+	token.line = scanner.line;
+	return token;
+}
+
 Token makeErrorToken(char *message) {
 	Token token;
 	token.type = TK_ERROR;

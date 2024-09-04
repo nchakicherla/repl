@@ -3,6 +3,7 @@
 
 #include "scanner.h"
 #include "memory.h"
+#include "table.h"
 //typedef struct s_Block;
 //typedef struct s_Statement;
 //typedef struct s_Expression;
@@ -33,7 +34,7 @@ typedef enum {
 */
 typedef enum {
 	BLCK_TYPE_SCOPE,
-	BLCK_TYPE_EXEC,
+	//BLCK_TYPE_EXEC,
 	
 	BLCK_TYPE_CLASS,
 	BLCK_TYPE_FN,
@@ -46,22 +47,24 @@ typedef enum {
 
 	STMT_TYPE_DECLARE,
 	// STMT_TYPE_ASSIGN,
+	STMT_TYPE_ASSIGN,
 	STMT_TYPE_INIT,
 	STMT_TYPE_ECHO,
 	STMT_TYPE_RETURN,
 	STMT_TYPE_EXIT,
-	STMT_TYPE_ASSIGN,
 	//STMT_TYPE_FNCALL,
 	//STMT_TYPE_FNCALL,
 
-	EXPR_TYPE_FNCALL, // EXPR type can have an effect
-	EXPR_TYPE_COMPUTE, // COMPUTE type can have an effect via internal FNCALLs
-	EXPR_TYPE_TRUTHY,
+	//EXPR_TYPE_FNCALL,
+	EXPR_TYPE_EVAL, // EXPR type contains at least 1 term
+	EXPR_TYPE_BOOL,
 	// EXPR_TYPE_VAR,
 
+	TERM_TYPE_PROP,
+	//TERM_TYPE_LABEL,
 	TERM_TYPE_FNCALL,
-	TERM_TYPE_VAR,
 	TERM_TYPE_FACTOR,
+	TERM_TYPE_STRING,
 
 	// EXPR_TYPE_UNARY,
 
@@ -90,17 +93,31 @@ typedef enum {
 	// postfix increment / decrement
 	OPER_TYPE_INCREMENT,
 	OPER_TYPE_DECREMENT,
-
-	// l-value
-	LABEL_TYPE,
 } NODE_TYPE;
+
+/*
+"var a = 3 * (5 + 4);"
+
+	BLCK_TYPE_SCOPE: (main)
+		- STMT_TYPE_DECLARE: "var a = 3 * (5 + 4);"
+			- EXPR_TYPE_COMPUTE:
+				- EXPR_TYPE_COMPUTE:
+					- TERM_TYPE_FACTOR 5
+					- OPER_TYPE_SUM + 
+					- TERM_TYPE_FACTOR 4
+				- OPER_TYPE_MULT *
+				- TERM_TYPE_PROP 3
+*/
+
 
 typedef struct s_Node {
 	NODE_TYPE type;
-	size_t n_children;
-	struct s_Node **children;
 
-	
+	Object object;
+	bool evaluated;
+
+	size_t n_children;
+	struct s_Node *children;
 } Node;
 
 #endif // AST_H

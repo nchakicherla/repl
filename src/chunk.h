@@ -14,17 +14,15 @@ typedef struct s_Chunk {
 	size_t n_tokens;
 	Token *tokens;
 
-	Node *head;
-
-	struct s_MemPool pool;
-
+	Node head;
+	MemPool pool;
 	// int err;
 } Chunk;
 
 // int __growChunkTokens()
 
-int initChunk(Chunk *chunk);
+void initChunk(Chunk *chunk);
 
-int termChunk(Chunk *chunk);
+void termChunk(Chunk *chunk);
 
 #endif // CHUNK_H

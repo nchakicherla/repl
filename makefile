@@ -26,12 +26,12 @@ else
 	valgrind --track-origins=yes --leak-check=full $(BIN)  
 endif
 
-reset: clear link
+reset: clear $(BIN)
 
-run: reset $(BIN)
+run: $(BIN)
 	$(BIN)
 
-link: $(OBJS) $(MAIN)
+$(BIN): $(OBJS) $(MAIN)
 	$(CC) $(CFLAGS) $(OBJS) $(MAIN) -o $(BIN)
 
 ./obj/%.o: ./src/%.c ./src/%.h #./src/common.h

@@ -41,12 +41,12 @@ static Block *newInitBlock(size_t block_size) {
 int initMemPool(MemPool *pool) {
 	size_t block_size = DEF_BLOCK_INIT_SIZE;
 
-	// pool->first_block = malloc(sizeof(Block));
-	pool->first_block = calloc(1, sizeof(Block));
+	pool->first_block = malloc(sizeof(Block));
+	// pool->first_block = calloc(1, sizeof(Block));
 	if(!pool->first_block) return 1;
-
-	// pool->first_block->data = malloc(block_size);
-	pool->first_block->data = calloc(1, block_size);
+	
+	pool->first_block->data = malloc(block_size);
+	// pool->first_block->data = calloc(1, block_size);
 	if(!pool->first_block->data) return 2;
 
 	pool->first_block->data_size = DEF_BLOCK_INIT_SIZE;
@@ -140,7 +140,7 @@ void *palloc(MemPool *pool, size_t size) {
 	return output;
 }
 
-char *newStrCopy(char *str, MemPool *pool) {
+char *pStrCpy(char *str, MemPool *pool) {
 	
 	char *output = NULL;
 	size_t len = strlen(str);

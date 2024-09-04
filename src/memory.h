@@ -29,7 +29,7 @@ int termMemPool(MemPool *pool);
 
 void *palloc(MemPool *pool, size_t size);
 
-char *newStrCopy(char *str, MemPool *pool);
+char *pStrCpy(char *str, MemPool *pool);
 
 size_t getBytesUsed(MemPool *pool);
 

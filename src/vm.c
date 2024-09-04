@@ -1,15 +1,32 @@
 #include "vm.h"
+#include "file.h"
+
+void initVM(VM *vm, char *script) {
+	initChunk(&(vm->chunk));
+	initTable(&(vm->table));
+	initMemPool(&(vm->pool));
+	vm->name = pStrCpy(script, &(vm->pool));
+	vm->source = readFile(script, &(vm->pool));
+	return;
+}
+
+void termVM(VM *vm) {
+	termChunk(&(vm->chunk));
+	termTable(&(vm->table));
+	termMemPool(&(vm->pool));
+	return;
+}
 
 int scanTokensFromSource(Chunk *chunk, char *source) {
 
 	size_t len = strlen(source);
 	chunk->source = palloc(&(chunk->pool), len + 1);
 	memcpy(chunk->source, source, len + 1);
-	chunk->source[len] = '\0'; 
+	chunk->source[len] = '\0';
 
 	initScanner(chunk->source);
 
-	// scanner passes twice to get count
+	// scanner passes twice to get count then write to chunk
 
 	size_t n_tokens = 0;
 	while(true) {
@@ -25,7 +42,6 @@ int scanTokensFromSource(Chunk *chunk, char *source) {
 
 	for(size_t i = 0; i < n_tokens; i++) {
 		chunk->tokens[i] = scanToken();
-		if(chunk->tokens[n_tokens].type == TK_EOF) break;
 	}
 	return 0;
 }

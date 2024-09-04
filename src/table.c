@@ -158,7 +158,7 @@ int insertKey(Table *table, char *key, void *value, OBJ_TYPE type) {
     }
 
     Entry *new_entry = palloc(&(table->pool), sizeof(Entry));
-    new_entry->key = newStrCopy(key, &(table->pool));
+    new_entry->key = pStrCpy(key, &(table->pool));
 
     new_entry->obj.type = type;
     switch(type) {
