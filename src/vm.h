@@ -10,7 +10,7 @@
 typedef struct s_VM {
 	Chunk *chunk;
 	MemPool *pool;
-} *VM;
+} VM;
 
 int scanTokensFromSource(Chunk *chunk, char *source);
 

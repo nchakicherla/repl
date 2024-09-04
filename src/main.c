@@ -24,6 +24,11 @@ int main(void) {
 	MemPool pool;
 	initMemPool(&pool);
 
+
+
+
+
+
 	int64_t *arr = palloc(&pool, BIGNUM * sizeof(int64_t));
 
 	fillI64ArrRand(arr, BIGNUM, INT64_MAX);
@@ -45,6 +50,13 @@ int main(void) {
 	printTokens(&chunk);
 
 	termChunk(&chunk);
+
+
+
+
+
+
+
 
 	Table table;
 	initTable(&table);
@@ -95,6 +107,8 @@ int main(void) {
 	if(!obj) {
 		printf("was removed!\n");
 	}	
+
+	termTable(&table);
 
 	return 0;
 }

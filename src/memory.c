@@ -70,7 +70,7 @@ int termMemPool(MemPool *pool) {
 		next = curr->next;
 		free(curr->data);
 		free(curr);
-		curr = next;	 
+		curr = next;
 	}
 	return 0;
 }
