@@ -1,5 +1,7 @@
 #include "scanner.h"
 
+#include <stdio.h>
+
 Scanner scanner;
 
 void initScanner(char *source) {
@@ -227,7 +229,6 @@ Token scanToken(void) {
 				match('=') ? TK_GREATER_EQUAL : TK_GREATER);
 		case '"': 
 			return string();
-
 	}
 	return makeErrorToken("unexpected character");
 }

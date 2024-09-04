@@ -14,7 +14,6 @@ char *readFile(char *name, MemPool *pool) {
 	size = ftell(file);
 	fseek(file, 0, SEEK_SET);
 	
-	// read file into calloc'd buffer and terminate with null
 	if(pool) {
 		output = palloc(pool, size + 1);
 	} else {

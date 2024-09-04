@@ -21,10 +21,10 @@ struct testStruct {
 };
 
 int main(void) {
-	MemPool pool;
-	initMemPool(&pool);
+	MemPool scope_pool;
+	initMemPool(&scope_pool);
 
-	int64_t *arr = palloc(&pool, BIGNUM * sizeof(int64_t));
+	int64_t *arr = palloc(&scope_pool, BIGNUM * sizeof(int64_t));
 
 	fillI64ArrRand(arr, BIGNUM, INT64_MAX);
 /*
@@ -33,7 +33,7 @@ int main(void) {
 	}
 	printf("bytes allocd: %zu, bytes used: %zu\n", getBytesAllocd(&pool), getBytesUsed(&pool));
 */
-	termMemPool(&pool); // source uses this
+	termMemPool(&scope_pool);
 
 	Chunk chunk;
 	initChunk(&chunk);
@@ -45,9 +45,6 @@ int main(void) {
 	printTokens(&chunk);
 
 	termChunk(&chunk);
-
-
-	//free(source);
 
 	return 0;
 }
