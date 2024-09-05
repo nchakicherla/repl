@@ -3,7 +3,7 @@
 #include "memory.h"
 #include <stdio.h>
 
-#define MEMORY_HOG_FACTOR 12
+#define MEMORY_HOG_FACTOR 8
 #define DEF_BLOCK_INIT_SIZE 1024
 
 static inline Block *getLastBlock(MemPool *pool) {
@@ -161,6 +161,13 @@ size_t getBytesUsed(MemPool *pool) {
 
 size_t getBytesAllocd(MemPool *pool) {
 	return pool->bytes_allocd;
+}
+
+void printPoolInfo(MemPool *pool) {
+	printf("pool info - \n");
+	printf("\tbytes used: %zu, (%f MB)\n", getBytesUsed(pool), (double)getBytesUsed(pool) / (1024 * 1024));
+	printf("\tbytes allocd: %zu, (%f MB)\n", getBytesAllocd(pool), (double)getBytesAllocd(pool) / (1024 * 1024));
+	return;
 }
 
 /*

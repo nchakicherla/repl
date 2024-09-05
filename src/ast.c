@@ -27,7 +27,8 @@ char *__node_type_literals[] = {
 	"STX_COMPUTE",
 
 	"STX_VAR",
-	"STX_PROP",
+	"STX_MEMBER",
+	"STX_THIS",
 	"STX_FNCALL",
 	"STX_INDEX",
 	"STX_NUM",
@@ -39,6 +40,8 @@ char *__node_type_literals[] = {
 	"STX_DIFF",
 	"STX_MOD",
 
+	"STX_TRUE",
+	"STX_FALSE",
 	"STX_AND",
 	"STX_OR",
 	"STX_NOT",
@@ -60,6 +63,9 @@ char *__node_type_literals[] = {
 };
 
 void initGrammarNode(GrammarNode *node) {
+	node->node_type = NONE;
+	node->rule_head = NULL;
+	node->children = NULL;
 	return;
 }
 

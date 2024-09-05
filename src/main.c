@@ -23,7 +23,21 @@ int main(void) {
 	scanTokensFromSource(&(vm.chunk), vm.source);
 	printSource(&vm);
 	printTokens(&vm);
+	printPoolInfo(&(vm.pool));
 	termVM(&vm);
+
+	MemPool scratch;
+	initMemPool(&scratch);
+
+#define BIGNUM 500000
+
+	int64_t *array = palloc(&scratch, BIGNUM * sizeof(int64_t));
+	for(size_t i = 0; i < BIGNUM; i++) {
+		array[i] = randI64(INT64_MAX);
+	}
+
+	printPoolInfo(&scratch);
+	termMemPool(&scratch);
 
 	return 0;
 }
