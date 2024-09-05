@@ -3,7 +3,7 @@
 #include "memory.h"
 #include <stdio.h>
 
-#define MEMORY_HOG_FACTOR 8
+#define MEMORY_HOG_FACTOR 12
 #define DEF_BLOCK_INIT_SIZE 1024
 
 static inline Block *getLastBlock(MemPool *pool) {

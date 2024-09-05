@@ -61,34 +61,23 @@ typedef enum {
 	OPER_TYPE_INCREMENT,
 	OPER_TYPE_DECREMENT,
 	ERR_TYPE,
-} NODE_TYPE;
+} SYNTAX_TYPE;
 
 typedef enum {
 	GRAM_SEQ,
 	GRAM_OR,
-	GRAM_ZEROONE,
-	GRAM_ZEROMANY,
+	GRAM_IFONE,
+	GRAM_IFMANY,
 } RULE_TYPE;
 
-/*
-"int a = 3 * (5 + 4);"
-
-	BLCK_TYPE_SCOPE: (main)
-		- STMT_TYPE_INIT: "int a = 3 * (5 + 4);"
-			- LVAL_TYPE_VAR "a"
-			- OPER_TYPE_EQUALS "="
-			- EXPR_TYPE_COMPUTE:
-				- TERM_TYPE_PROP "3"
-				- OPER_TYPE_MULT "*""
-				- EXPR_TYPE_COMPUTE:
-					- TERM_TYPE_FACTOR "5"
-					- OPER_TYPE_SUM "+"
-					- TERM_TYPE_FACTOR "4"
-*/
-
+typedef enum {
+	GRAMMAR,
+	SYNTAX,
+	TOKEN,
+} TARGET_TYPE;
 
 typedef struct s_SyntaxNode {
-	NODE_TYPE type;
+	SYNTAX_TYPE type;
 
 	bool evaluated;
 	Object object;
@@ -98,19 +87,20 @@ typedef struct s_SyntaxNode {
 } SyntaxNode;
 
 typedef struct s_GrammarNode {
-	bool isToken;
-	size_t type;
 
-	Token *termToken;
-	struct s_GrammarNode *rule;
-	// fn pointer to terminal definition?
+	TARGET_TYPE ntype;
+
+	int64_t target_type;
+
+	struct s_GrammarNode *rule_head;
+	// fn pointer to non terminal definition?
 
 	size_t n_children;
 	struct s_GrammarNode *children;
 } GrammarNode;
 
 typedef struct s_GrammarRule {
-	NODE_TYPE type;
+	SYNTAX_TYPE stype;
 	GrammarNode *head;
 } GrammarRule;
 
@@ -131,6 +121,6 @@ void initGrammarNode(GrammarNode *node);
 
 void initGrammarParser(GrammarParser *parser);
 
-NODE_TYPE getNodeTypeFromLiteral(char *str);
+SYNTAX_TYPE getSNodeTypeFromLiteral(char *str);
 
 #endif // AST_H

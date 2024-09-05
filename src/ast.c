@@ -46,7 +46,7 @@ char *__node_type_literals[] = {
 	"OPER_TYPE_NOT_EQUAL",
 	"OPER_TYPE_GREATER_EQUAL",
 	"OPER_TYPE_LESS_EQUAL",
-	
+
 	"OPER_TYPE_EQUALS",
 	"OPER_TYPE_PLUS_EQUAL",
 	"OPER_TYPE_MINUS_EQUAL",
@@ -60,14 +60,6 @@ char *__node_type_literals[] = {
 };
 
 void initGrammarNode(GrammarNode *node) {
-	node->isToken = false;
-	node->type = 0;
-
-	node->termToken = NULL;
-	node->rule = NULL;
-
-	node->n_children = 0;
-	node->children = NULL;
 	return;
 }
 
@@ -82,7 +74,7 @@ void initGrammarParser(GrammarParser *parser) {
 	return;
 }
 
-NODE_TYPE getNodeTypeFromLiteral(char *str) {
+SYNTAX_TYPE getSNodeTypeFromLiteral(char *str) {
 	for (size_t i = 0; i < (sizeof(__node_type_literals) / sizeof(char *)); i++) {
 		if(0 == strcmp(str, __node_type_literals[i])) {
 			return i;
