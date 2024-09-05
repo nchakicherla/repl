@@ -8,15 +8,17 @@
 #include "table.h"
 #include "memory.h"
 #include "ast.h"
-#include "tree.h"
 #include "chunk.h"
 
 #include "random.h"
 
 int main(void) {
 
+	//char *script1 = "./resources/test2.tl";
+	char *script2 = "./resources/grammar.txt";
+
 	VM vm;
-	initVM(&vm, "./resources/test2.tl");
+	initVM(&vm, script2);
 
 	scanTokensFromSource(&(vm.chunk), vm.source);
 	printSource(&vm);

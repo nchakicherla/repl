@@ -9,7 +9,7 @@ typedef enum {
 	// 1-character
 	TK_LPAREN, TK_RPAREN, TK_LBRACE, TK_RBRACE, TK_LSQUARE, TK_RSQUARE,
 	TK_COMMA, TK_DOT, TK_MINUS, TK_PLUS, TK_MOD, TK_SEMICOLON, 
-	TK_FSLASH, TK_STAR, TK_COLON,
+	TK_FSLASH, TK_STAR, TK_COLON, TK_PIPE,
 
 	// 1- or 2-character
 	TK_BANG, TK_BANG_EQUAL,
@@ -21,9 +21,8 @@ typedef enum {
 	TK_IDENTIFIER, TK_STRING, TK_NUM,
 
 	// keywords
-	TK_AND, TK_BOOL, TK_BREAK, TK_CLASS, TK_FLT, TK_ELSE, TK_EXIT, 
-	TK_FALSE, TK_FN, TK_FOR, TK_IF, TK_INT, TK_NIL, TK_OR, TK_RETURN, 
-	TK_STR, TK_THIS, TK_TRUE, TK_WHILE,
+	TK_AND, TK_BOOL, TK_BREAK, TK_CLASS, TK_FLT, TK_ELSE, TK_EXIT, TK_FALSE, TK_FN, TK_FOR, TK_IF, TK_INT, TK_NIL, 
+	TK_OR, TK_RETURN, TK_SCOPE, TK_STR, TK_THIS, TK_TRUE, TK_WHILE,
 
 	TK_ERROR, TK_EOF,
 } TOKEN_TYPE;
@@ -75,6 +74,8 @@ Token identifier(void);
 
 Token scanToken(void);
 
-char *getTKTypeLiteral(TOKEN_TYPE type);
+char *getLiteralFromTokenType(TOKEN_TYPE type);
+
+TOKEN_TYPE getTokenTypeFromLiteral(char *str);
 
 #endif // SCANNER_H

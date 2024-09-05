@@ -14,7 +14,6 @@ OBJS = 	./obj/file.o \
 		./obj/memory.o \
 		./obj/scanner.o \
 		./obj/ast.o \
-		./obj/tree.o \
 		./obj/random.o \
 		./obj/chunk.o \
 		./obj/vm.o \

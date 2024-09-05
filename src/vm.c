@@ -51,7 +51,7 @@ void printTokens(VM *vm) {
 	for(size_t i = 0; i < vm->chunk.n_tokens; i++) {
 		printf("TK%6zu: TYPE: %16s - \"%.*s\"\n", 
 			i,
-			getTKTypeLiteral(vm->chunk.tokens[i].type), 
+			getLiteralFromTokenType(vm->chunk.tokens[i].type), 
 			(int)vm->chunk.tokens[i].len, vm->chunk.tokens[i].start);
 	}
 	return;

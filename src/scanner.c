@@ -5,7 +5,8 @@
 
 char *__tk_literals[] = {
 	"TK_LPAREN", "TK_RPAREN", "TK_LBRACE", "TK_RBRACE", "TK_LSQUARE", "TK_RSQUARE",
-	"TK_COMMA", "TK_DOT", "TK_MINUS", "TK_PLUS", "TK_MOD", "TK_SEMICOLON", "TK_FSLASH", "TK_STAR", "TK_COLON",
+	"TK_COMMA", "TK_DOT", "TK_MINUS", "TK_PLUS", "TK_MOD", "TK_SEMICOLON", 
+	"TK_FSLASH", "TK_STAR", "TK_COLON", "TK_PIPE",
 
 	// 1- or 2-character
 	"TK_BANG", "TK_BANG_EQUAL",
@@ -18,9 +19,9 @@ char *__tk_literals[] = {
 
 	// keywords
 	"TK_AND", "TK_BOOL", "TK_BREAK", "TK_CLASS", "TK_FLT", "TK_ELSE", "TK_EXIT", "TK_FALSE", "TK_FN", "TK_FOR", "TK_IF", "TK_INT", "TK_NIL", 
-	"TK_OR", "TK_RETURN", "TK_STR", "TK_THIS", "TK_TRUE", "TK_WHILE",
+	"TK_OR", "TK_RETURN", "TK_SCOPE", "TK_STR", "TK_THIS", "TK_TRUE", "TK_WHILE",
 
-	"TK_ERROR", "TK_EOF"
+	"TK_EOF", "TK_ERROR"
 };
 
 Scanner scanner;
@@ -213,7 +214,14 @@ TOKEN_TYPE identifierType(void) {
 		case 'o': return checkKeyword(1, 2, "r", TK_OR);
 		//case 'p': return checkKeyword(1, 2, "rint", TK_PRINT);
 		case 'r': return checkKeyword(1, 2, "eturn", TK_RETURN);
-		case 's': return checkKeyword(1, 2, "tr", TK_STR);
+		case 's': {
+			if (scanner.current - scanner.start > 1) {
+				switch (scanner.start[1]) {
+					case 'c': return checkKeyword(2, 3, "ope", TK_SCOPE);
+					case 't': return checkKeyword(2, 1, "r", TK_STR);
+				}
+			}
+		}
 		case 't': {
 			if (scanner.current - scanner.start > 1) {
 				switch (scanner.start[1]) {
@@ -268,6 +276,7 @@ Token scanToken(void) {
 		case '*': return makeToken(TK_STAR);
 		case '%': return makeToken(TK_MOD);
 		case ':': return makeToken(TK_COLON);
+		case '|': return makeToken(TK_PIPE);
 
 		case '!':
 			return makeToken (
@@ -287,6 +296,13 @@ Token scanToken(void) {
 	return makeErrorToken("unexpected character");
 }
 
-char *getTKTypeLiteral(TOKEN_TYPE type) {
+char *getLiteralFromTokenType(TOKEN_TYPE type) {
 	return __tk_literals[type];
+}
+
+TOKEN_TYPE getTokenTypeFromLiteral(char *str) {
+	for (size_t i = 0; i < (sizeof(__tk_literals) / sizeof(char *)); i++) {
+		if(0 == strcmp(__tk_literals[i], str)) return i;
+	}
+	return TK_ERROR;
 }

@@ -14,7 +14,7 @@ typedef struct s_Chunk {
 	size_t n_tokens;
 	Token *tokens;
 
-	Node *head;
+	SyntaxNode *head;
 	MemPool pool;
 	// int err;
 } Chunk;
