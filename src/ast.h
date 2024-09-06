@@ -27,9 +27,10 @@ typedef enum {
 
 	STX_EXIT,
 
-	STX_GROUPING,
-	STX_COMPUTE,
+	STX_GEXPR,
+	STX_EXPR,
 
+	STX_VTYPE,
 	STX_VAR,
 	STX_MEMBER,
 	STX_THIS,
@@ -63,7 +64,7 @@ typedef enum {
 
 	STX_INCREMENT,
 	STX_DECREMENT,
-	ERR_TYPE,
+	STX_ERR,
 } SYNTAX_TYPE;
 
 typedef enum {
@@ -71,16 +72,16 @@ typedef enum {
 	GRM_OR,
 	GRM_IFONE,
 	GRM_IFMANY,
+	GRM_GROUP,
 } GRAMMAR_TYPE;
 
 typedef enum {
-	NONE,
 	GRAMMAR,
 	SYNTAX,
 	TOKEN,
-} NODE_TYPE;
+} GRAMMAR_NODE_TYPE;
 
-union GenericType {
+union u_TargetType {
 	GRAMMAR_TYPE g;
 	SYNTAX_TYPE s;
 	TOKEN_TYPE t;
@@ -90,6 +91,7 @@ typedef struct s_SyntaxNode {
 	SYNTAX_TYPE type;
 
 	bool evaluated;
+	bool isBool;
 	Object object;
 
 	size_t n_children;
@@ -98,9 +100,9 @@ typedef struct s_SyntaxNode {
 
 typedef struct s_GrammarNode {
 
-	NODE_TYPE node_type;
+	GRAMMAR_NODE_TYPE node_type;
 
-	union GenericType type;
+	union u_TargetType type;
 
 	struct s_GrammarNode *rule_head;
 	// fn pointer to non terminal definition?

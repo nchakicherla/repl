@@ -5,7 +5,7 @@
 
 char *__tk_literals[] = {
 	"TK_LPAREN", "TK_RPAREN", "TK_LBRACE", "TK_RBRACE", "TK_LSQUARE", "TK_RSQUARE",
-	"TK_COMMA", "TK_DOT", "TK_MINUS", "TK_PLUS", "TK_MOD", "TK_SEMICOLON", 
+	"TK_COMMA", "TK_DOT", "TK_HASH", "TK_MINUS", "TK_PLUS", "TK_MOD", "TK_SEMICOLON", 
 	"TK_FSLASH", "TK_STAR", "TK_COLON", "TK_PIPE",
 
 	// 1- or 2-character
@@ -50,6 +50,13 @@ char peekNext(void) {
 		return '\0';
 	}
 	return scanner.current[1];
+}
+
+char peekNextNext(void) {
+	if (isAtEnd()) {
+		return '\0';
+	}
+	return scanner.current[2];
 }
 
 bool match(char expect) {
@@ -107,6 +114,16 @@ void skipWhitespace(void) {
 			case '/':
 				if (peekNext() == '/') {
 					while (peek() != '\n' && !isAtEnd()) {
+						advance();
+					}
+				} else if (peekNext() == '*') {
+					advance();
+					advance();
+					while (peek() != '*' && !isAtEnd()) {
+						advance();
+					}
+					if(peek() == '*' && peekNext() == '/') {
+						advance();
 						advance();
 					}
 				} else {
@@ -277,6 +294,7 @@ Token scanToken(void) {
 		case '%': return makeToken(TK_MOD);
 		case ':': return makeToken(TK_COLON);
 		case '|': return makeToken(TK_PIPE);
+		case '#': return makeToken(TK_HASH);
 
 		case '!':
 			return makeToken (

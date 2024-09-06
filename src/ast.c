@@ -23,9 +23,10 @@ char *__node_type_literals[] = {
 	
 	"STX_EXIT",
 
-	"STX_GROUPING",
-	"STX_COMPUTE",
+	"STX_GEXPR",
+	"STX_EXPR",
 
+	"STX_VTYPE",
 	"STX_VAR",
 	"STX_MEMBER",
 	"STX_THIS",
@@ -59,11 +60,10 @@ char *__node_type_literals[] = {
 
 	"STX_INCREMENT",
 	"STX_DECREMENT",
-	"ERR_TYPE"
+	"STX_ERR"
 };
 
 void initGrammarNode(GrammarNode *node) {
-	node->node_type = NONE;
 	node->rule_head = NULL;
 	node->children = NULL;
 	return;

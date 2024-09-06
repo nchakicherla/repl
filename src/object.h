@@ -6,12 +6,10 @@
 
 typedef enum {
 	NIL_TYPE,
-
 	STR_TYPE,
 	ITR_TYPE,
 	DBL_TYPE,
 	BLN_TYPE,
-	
 	PTR_TYPE,
 } OBJ_TYPE;
 
