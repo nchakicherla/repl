@@ -5,7 +5,7 @@
 
 #define MEMORY_HOG_FACTOR 8
 #define DEF_BLOCK_INIT_SIZE 1024
-
+/*
 static inline Block *getLastBlock(MemPool *pool) {
 	
 	Block *current = pool->first_block;
@@ -17,7 +17,7 @@ static inline Block *getLastBlock(MemPool *pool) {
 	}
 	return current;
 }
-
+*/
 static Block *newInitBlock(size_t block_size) {
 	
 	Block *block =  malloc(sizeof(Block));

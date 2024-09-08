@@ -29,11 +29,12 @@ int main(void) {
 	MemPool scratch;
 	initMemPool(&scratch);
 
-#define BIGNUM 500000
+#define BIGNUM 10000000
 
 	int64_t *array = palloc(&scratch, BIGNUM * sizeof(int64_t));
 	for(size_t i = 0; i < BIGNUM; i++) {
 		array[i] = randI64(INT64_MAX);
+		// printf("num %zu: %" PRId64 "\n", i, array[i]);
 	}
 
 	printPoolInfo(&scratch);
