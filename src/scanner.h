@@ -74,8 +74,8 @@ Token identifier(void);
 
 Token scanToken(void);
 
-char *getLiteralFromTokenType(TOKEN_TYPE type);
+char *tokenTypeLiteralLookup(TOKEN_TYPE type);
 
-TOKEN_TYPE getTokenTypeFromLiteral(char *str);
+TOKEN_TYPE tokenTypeValFromLiteral(char *str);
 
 #endif // SCANNER_H
