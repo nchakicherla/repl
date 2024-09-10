@@ -164,9 +164,9 @@ size_t getBytesAllocd(MemPool *pool) {
 }
 
 void printPoolInfo(MemPool *pool) {
-	printf("pool info - \n");
-	printf("\tbytes used: %zu, (%f MB)\n", getBytesUsed(pool), (double)getBytesUsed(pool) / (1024 * 1024));
-	printf("\tbytes allocd: %zu, (%f MB)\n", getBytesAllocd(pool), (double)getBytesAllocd(pool) / (1024 * 1024));
+	printf("\nMEMPOOL INFO - \n");
+	printf("\tUSED: %zu, (%f MB)\n", getBytesUsed(pool), (double)getBytesUsed(pool) / (1024 * 1024));
+	printf("\tALLOCD: %zu, (%f MB)\n", getBytesAllocd(pool), (double)getBytesAllocd(pool) / (1024 * 1024));
 	return;
 }
 
