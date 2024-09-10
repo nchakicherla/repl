@@ -8,4 +8,6 @@
 
 char *readFile(char *name, MemPool *pool);
 
+int writeFile(char *name, char *source);
+
 #endif // FILE_H

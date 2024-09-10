@@ -1,7 +1,7 @@
 #include "file.h"
 
 char *readFile(char *name, MemPool *pool) {
-	FILE* file = NULL;
+	FILE *file = NULL;
 	char *output = NULL;
 	long size;
 
@@ -25,4 +25,15 @@ char *readFile(char *name, MemPool *pool) {
 
 	fclose(file);
 	return output;
+}
+
+int writeFile(char *name, char *source) {
+	FILE *file = NULL;
+
+	file = fopen(name, "w");
+	if(!file) return 1;
+
+	fprintf(file, "%s", source);
+	fclose(file);
+	return 0;
 }

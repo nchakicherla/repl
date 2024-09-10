@@ -3,25 +3,26 @@
 #include "common.h"
 
 //#include "scanner.h"
-#include "ast.h"
 #include "file.h"
 #include "table.h"
 #include "memory.h"
 #include "vm.h"
+#include "ast.h"
 
 #include "random.h"
 
 int main(void) {
 
 	//char *script1 = "./resources/test2.tl";
-	char *script2 = "./resources/grammar.txt";
+	char *script = "./resources/test2.tl";
+	char *grammar = "./resources/grammar.txt";
 
 	VM vm;
-	initVM(&vm, script2, script2); // grammar build happens here
+	initVM(&vm, script, grammar); // grammar build happens here
 
 	scanTokensFromSource(&(vm.chunk), vm.source);
-	//printSource(&vm);
-	//printTokens(&vm);
+	printSource(&vm);
+	printTokens(&vm);
 	printPoolInfo(&(vm.pool));
 
 	// build grammar tree here
@@ -90,6 +91,7 @@ int main(void) {
 	}
 	printf("%p\n", (void *)ptrs);
 
+	// part 3
 
 	Table table;
 	initTable(&table);

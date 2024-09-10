@@ -7,65 +7,27 @@
 
 char *__syntaxTypeLiterals[] = {
 
-	"STX_SCOPE",
-	
-	"STX_CLASS",
-	"STX_FNDEF",
-	
-	"STX_IF",
-	"STX_WHILE",
-	"STX_FOR",
+	"STX_SCOPE", "STX_CLASS", "STX_FNDEF", "STX_IF", "STX_WHILE", "STX_FOR",
 
-	"STX_DECLARE",
-	"STX_ASSIGN",
-	"STX_INIT",
-	"STX_ECHO",
-	"STX_BREAK",
-	"STX_RETURN",
-	
-	"STX_EXIT",
+	"STX_DECLARE", "STX_ASSIGN", "STX_INIT", "STX_ECHO", "STX_BREAK", 
+	"STX_RETURN", "STX_EXIT",
 
-	"STX_GEXPR",
-	"STX_EXPR",
+	"STX_GEXPR", "STX_EXPR",
 
-	"STX_VTYPE",
-	"STX_VAR",
-	"STX_MEMBER",
-	"STX_THIS",
-	"STX_FNCALL",
-	"STX_INDEX",
-	"STX_NUM",
-	"STX_STRING",
+	"STX_VTYPE", "STX_VAR", "STX_MEMBER", "STX_THIS", "STX_FNCALL", "STX_INDEX",
+	"STX_NUM", "STX_STRING",
 
-	"STX_ARITHOP",
-	"STX_BOOLOP",
+	"STX_ARITHOP", "STX_BOOLOP",
 
-	"STX_MULT",
-	"STX_DIV",
-	"STX_SUM",
-	"STX_DIFF",
-	"STX_MOD",
+	"STX_MULT", "STX_DIV", "STX_SUM", "STX_DIFF", "STX_MOD",
 
-	"STX_TRUE",
-	"STX_FALSE",
-	"STX_AND",
-	"STX_OR",
-	"STX_NOT",
-	"STX_EQUAL_EQUAL",
-	"STX_NOT_EQUAL",
-	"STX_GREATER_EQUAL",
-	"STX_LESS_EQUAL",
+	"STX_TRUE", "STX_FALSE", "STX_AND", "STX_OR", "STX_NOT", "STX_EQUAL_EQUAL",
+	"STX_NOT_EQUAL", "STX_GREATER_EQUAL", "STX_LESS_EQUAL",
 
-	"STX_EQUAL",
-	"STX_PLUS_EQUAL",
-	"STX_MINUS_EQUAL",
-	"STX_STAR_EQUAL",
-	"STX_DIV_EQUAL",
-	"STX_MOD_EQUAL",
+	"STX_EQUAL", "STX_PLUS_EQUAL", "STX_MINUS_EQUAL", "STX_STAR_EQUAL",
+	"STX_DIV_EQUAL", "STX_MOD_EQUAL",
 
-	"STX_INCREMENT",
-	"STX_DECREMENT",
-	"STX_ERR"
+	"STX_INCREMENT", "STX_DECREMENT", "STX_ERR"
 };
 
 void initChunk(Chunk *chunk) {
@@ -123,11 +85,16 @@ int scanTokensFromSource(Chunk *chunk, char *source) {
 	return 0;
 }
 
+void initSyntaxNode(SyntaxNode *node) {
+	node->children = NULL;
+	node->parent = NULL;
+}
+
 void initGrammarNode(RuleNode *node) {
 	node->rule_head = NULL;
 	node->n_children = 0;
 	node->children = NULL;
-	return;
+	node->parent = NULL;
 }
 /*
 void initGrammarParser(GrammarParser *parser) {
@@ -162,9 +129,7 @@ void __printTokens(Token *tokens, size_t n) {
 
 size_t getSemicolonOffset(Token *tokens) {
 	size_t ret = 0;
-	//printf("in semioffset: %.*s\n", (int)tokens[0].len, tokens[0].start);
 	while(tokens[ret].type != TK_SEMICOLON) {
-		//printf("ret: %zu, type: %s\n", ret, tokenTypeLiteralLookup(tokens[ret].type));
 		ret++;
 	}
 	return ret;
@@ -323,55 +288,32 @@ int fillGrammarNode(RuleNode *node, Token *tokens, size_t n, MemPool *pool) {
 
 	switch(nodeType) {
 		case RULE_GRM: {
-			switch(getPrevalentGrammarType(tokens, n)) {
-				case GRM_AND: {
-					node->nested_type.g = GRM_AND;
-					node->n_children = countChildren(GRM_AND, tokens, n);
-					node->children = palloc(pool, node->n_children * sizeof(RuleNode));
-
-					Token *start = tokens;
-					size_t delimOffset = 0;
-					for(size_t i = 0; i < node->n_children - 1; i++) {
-						delimOffset = getDelimOffset(GRM_AND, start);
-						fillGrammarNode(&(node->children[i]), start, delimOffset, pool);
-						start = start + delimOffset + 1;
-					}
-					fillGrammarNode(&(node->children[node->n_children - 1]), start, n - (size_t)(start - tokens), pool);
-					break;
-				}
+			GRAMMAR_TYPE grammarType = getPrevalentGrammarType(tokens, n);
+			switch(grammarType) {
+				case GRM_AND:
 				case GRM_OR: {
-					node->nested_type.g = GRM_OR;
-					node->n_children = countChildren(GRM_OR, tokens, n);
+					node->nested_type.g = grammarType;
+					node->n_children = countChildren(grammarType, tokens, n);
 					node->children = palloc(pool, node->n_children * sizeof(RuleNode));
 
 					Token *start = tokens;
 					size_t delimOffset = 0;
 					for(size_t i = 0; i < node->n_children - 1; i++) {
-						delimOffset = getDelimOffset(GRM_OR, start);
+						delimOffset = getDelimOffset(grammarType, start);
 						fillGrammarNode(&(node->children[i]), start, delimOffset, pool);
+						node->children[i].parent = node;
 						start = start + delimOffset + 1;
 					}
 					fillGrammarNode(&(node->children[node->n_children - 1]), start, n - (size_t)(start - tokens), pool);
 					break;
 				}
-				case GRM_GROUP: {
-					node->nested_type.g = GRM_GROUP;
-					node->n_children = 1;
-					node->children = palloc(pool, sizeof(RuleNode));
-					fillGrammarNode(node->children, tokens + 1, n - 2, pool);
-					break;
-				}
-				case GRM_IFONE: {
-					node->nested_type.g = GRM_IFONE;
-					node->n_children = 1;
-					node->children = palloc(pool, sizeof(RuleNode));
-					fillGrammarNode(node->children, tokens + 1, n - 2, pool);
-					break;
-				}
+				case GRM_GROUP:
+				case GRM_IFONE:
 				case GRM_IFMANY: {
-					node->nested_type.g = GRM_IFMANY;
+					node->nested_type.g = grammarType;
 					node->n_children = 1;					
 					node->children = palloc(pool, sizeof(RuleNode));
+					node->children->parent = node;
 					fillGrammarNode(node->children, tokens + 1, n - 2, pool);
 					break;
 				}
@@ -413,9 +355,9 @@ int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *array) {
 			node->rule_head = array->rules[node->nested_type.s].head;
 			break;
 		}
-		case RULE_TK: {
+		case RULE_TK:
+		default:
 			break;
-		}
 	}
 	return 0;
 }
@@ -458,6 +400,7 @@ int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *p
 		size_t semiOffset = getSemicolonOffset(&tokens[ruleStart]);
 
 		fillGrammarNode(ruleArray->rules[i].head, &tokens[ruleStart], semiOffset, pool);
+		ruleArray->rules[i].head->parent = NULL;
 	}
 	populateGrammarRuleArrayPointers(ruleArray);
 	printGrammarRuleArray(ruleArray);
@@ -490,28 +433,20 @@ void printGrammarNode(RuleNode *node, unsigned int indent) {
 	switch(node->node_type) {
 		case RULE_GRM: {
 			__printNTabs(indent);
+			char *label = NULL;
 			switch(node->nested_type.g) {
-				case GRM_AND: {
-					printf("%s:\n", "AND");
-					break;
-				}
-				case GRM_OR: {
-					printf("%s:\n", "OR");
-					break;
-				}
-				case GRM_GROUP: {
-					printf("%s:\n", "GROUP");
-					break;
-				}
-				case GRM_IFONE: {
-					printf("%s:\n", "IFONE");
-					break;
-				}
-				case GRM_IFMANY: {
-					printf("%s:\n", "IFMANY");
-					break;
-				}
+				case GRM_AND:
+					label = "AND"; break;
+				case GRM_OR:
+					label = "OR"; break;
+				case GRM_GROUP:
+					label = "GROUP"; break;
+				case GRM_IFONE:
+					label = "IFONE"; break;
+				case GRM_IFMANY:
+					label = "IFMANY"; break;
 			}
+			printf("%s\n", label);
 			for(size_t i = 0; i < node->n_children; i++) {
 				printGrammarNode(&(node->children[i]), indent + 1);
 			}
@@ -535,7 +470,7 @@ void printGrammarNode(RuleNode *node, unsigned int indent) {
 
 void printGrammarRule(GrammarRule *rule) {
 	printf("RULE: %s\n", syntaxTypeLiteralLookup(rule->stype));
-	printf("---\n");
+	printf("-\n");
 	printGrammarNode(rule->head, 0);
 	putchar('\n');
 	return;
@@ -552,3 +487,4 @@ void printGrammarRuleArray(GrammarRuleArray *array) {
 	}
 	return;
 }
+

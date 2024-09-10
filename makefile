@@ -17,7 +17,7 @@ OBJS = 	./obj/file.o \
 		./obj/random.o \
 		./obj/vm.o \
 		./obj/object.o \
-		#./obj/chunk.o \
+		./obj/array.o \
 
 default: reset $(BIN)
 ifeq ($(OS),Darwin) 
