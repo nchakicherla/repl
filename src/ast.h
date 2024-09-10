@@ -164,9 +164,13 @@ size_t getSemicolonOffset(Token *tokens);
 
 GTREE_NODE_TYPE getPrevalentType(Token *tokens, size_t n);
 
+GRAMMAR_TYPE getPrevalentGrammarType(Token *tokens, size_t n);
+
 size_t getRuleStartIndex(SYNTAX_TYPE type, Token *tokens, size_t n);
 
-int makeGrammarNode(GrammarNode *node, GTREE_NODE_TYPE type, Chunk *chunk, size_t n);
+size_t countChildren(GRAMMAR_TYPE type, Token *tokens, size_t n);
+
+int fillGrammarNode(GrammarNode *node, Token *tokens, size_t n, MemPool *pool);
 
 int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *pool);
 
