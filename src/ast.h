@@ -182,4 +182,8 @@ SYNTAX_TYPE getSNodeTypeFromLiteral(char *str);
 
 SYNTAX_TYPE getSNodeTypeFromNChars(char *str, size_t n);
 
+void printGrammarNode(GrammarNode *node, unsigned int indent);
+
+void printGrammarRule(GrammarRule *rule);
+
 #endif // AST_H

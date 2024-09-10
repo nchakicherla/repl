@@ -78,6 +78,6 @@ char *tokenTypeLiteralLookup(TOKEN_TYPE type);
 
 TOKEN_TYPE getTKTypeFromLiteral(char *str);
 
-TOKEN_TYPE getTKTypeFromNChars(char* str, size_t n);
+TOKEN_TYPE tokenTypeValFromNChars(char* str, size_t n);
 
 #endif // SCANNER_H

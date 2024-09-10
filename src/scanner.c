@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-char *__tokenTypeNameLiterals[] = {
+char *__tokenNameLiterals[] = {
 	"TK_LPAREN", "TK_RPAREN", "TK_LBRACE", "TK_RBRACE", "TK_LSQUARE", "TK_RSQUARE",
 	"TK_COMMA", "TK_DOT", "TK_HASH", "TK_MINUS", "TK_PLUS", "TK_MOD", "TK_SEMICOLON", 
 	"TK_FSLASH", "TK_STAR", "TK_COLON", "TK_PIPE",
@@ -318,19 +318,19 @@ Token scanToken(void) {
 }
 
 char *tokenTypeLiteralLookup(TOKEN_TYPE type) {
-	return __tokenTypeNameLiterals[type];
+	return __tokenNameLiterals[type];
 }
 
 TOKEN_TYPE tokenTypeValFromLiteral(char *str) {
-	for (size_t i = 0; i < (sizeof(__tokenTypeNameLiterals) / sizeof(char *)); i++) {
-		if(0 == strcmp(__tokenTypeNameLiterals[i], str)) return i;
+	for (size_t i = 0; i < (sizeof(__tokenNameLiterals) / sizeof(char *)); i++) {
+		if(0 == strcmp(__tokenNameLiterals[i], str)) return i;
 	}
 	return TK_ERROR;
 }
 
-TOKEN_TYPE getTKTypeFromNChars(char* str, size_t n) {
-	for (size_t i = 0; i < (sizeof(__tokenTypeNameLiterals) / sizeof(char *)); i++) {
-		if(0 == strncmp(__tokenTypeNameLiterals[i], str, n)) return i;
+TOKEN_TYPE tokenTypeValFromNChars(char* str, size_t n) {
+	for (size_t i = 0; i < (sizeof(__tokenNameLiterals) / sizeof(char *)); i++) {
+		if(0 == strncmp(__tokenNameLiterals[i], str, n)) return i;
 	}
 	return TK_ERROR;
 }
