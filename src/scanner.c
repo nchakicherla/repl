@@ -327,3 +327,10 @@ TOKEN_TYPE tokenTypeValFromLiteral(char *str) {
 	}
 	return TK_ERROR;
 }
+
+TOKEN_TYPE getTKTypeFromNChars(char* str, size_t n) {
+	for (size_t i = 0; i < (sizeof(__tokenTypeNameLiterals) / sizeof(char *)); i++) {
+		if(0 == strncmp(__tokenTypeNameLiterals[i], str, n)) return i;
+	}
+	return TK_ERROR;
+}

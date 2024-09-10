@@ -106,7 +106,7 @@ typedef struct s_GrammarNode {
 
 	GTREE_NODE_TYPE node_type;
 
-	union u_TargetType type;
+	union u_TargetType nested_type;
 
 	struct s_GrammarNode *rule_head;
 	// fn pointer to non terminal definition?
@@ -170,6 +170,8 @@ size_t getRuleStartIndex(SYNTAX_TYPE type, Token *tokens, size_t n);
 
 size_t countChildren(GRAMMAR_TYPE type, Token *tokens, size_t n);
 
+size_t getDelimOffset(GRAMMAR_TYPE type, Token *tokens);
+
 int fillGrammarNode(GrammarNode *node, Token *tokens, size_t n, MemPool *pool);
 
 int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *pool);
@@ -177,5 +179,7 @@ int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *p
 char *syntaxTypeLiteralLookup(SYNTAX_TYPE type);
 
 SYNTAX_TYPE getSNodeTypeFromLiteral(char *str);
+
+SYNTAX_TYPE getSNodeTypeFromNChars(char *str, size_t n);
 
 #endif // AST_H

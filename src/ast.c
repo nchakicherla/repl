@@ -141,6 +141,18 @@ void initGrammarParser(GrammarParser *parser) {
 }
 */
 
+void __printTokens(Token *tokens, size_t n) {
+	for(size_t i = 0; i < n; i++) {
+		printf("LINE: %6zu TK%6zu: TYPE: %16s - \"%.*s\"\n", 
+			tokens[i].line,
+			i,
+			tokenTypeLiteralLookup(tokens[i].type), 
+			(int)tokens[i].len, tokens[i].start);
+	}
+	return;
+}
+
+
 size_t getSemicolonOffset(Token *tokens) {
 	size_t ret = 0;
 	//printf("in semioffset: %.*s\n", (int)tokens[0].len, tokens[0].start);
@@ -251,44 +263,123 @@ size_t countChildren(GRAMMAR_TYPE type, Token *tokens, size_t n) { // should onl
 	return n_children;
 }
 
+size_t getDelimOffset(GRAMMAR_TYPE type, Token *tokens) {
+	bool inGroup = false;
+	TOKEN_TYPE delim;
+	size_t ret = 0;
+	switch(type) {
+		case GRM_AND:
+			delim = TK_COMMA;
+			break;
+		case GRM_OR:
+			delim = TK_PIPE;
+			break;
+		case GRM_GROUP:
+		case GRM_IFONE:
+		case GRM_IFMANY:
+		default:
+			break;
+	}
+	while(true) {
+		printf("here3\n");
+		switch(tokens[ret].type) {
+			case TK_LPAREN:
+			case TK_LBRACE:
+			case TK_LSQUARE:
+				inGroup = true;
+				ret++;
+				continue;
+			case TK_RPAREN:
+			case TK_RBRACE:
+			case TK_RSQUARE:
+				inGroup = false;
+				ret++;
+				continue;
+			default:
+				break;
+		}
+		if(!inGroup && tokens[ret].type == delim) {
+			return ret;
+		}
+		ret++;
+	}
+	return 0;
+}
+
 int fillGrammarNode(GrammarNode *node, Token *tokens, size_t n, MemPool *pool) {
-	GTREE_NODE_TYPE prevalentType = getPrevalentType(tokens, n);
-	node->node_type = prevalentType;
-	printf("prev type: %d\n", prevalentType);
-	
+	GTREE_NODE_TYPE nodeType = getPrevalentType(tokens, n);
+	node->node_type = nodeType;
+	printf("prev type: %d, n: %zu\n", nodeType, n);
+	printf("before switch:");
+	__printTokens(tokens, n);
 	//Token *start = tokens;
 	//Token *end = tokens;
 
-	if(prevalentType == GTREE_GRM) {
-		printf("prev grm type: ");
-		switch(getPrevalentGrammarType(tokens, n)) {
-			case GRM_AND: {
-				printf("GRM_AND\n");
-				printf("n_children: %zu\n", countChildren(GRM_AND, tokens, n));
-				break;
+	switch(nodeType) {
+		case GTREE_GRM: {
+			printf("prev grm type: ");
+			switch(getPrevalentGrammarType(tokens, n)) {
+				case GRM_AND: {
+					node->nested_type.g = GRM_AND;
+					node->n_children = countChildren(GRM_AND, tokens, n);
+					node->children = palloc(pool, node->n_children * sizeof(GrammarNode));
+					printf("GRM_AND\n");
+					printf("n_children: %zu\n", node->n_children);
+
+					Token *start = tokens;
+					size_t delimOffset = 0;
+					for(size_t i = 0; i < node->n_children - 1; i++) {
+						delimOffset = getDelimOffset(GRM_AND, start);
+						printf("in fill node i = %zu\n", i);
+						__printTokens(start, delimOffset);
+						printf("delimoffset: %zu\n", delimOffset);
+						fillGrammarNode(&(node->children[i]), start, delimOffset, pool);
+						start = start + delimOffset + 1;
+					}
+					printf("%p, %p, %zu\n", (void *)tokens, (void *)start, start - tokens);
+					printf("arg: %zu\n", n - (size_t)(start - tokens));
+					fillGrammarNode(&(node->children[node->n_children - 1]), start, n - (size_t)(start - tokens), pool);
+					
+					break;
+				}
+				case GRM_OR: {
+					node->nested_type.g = GRM_OR;
+					node->n_children = countChildren(GRM_OR, tokens, n);
+					node->children = palloc(pool, node->n_children * sizeof(GrammarNode));
+					printf("GRM_OR\n");
+					printf("n_children: %zu\n", node->n_children);
+					break;
+				}
+				case GRM_GROUP: {
+					node->nested_type.g = GRM_GROUP;
+					printf("GRM_GROUP\n");
+					break;
+				}
+				case GRM_IFONE: {
+					node->nested_type.g = GRM_IFONE;
+					printf("GRM_IFONE\n");
+					break;
+				}
+				case GRM_IFMANY: {
+					node->nested_type.g = GRM_IFMANY;
+					printf("GRM_IFMANY\n");
+					break;
+				}
+				default: 
+					break;
 			}
-			case GRM_OR: {
-				printf("GRM_OR\n");
-				printf("n_children: %zu\n", countChildren(GRM_OR, tokens, n));
-				break;
-			}
-			case GRM_GROUP: {
-				printf("GRM_GROUP\n");
-				break;
-			}
-			case GRM_IFONE: {
-				printf("GRM_IFONE\n");
-				break;
-			}
-			case GRM_IFMANY: {
-				printf("GRM_IFMANY\n");
-				break;
-			}
-			default: 
-				break;
+			break;
 		}
-	} else {
-		printf("not grammar node\n");
+		case GTREE_STX: {
+			printf("stx node\n");
+			node->nested_type.s = getSNodeTypeFromNChars(tokens[0].start, tokens[0].len);
+			break;
+		}
+		case GTREE_TK: {
+			printf("tk node\n");
+			node->nested_type.t = getTKTypeFromNChars(tokens[0].start, tokens[0].len);
+			break;
+		}
 	}
 	return 0;
 }
@@ -350,5 +441,14 @@ SYNTAX_TYPE getSNodeTypeFromLiteral(char *str) {
 			return i;
 		}
 	}
-	return 0;
+	return STX_ERR;
+}
+
+SYNTAX_TYPE getSNodeTypeFromNChars(char *str, size_t n) {
+	for (size_t i = 0; i < (sizeof(__node_type_literals) / sizeof(char *)); i++) {
+		if(0 == strncmp(str, __node_type_literals[i], n)) {
+			return i;
+		}
+	}
+	return STX_ERR;
 }
