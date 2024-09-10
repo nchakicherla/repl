@@ -1,10 +1,13 @@
 #include "vm.h"
 #include "file.h"
+#include "ast.h"
+//#include "chunk.h"
 
-void initVM(VM *vm, char *script) {
+void initVM(VM *vm, char *script, char *grammar) {
 	initChunk(&(vm->chunk));
-	initTable(&(vm->table));
 	initMemPool(&(vm->pool));
+	initGrammarRuleArray(&(vm->ruleArray), grammar, &(vm->pool));
+	initTable(&(vm->table));
 	vm->name = pStrCpy(script, &(vm->pool));
 	vm->source = readFile(script, &(vm->pool));
 	return;
@@ -15,35 +18,6 @@ void termVM(VM *vm) {
 	termTable(&(vm->table));
 	termMemPool(&(vm->pool));
 	return;
-}
-
-int scanTokensFromSource(Chunk *chunk, char *source) {
-
-	size_t len = strlen(source);
-	chunk->source = palloc(&(chunk->pool), len + 1);
-	memcpy(chunk->source, source, len + 1);
-	chunk->source[len] = '\0';
-
-	initScanner(chunk->source);
-
-	// scanner passes twice to get count then write to chunk
-
-	size_t n_tokens = 0;
-	while(true) {
-		Token token = scanToken();
-		n_tokens++;
-		if (token.type == TK_EOF) break;
-	}
-
-	chunk->n_tokens = n_tokens;
-	chunk->tokens = palloc(&(chunk->pool), (n_tokens * sizeof(Token)));
-
-	initScanner(chunk->source);
-
-	for(size_t i = 0; i < n_tokens; i++) {
-		chunk->tokens[i] = scanToken();
-	}
-	return 0;
 }
 
 void printTokens(VM *vm) {

@@ -2,28 +2,30 @@
 
 #include "common.h"
 
-#include "scanner.h"
+//#include "scanner.h"
+#include "ast.h"
 #include "file.h"
 #include "table.h"
 #include "memory.h"
 #include "vm.h"
-#include "chunk.h"
-#include "ast.h"
 
 #include "random.h"
 
 int main(void) {
 
 	//char *script1 = "./resources/test2.tl";
-	char *script2 = "./resources/testgrammar.txt";
+	char *script2 = "./resources/grammar.txt";
 
 	VM vm;
-	initVM(&vm, script2);
+	initVM(&vm, script2, script2); // grammar build happens here
 
 	scanTokensFromSource(&(vm.chunk), vm.source);
-	printSource(&vm);
-	printTokens(&vm);
+	//printSource(&vm);
+	//printTokens(&vm);
 	printPoolInfo(&(vm.pool));
+
+	// build grammar tree here
+	//initGrammarRuleArray(&(vm.chunk.ruleArray), "./resources/testgrammar.txt", &(vm.pool));
 
 	termVM(&vm);
 

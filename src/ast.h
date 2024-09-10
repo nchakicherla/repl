@@ -4,10 +4,10 @@
 #include <string.h>
 #include "common.h"
 
-#include "scanner.h"
 #include "memory.h"
 #include "table.h"
-#include "chunk.h"
+#include "scanner.h"
+//#include "chunk.h"
 
 typedef enum {
 	STX_SCOPE,
@@ -133,13 +133,44 @@ typedef struct s_GrammarParser {
 	MemPool pool;
 } GrammarParser;
 */
+
+typedef struct s_Chunk {
+	char *source;
+
+	size_t n_tokens;
+	Token *tokens;
+
+	SyntaxNode *head;
+
+	MemPool pool;
+	// int err;
+} Chunk;
+
+// int __growChunkTokens()
+
+void initChunk(Chunk *chunk);
+
+void resetChunk(Chunk *chunk);
+
+void termChunk(Chunk *chunk);
+
+int scanTokensFromSource(Chunk *chunk, char *source);
+
 void initGrammarNode(GrammarNode *node);
 
 //void initGrammarParser(GrammarParser *parser);
 
-GTREE_NODE_TYPE getPrevalentType(Token *tokens, size_t start, size_t n);
+size_t getSemicolonOffset(Token *tokens);
 
-int makeGrammarNode(GrammarNode *node, GTREE_NODE_TYPE type, Chunk *chunk, size_t start, size_t n);
+GTREE_NODE_TYPE getPrevalentType(Token *tokens, size_t n);
+
+size_t getRuleStartIndex(SYNTAX_TYPE type, Token *tokens, size_t n);
+
+int makeGrammarNode(GrammarNode *node, GTREE_NODE_TYPE type, Chunk *chunk, size_t n);
+
+int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *pool);
+
+char *syntaxTypeLiteralLookup(SYNTAX_TYPE type);
 
 SYNTAX_TYPE getSNodeTypeFromLiteral(char *str);
 

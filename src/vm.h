@@ -3,23 +3,21 @@
 
 #include "common.h"
 #include "memory.h"
-#include "scanner.h"
+//#include "scanner.h"
 #include "ast.h"
-#include "chunk.h"
 
 typedef struct s_VM {
 	Chunk chunk;
+	GrammarRuleArray ruleArray;
 	Table table;
 	MemPool pool;
 	char *name;
 	char *source;
 } VM;
 
-void initVM(VM *vm, char *script);
+void initVM(VM *vm, char *script, char *grammar);
 
 void termVM(VM *vm);
-
-int scanTokensFromSource(Chunk *chunk, char *source);
 
 void printTokens(VM *vm);
 
