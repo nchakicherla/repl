@@ -451,7 +451,7 @@ int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *p
 	ruleArray->rules = palloc(pool, ruleArray->n_rules * sizeof(GrammarRule));
 
 	for(size_t i = 0; i < ruleArray->n_rules; i++) {
-		ruleArray->rules[i].stype = (SYNTAX_TYPE)i;
+		ruleArray->rules[i].stype = i;
 		ruleArray->rules[i].head = palloc(pool, sizeof(RuleNode));
 
 		size_t ruleStart = getRuleStartIndex((SYNTAX_TYPE)i, tokens, n_tokens);
@@ -519,14 +519,14 @@ void printGrammarNode(RuleNode *node, unsigned int indent) {
 		}
 		case RULE_STX: {
 			__printNTabs(indent);
-			printf("SYNTAX: %s (%p)\n", 
+			printf("SYNTAX --- %s (%p)\n", 
 				syntaxTypeLiteralLookup(node->nested_type.s),
 				(void *)node->rule_head);
 			break;
 		}
 		case RULE_TK: {
 			__printNTabs(indent);
-			printf("TOKEN: %s\n", tokenTypeLiteralLookup(node->nested_type.t));
+			printf("TOKEN --- %s\n", tokenTypeLiteralLookup(node->nested_type.t));
 			break;
 		}
 	}
@@ -535,7 +535,7 @@ void printGrammarNode(RuleNode *node, unsigned int indent) {
 
 void printGrammarRule(GrammarRule *rule) {
 	printf("RULE: %s\n", syntaxTypeLiteralLookup(rule->stype));
-	printf("--\n");
+	printf("---\n");
 	printGrammarNode(rule->head, 0);
 	putchar('\n');
 	return;
