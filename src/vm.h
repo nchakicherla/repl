@@ -13,6 +13,7 @@ typedef struct s_VM {
 	MemPool pool;
 	char *name;
 	char *source;
+	char *grammar_name;
 } VM;
 
 void initVM(VM *vm, char *script, char *grammar);

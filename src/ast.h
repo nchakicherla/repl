@@ -80,10 +80,10 @@ typedef enum {
 } GRAMMAR_TYPE;
 
 typedef enum {
-	GTREE_GRM,
-	GTREE_STX,
-	GTREE_TK,
-} GTREE_NODE_TYPE;
+	RULE_GRM,
+	RULE_STX,
+	RULE_TK,
+} RULE_NODE_TYPE;
 
 union u_TargetType {
 	GRAMMAR_TYPE g;
@@ -99,12 +99,12 @@ typedef struct s_SyntaxNode {
 	Object object;
 
 	size_t n_children;
-	struct s_SyntaxNode *children;
+	struct s_SyntaxNode **children;
 } SyntaxNode;
 
 typedef struct s_GrammarNode {
 
-	GTREE_NODE_TYPE node_type;
+	RULE_NODE_TYPE node_type;
 
 	union u_TargetType nested_type;
 
@@ -112,11 +112,11 @@ typedef struct s_GrammarNode {
 
 	size_t n_children;
 	struct s_GrammarNode *children;
-} GrammarNode;
+} RuleNode;
 
 typedef struct s_GrammarRule {
 	SYNTAX_TYPE stype;
-	GrammarNode *head;
+	RuleNode *head;
 } GrammarRule;
 
 typedef struct s_GrammarRuleArray {
@@ -127,8 +127,8 @@ typedef struct s_GrammarRuleArray {
 typedef struct s_GrammarParser {
 	size_t n_tokens;
 	Token *tokens;
-	GrammarNode *par_node;
-	GrammarNode *curr_node;
+	RuleNode *par_node;
+	RuleNode *curr_node;
 	MemPool pool;
 } GrammarParser;
 */
@@ -155,13 +155,13 @@ void termChunk(Chunk *chunk);
 
 int scanTokensFromSource(Chunk *chunk, char *source);
 
-void initGrammarNode(GrammarNode *node);
+void initGrammarNode(RuleNode *node);
 
 //void initGrammarParser(GrammarParser *parser);
 
 size_t getSemicolonOffset(Token *tokens);
 
-GTREE_NODE_TYPE getPrevalentType(Token *tokens, size_t n);
+RULE_NODE_TYPE getPrevalentType(Token *tokens, size_t n);
 
 GRAMMAR_TYPE getPrevalentGrammarType(Token *tokens, size_t n);
 
@@ -171,9 +171,9 @@ size_t countChildren(GRAMMAR_TYPE type, Token *tokens, size_t n);
 
 size_t getDelimOffset(GRAMMAR_TYPE type, Token *tokens);
 
-int fillGrammarNode(GrammarNode *node, Token *tokens, size_t n, MemPool *pool);
+int fillGrammarNode(RuleNode *node, Token *tokens, size_t n, MemPool *pool);
 
-int populateGrammarRulePointers(GrammarNode *node, GrammarRuleArray *array);
+int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *array);
 
 int populateGrammarRuleArrayPointers(GrammarRuleArray *ruleArray);
 
@@ -185,7 +185,7 @@ SYNTAX_TYPE getSNodeTypeFromLiteral(char *str);
 
 SYNTAX_TYPE getSNodeTypeFromNChars(char *str, size_t n);
 
-void printGrammarNode(GrammarNode *node, unsigned int indent);
+void printGrammarNode(RuleNode *node, unsigned int indent);
 
 void printGrammarRule(GrammarRule *rule);
 

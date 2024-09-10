@@ -3,13 +3,14 @@
 #include "ast.h"
 //#include "chunk.h"
 
-void initVM(VM *vm, char *script, char *grammar) {
+void initVM(VM *vm, char *script, char *grammarFile) {
 	initChunk(&(vm->chunk));
 	initMemPool(&(vm->pool));
-	initGrammarRuleArray(&(vm->ruleArray), grammar, &(vm->pool));
+	initGrammarRuleArray(&(vm->ruleArray), grammarFile, &(vm->pool));
 	initTable(&(vm->table));
 	vm->name = pStrCpy(script, &(vm->pool));
 	vm->source = readFile(script, &(vm->pool));
+	vm->grammar_name = pStrCpy(grammarFile, &(vm->pool));
 	return;
 }
 

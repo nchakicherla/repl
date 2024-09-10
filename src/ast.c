@@ -123,7 +123,7 @@ int scanTokensFromSource(Chunk *chunk, char *source) {
 	return 0;
 }
 
-void initGrammarNode(GrammarNode *node) {
+void initGrammarNode(RuleNode *node) {
 	node->rule_head = NULL;
 	node->n_children = 0;
 	node->children = NULL;
@@ -170,18 +170,18 @@ size_t getSemicolonOffset(Token *tokens) {
 	return ret;
 }
 
-GTREE_NODE_TYPE getPrevalentType(Token *tokens, size_t n) {
+RULE_NODE_TYPE getPrevalentType(Token *tokens, size_t n) {
 	if(n == 1) {
 		switch(tokens[0].start[0]) {
 			case 'S': {
-				return GTREE_STX;
+				return RULE_STX;
 			}
 			case 'T': {
-				return GTREE_TK;
+				return RULE_TK;
 			}
 		}
 	}
-	return GTREE_GRM;
+	return RULE_GRM;
 }
 
 GRAMMAR_TYPE getPrevalentGrammarType(Token *tokens, size_t n) {
@@ -316,18 +316,18 @@ size_t getDelimOffset(GRAMMAR_TYPE type, Token *tokens) {
 	return 0;
 }
 
-int fillGrammarNode(GrammarNode *node, Token *tokens, size_t n, MemPool *pool) {
+int fillGrammarNode(RuleNode *node, Token *tokens, size_t n, MemPool *pool) {
 	initGrammarNode(node);
-	GTREE_NODE_TYPE nodeType = getPrevalentType(tokens, n);
+	RULE_NODE_TYPE nodeType = getPrevalentType(tokens, n);
 	node->node_type = nodeType;
 
 	switch(nodeType) {
-		case GTREE_GRM: {
+		case RULE_GRM: {
 			switch(getPrevalentGrammarType(tokens, n)) {
 				case GRM_AND: {
 					node->nested_type.g = GRM_AND;
 					node->n_children = countChildren(GRM_AND, tokens, n);
-					node->children = palloc(pool, node->n_children * sizeof(GrammarNode));
+					node->children = palloc(pool, node->n_children * sizeof(RuleNode));
 
 					Token *start = tokens;
 					size_t delimOffset = 0;
@@ -342,7 +342,7 @@ int fillGrammarNode(GrammarNode *node, Token *tokens, size_t n, MemPool *pool) {
 				case GRM_OR: {
 					node->nested_type.g = GRM_OR;
 					node->n_children = countChildren(GRM_OR, tokens, n);
-					node->children = palloc(pool, node->n_children * sizeof(GrammarNode));
+					node->children = palloc(pool, node->n_children * sizeof(RuleNode));
 
 					Token *start = tokens;
 					size_t delimOffset = 0;
@@ -357,21 +357,21 @@ int fillGrammarNode(GrammarNode *node, Token *tokens, size_t n, MemPool *pool) {
 				case GRM_GROUP: {
 					node->nested_type.g = GRM_GROUP;
 					node->n_children = 1;
-					node->children = palloc(pool, sizeof(GrammarNode));
+					node->children = palloc(pool, sizeof(RuleNode));
 					fillGrammarNode(node->children, tokens + 1, n - 2, pool);
 					break;
 				}
 				case GRM_IFONE: {
 					node->nested_type.g = GRM_IFONE;
 					node->n_children = 1;
-					node->children = palloc(pool, sizeof(GrammarNode));
+					node->children = palloc(pool, sizeof(RuleNode));
 					fillGrammarNode(node->children, tokens + 1, n - 2, pool);
 					break;
 				}
 				case GRM_IFMANY: {
 					node->nested_type.g = GRM_IFMANY;
 					node->n_children = 1;					
-					node->children = palloc(pool, sizeof(GrammarNode));
+					node->children = palloc(pool, sizeof(RuleNode));
 					fillGrammarNode(node->children, tokens + 1, n - 2, pool);
 					break;
 				}
@@ -380,11 +380,11 @@ int fillGrammarNode(GrammarNode *node, Token *tokens, size_t n, MemPool *pool) {
 			}
 			break;
 		}
-		case GTREE_STX: {
+		case RULE_STX: {
 			node->nested_type.s = getSNodeTypeFromNChars(tokens[0].start, tokens[0].len);
 			break;
 		}
-		case GTREE_TK: {
+		case RULE_TK: {
 			node->nested_type.t = tokenTypeValFromNChars(tokens[0].start, tokens[0].len);
 			break;
 		}
@@ -392,9 +392,9 @@ int fillGrammarNode(GrammarNode *node, Token *tokens, size_t n, MemPool *pool) {
 	return 0;
 }
 
-int populateGrammarRulePointers(GrammarNode *node, GrammarRuleArray *array) {
+int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *array) {
 	switch(node->node_type) {
-		case GTREE_GRM: {
+		case RULE_GRM: {
 			switch(node->nested_type.g) {
 				case GRM_AND:
 				case GRM_OR:
@@ -409,11 +409,11 @@ int populateGrammarRulePointers(GrammarNode *node, GrammarRuleArray *array) {
 					break;
 			}
 		}
-		case GTREE_STX: {
+		case RULE_STX: {
 			node->rule_head = array->rules[node->nested_type.s].head;
 			break;
 		}
-		case GTREE_TK: {
+		case RULE_TK: {
 			break;
 		}
 	}
@@ -446,21 +446,13 @@ int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *p
 	for(size_t i = 0; i < n_tokens; i++) {
 		tokens[i] = scanToken();
 	}
-/*
-	for(size_t i = 0; i < n_tokens; i++) {
-		printf("LINE: %6zu TK%6zu: TYPE: %16s - \"%.*s\"\n", 
-			tokens[i].line,
-			i,
-			tokenTypeLiteralLookup(tokens[i].type), 
-			(int)tokens[i].len, tokens[i].start);
-	}
-*/
+
 	ruleArray->n_rules = STX_ERR - STX_SCOPE;
 	ruleArray->rules = palloc(pool, ruleArray->n_rules * sizeof(GrammarRule));
 
 	for(size_t i = 0; i < ruleArray->n_rules; i++) {
 		ruleArray->rules[i].stype = (SYNTAX_TYPE)i;
-		ruleArray->rules[i].head = palloc(pool, sizeof(GrammarNode));
+		ruleArray->rules[i].head = palloc(pool, sizeof(RuleNode));
 
 		size_t ruleStart = getRuleStartIndex((SYNTAX_TYPE)i, tokens, n_tokens);
 		size_t semiOffset = getSemicolonOffset(&tokens[ruleStart]);
@@ -494,10 +486,9 @@ SYNTAX_TYPE getSNodeTypeFromNChars(char *str, size_t n) {
 	return STX_ERR;
 }
 
-void printGrammarNode(GrammarNode *node, unsigned int indent) {
+void printGrammarNode(RuleNode *node, unsigned int indent) {
 	switch(node->node_type) {
-		case GTREE_GRM: {
-			//char *label;
+		case RULE_GRM: {
 			__printNTabs(indent);
 			switch(node->nested_type.g) {
 				case GRM_AND: {
@@ -526,14 +517,14 @@ void printGrammarNode(GrammarNode *node, unsigned int indent) {
 			}
 			break;
 		}
-		case GTREE_STX: {
+		case RULE_STX: {
 			__printNTabs(indent);
 			printf("SYNTAX: %s (%p)\n", 
 				syntaxTypeLiteralLookup(node->nested_type.s),
 				(void *)node->rule_head);
 			break;
 		}
-		case GTREE_TK: {
+		case RULE_TK: {
 			__printNTabs(indent);
 			printf("TOKEN: %s\n", tokenTypeLiteralLookup(node->nested_type.t));
 			break;
@@ -546,6 +537,7 @@ void printGrammarRule(GrammarRule *rule) {
 	printf("RULE: %s\n", syntaxTypeLiteralLookup(rule->stype));
 	printf("--\n");
 	printGrammarNode(rule->head, 0);
+	putchar('\n');
 	return;
 }
 
