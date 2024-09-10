@@ -95,7 +95,7 @@ typedef struct s_SyntaxNode {
 	SYNTAX_TYPE type;
 
 	bool evaluated;
-	bool isBool;
+	bool is_bool;
 	Object object;
 
 	size_t n_children;
@@ -109,7 +109,6 @@ typedef struct s_GrammarNode {
 	union u_TargetType nested_type;
 
 	struct s_GrammarNode *rule_head;
-	// fn pointer to non terminal definition?
 
 	size_t n_children;
 	struct s_GrammarNode *children;
@@ -174,6 +173,10 @@ size_t getDelimOffset(GRAMMAR_TYPE type, Token *tokens);
 
 int fillGrammarNode(GrammarNode *node, Token *tokens, size_t n, MemPool *pool);
 
+int populateGrammarRulePointers(GrammarNode *node, GrammarRuleArray *array);
+
+int populateGrammarRuleArrayPointers(GrammarRuleArray *ruleArray);
+
 int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *pool);
 
 char *syntaxTypeLiteralLookup(SYNTAX_TYPE type);
@@ -185,5 +188,9 @@ SYNTAX_TYPE getSNodeTypeFromNChars(char *str, size_t n);
 void printGrammarNode(GrammarNode *node, unsigned int indent);
 
 void printGrammarRule(GrammarRule *rule);
+
+void printGrammarRuleByIndex(GrammarRuleArray *array, int i);
+
+void printGrammarRuleArray(GrammarRuleArray *array);
 
 #endif // AST_H
