@@ -140,11 +140,12 @@ void initGrammarParser(GrammarParser *parser) {
 	return;
 }
 */
+
 size_t getSemicolonOffset(Token *tokens) {
 	size_t ret = 0;
-	printf("in semioffset: %.*s\n", (int)tokens[0].len, tokens[0].start);
+	//printf("in semioffset: %.*s\n", (int)tokens[0].len, tokens[0].start);
 	while(tokens[ret].type != TK_SEMICOLON) {
-		printf("ret: %zu, type: %s\n", ret, tokenTypeLiteralLookup(tokens[ret].type));
+		//printf("ret: %zu, type: %s\n", ret, tokenTypeLiteralLookup(tokens[ret].type));
 		ret++;
 	}
 	return ret;
@@ -163,9 +164,13 @@ GTREE_NODE_TYPE getPrevalentType(Token *tokens, size_t n) {
 }
 
 size_t getRuleStartIndex(SYNTAX_TYPE type, Token *tokens, size_t n) {
+	char *typeLiteral = syntaxTypeLiteralLookup(type);
+	size_t literalLen = strlen(typeLiteral);
 	for(size_t i = 0; i < n; i++) {
-		if(0 == strncmp(tokens[i].start, syntaxTypeLiteralLookup(type), tokens[i].len)) {
-			if(tokens[i + 1].type == TK_EQUAL) return i + 2;
+		if(tokens[i].len == literalLen) {
+			if(0 == strncmp(typeLiteral, tokens[i].start, literalLen) && tokens[i + 1].type == TK_EQUAL) {
+				return i + 2;
+			}
 		}
 	}
 	return 0;
@@ -196,17 +201,27 @@ int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *p
 		tokens[i] = scanToken();
 	}
 
+	for(size_t i = 0; i < n_tokens; i++) {
+		printf("LINE: %6zu TK%6zu: TYPE: %16s - \"%.*s\"\n", 
+			tokens[i].line,
+			i,
+			tokenTypeLiteralLookup(tokens[i].type), 
+			(int)tokens[i].len, tokens[i].start);
+	}
+
 	ruleArray->n_rules = STX_ERR - STX_SCOPE;
 	ruleArray->rules = palloc(pool, ruleArray->n_rules * sizeof(GrammarRule));
 
 	for(size_t i = 0; i < ruleArray->n_rules; i++) {
 		ruleArray->rules[i].stype = (SYNTAX_TYPE)i;
+		ruleArray->rules[i].head = NULL;
 		size_t ruleStart = getRuleStartIndex((SYNTAX_TYPE)i, tokens, n_tokens);
-		printf("set STX type: %s\n", syntaxTypeLiteralLookup(i));
+		size_t semiOffset = getSemicolonOffset(&tokens[ruleStart]);
+		printf("\n\nset STX type: %s\n", syntaxTypeLiteralLookup(i));
 		printf("rule starts: %zu\n", ruleStart);
 		printf("start token: %.*s\n", (int)tokens[ruleStart].len, tokens[ruleStart].start);
-		printf("semi offset: %zu\n", getSemicolonOffset(&tokens[ruleStart]));
-		printf("prev type: %d\n", getPrevalentType(&tokens[ruleStart], getSemicolonOffset(&tokens[ruleStart])));
+		printf("semi offset: %zu\n", semiOffset);
+		printf("prev type: %d\n\n", getPrevalentType(&tokens[ruleStart], semiOffset));
 	}
 
 	return 0;
