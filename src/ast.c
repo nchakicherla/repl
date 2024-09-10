@@ -35,6 +35,9 @@ char *__node_type_literals[] = {
 	"STX_NUM",
 	"STX_STRING",
 
+	"STX_ARITHOP",
+	"STX_BOOLOP",
+
 	"STX_MULT",
 	"STX_DIV",
 	"STX_SUM",
@@ -68,7 +71,7 @@ void initGrammarNode(GrammarNode *node) {
 	node->children = NULL;
 	return;
 }
-
+/*
 void initGrammarParser(GrammarParser *parser) {
 	parser->n_tokens = 0;
 	parser->tokens = NULL;
@@ -78,6 +81,13 @@ void initGrammarParser(GrammarParser *parser) {
 
 	initMemPool(&(parser->pool));
 	return;
+}
+*/
+GTREE_NODE_TYPE getPrevalentType(Tokens *tokens, size_t start, size_t n);
+
+int makeGrammarNode(GrammarNode *node, GTREE_NODE_TYPE type, Chunk *chunk, size_t start, size_t n) {
+
+	return 0;
 }
 
 SYNTAX_TYPE getSNodeTypeFromLiteral(char *str) {

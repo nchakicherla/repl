@@ -4,18 +4,18 @@
 
 #include "scanner.h"
 #include "file.h"
-#include "vm.h"
 #include "table.h"
 #include "memory.h"
-#include "ast.h"
+#include "vm.h"
 #include "chunk.h"
+#include "ast.h"
 
 #include "random.h"
 
 int main(void) {
 
 	//char *script1 = "./resources/test2.tl";
-	char *script2 = "./resources/grammar.txt";
+	char *script2 = "./resources/testgrammar.txt";
 
 	VM vm;
 	initVM(&vm, script2);
@@ -24,11 +24,12 @@ int main(void) {
 	printSource(&vm);
 	printTokens(&vm);
 	printPoolInfo(&(vm.pool));
+
 	termVM(&vm);
 
+/*
 	MemPool scratch;
 	initMemPool(&scratch);
-
 #define BIGNUM 10000000
 
 	int64_t *array = palloc(&scratch, BIGNUM * sizeof(int64_t));
@@ -39,7 +40,7 @@ int main(void) {
 
 	printPoolInfo(&scratch);
 	termMemPool(&scratch);
-
+*/
 	return 0;
 }
 	/*

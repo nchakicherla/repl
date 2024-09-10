@@ -1,12 +1,13 @@
 #ifndef AST_H
 #define AST_H
 
-#include "common.h"
 #include <string.h>
+#include "common.h"
 
 #include "scanner.h"
 #include "memory.h"
 #include "table.h"
+#include "chunk.h"
 
 typedef enum {
 	STX_SCOPE,
@@ -39,6 +40,9 @@ typedef enum {
 	STX_NUM,
 	STX_STRING,
 
+	STX_ARITHOP,
+	STX_BOOLOP,
+
 	STX_MULT,
 	STX_DIV,
 	STX_SUM,
@@ -70,16 +74,16 @@ typedef enum {
 typedef enum {
 	GRM_AND,
 	GRM_OR,
+	GRM_GROUP,
 	GRM_IFONE,
 	GRM_IFMANY,
-	GRM_GROUP,
 } GRAMMAR_TYPE;
 
 typedef enum {
-	GRAMMAR,
-	SYNTAX,
-	TOKEN,
-} GRAMMAR_NODE_TYPE;
+	GTREE_GRM,
+	GTREE_STX,
+	GTREE_TK,
+} GTREE_NODE_TYPE;
 
 union u_TargetType {
 	GRAMMAR_TYPE g;
@@ -100,7 +104,7 @@ typedef struct s_SyntaxNode {
 
 typedef struct s_GrammarNode {
 
-	GRAMMAR_NODE_TYPE node_type;
+	GTREE_NODE_TYPE node_type;
 
 	union u_TargetType type;
 
@@ -116,11 +120,11 @@ typedef struct s_GrammarRule {
 	GrammarNode *head;
 } GrammarRule;
 
-typedef struct s_RuleArray {
+typedef struct s_GrammarRuleArray {
 	size_t n_rules;
 	GrammarRule *rules;
-} RuleArray;
-
+} GrammarRuleArray;
+/*
 typedef struct s_GrammarParser {
 	size_t n_tokens;
 	Token *tokens;
@@ -128,10 +132,14 @@ typedef struct s_GrammarParser {
 	GrammarNode *curr_node;
 	MemPool pool;
 } GrammarParser;
-
+*/
 void initGrammarNode(GrammarNode *node);
 
-void initGrammarParser(GrammarParser *parser);
+//void initGrammarParser(GrammarParser *parser);
+
+GTREE_NODE_TYPE getPrevalentType(Token *tokens, size_t start, size_t n);
+
+int makeGrammarNode(GrammarNode *node, GTREE_NODE_TYPE type, Chunk *chunk, size_t start, size_t n);
 
 SYNTAX_TYPE getSNodeTypeFromLiteral(char *str);
 

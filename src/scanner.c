@@ -119,7 +119,7 @@ void skipWhitespace(void) {
 				} else if (peekNext() == '*') {
 					advance();
 					advance();
-					while (!(peek() == '*' && peekNext() == '/') && !isAtEnd()) {
+					while ((peek() != '*' && peekNext() != '/') && !isAtEnd()) {
 						if(peek() == '\n') {
 							scanner.line++;
 						}
