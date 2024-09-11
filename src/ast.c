@@ -65,8 +65,6 @@ int scanTokensFromSource(Chunk *chunk, char *source) {
 
 	initScanner(chunk->source);
 
-	// scanner passes twice to get count then write to chunk
-
 	size_t n_tokens = 0;
 	while(true) {
 		Token token = scanToken();
@@ -112,6 +110,13 @@ void initGrammarParser(GrammarParser *parser) {
 void __printNTabs(unsigned int n) {
 	for(unsigned int i = 0; i < n; i++) {
 		putchar('\t');
+	}
+	return;
+}
+
+void __fPrintNTabs(unsigned int n, FILE *file) {
+	for(unsigned int i = 0; i < n; i++) {
+		fputc('\t', file);
 	}
 	return;
 }
@@ -404,6 +409,12 @@ int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *p
 	}
 	populateGrammarRuleArrayPointers(ruleArray);
 	printGrammarRuleArray(ruleArray);
+
+	FILE *rulesLog = checkFileOpen("./debug/grammar_tree.log", "w");
+	if(rulesLog) {
+		fPrintGrammarRuleArray(ruleArray, rulesLog);
+	}
+	fclose(rulesLog);
 	return 0;
 }
 
@@ -471,8 +482,10 @@ void printGrammarNode(RuleNode *node, unsigned int indent) {
 void printGrammarRule(GrammarRule *rule) {
 	printf("RULE: %s\n", syntaxTypeLiteralLookup(rule->stype));
 	printf("-\n");
-	printGrammarNode(rule->head, 0);
+	printGrammarNode(rule->head, 1);
 	putchar('\n');
+	printf("----\n");
+	printf("----\n\n");
 	return;
 }
 
@@ -488,3 +501,60 @@ void printGrammarRuleArray(GrammarRuleArray *array) {
 	return;
 }
 
+void fPrintGrammarNode(RuleNode *node, unsigned int indent, FILE *file) {
+	switch(node->node_type) {
+		case RULE_GRM: {
+			__fPrintNTabs(indent, file);
+			char *label = NULL;
+			switch(node->nested_type.g) {
+				case GRM_AND:
+					label = "AND"; break;
+				case GRM_OR:
+					label = "OR"; break;
+				case GRM_GROUP:
+					label = "GROUP"; break;
+				case GRM_IFONE:
+					label = "IFONE"; break;
+				case GRM_IFMANY:
+					label = "IFMANY"; break;
+			}
+			fprintf(file, "%s\n", label);
+			for(size_t i = 0; i < node->n_children; i++) {
+				fPrintGrammarNode(&(node->children[i]), indent + 1, file);
+			}
+			break;
+		}
+		case RULE_STX: {
+			__fPrintNTabs(indent, file);
+			fprintf(file, "SYNTAX --- %s\n", syntaxTypeLiteralLookup(node->nested_type.s));
+			break;
+		}
+		case RULE_TK: {
+			__fPrintNTabs(indent, file);
+			fprintf(file, "TOKEN --- %s\n", tokenTypeLiteralLookup(node->nested_type.t));
+			break;
+		}
+	}
+	return;
+}
+
+void fPrintGrammarRule(GrammarRule *rule, FILE *file) {
+	fprintf(file, "RULE: %s\n", syntaxTypeLiteralLookup(rule->stype));
+	fprintf(file, "-\n");
+	fPrintGrammarNode(rule->head, 1, file);
+	fputc('\n', file);
+	fprintf(file, "----\n");
+	fprintf(file, "----\n\n");
+	return;
+}
+
+void fPrintGrammarRuleByIndex(GrammarRuleArray *array, int i, FILE *file) {
+	fPrintGrammarRule(&(array->rules[i]), file);
+	return;
+}
+void fPrintGrammarRuleArray(GrammarRuleArray *array, FILE *file) {
+	for(size_t i = 0; i < array->n_rules; i++) {
+		fPrintGrammarRule(&(array->rules[i]), file);
+	}
+	return;
+}

@@ -14,7 +14,7 @@
 int main(void) {
 
 	//char *script1 = "./resources/test2.tl";
-	char *script = "./resources/test2.tl";
+	char *script = "./resources/testscript.tl";
 	char *grammar = "./resources/grammar.txt";
 
 	VM vm;

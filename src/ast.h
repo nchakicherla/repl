@@ -7,6 +7,7 @@
 #include "memory.h"
 #include "table.h"
 #include "scanner.h"
+#include "file.h"
 //#include "chunk.h"
 
 typedef enum {
@@ -159,12 +160,12 @@ void printGrammarRuleByIndex(GrammarRuleArray *array, int i);
 
 void printGrammarRuleArray(GrammarRuleArray *array);
 
-void printGrammarNode(RuleNode *node, unsigned int indent);
+void fPrintGrammarNode(RuleNode *node, unsigned int indent, FILE *file);
 
-void printGrammarRule(GrammarRule *rule);
+void fPrintGrammarRule(GrammarRule *rule, FILE *file);
 
-void printGrammarRuleByIndex(GrammarRuleArray *array, int i);
+void fPrintGrammarRuleByIndex(GrammarRuleArray *array, int i, FILE *file);
 
-void printGrammarRuleArray(GrammarRuleArray *array);
+void fPrintGrammarRuleArray(GrammarRuleArray *array, FILE *file);
 
 #endif // AST_H

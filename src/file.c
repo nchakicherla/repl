@@ -27,7 +27,7 @@ char *readFile(char *name, MemPool *pool) {
 	return output;
 }
 
-int writeFile(char *name, char *source) {
+int writeFileChars(char *name, char *source) {
 	FILE *file = NULL;
 
 	file = fopen(name, "w");
@@ -37,3 +37,12 @@ int writeFile(char *name, char *source) {
 	fclose(file);
 	return 0;
 }
+
+FILE *checkFileOpen(char *name, char *mode) {
+	FILE *fp = NULL;
+	if(!(fp = fopen(name, mode))) {
+		return NULL;
+	}
+	return fp;
+}
+
