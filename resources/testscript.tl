@@ -1,4 +1,5 @@
 scope main {
-	int a = 3 * (5 + 4);
+	int a = 3;
 	print(a);
+	return 0;
 }
