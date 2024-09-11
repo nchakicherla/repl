@@ -101,7 +101,7 @@ int sortEntriesByKey(Sortee *array, size_t n, MemPool *pool) { // quicksort
     if(n <= 1) {
         return 0;
     }
-    size_t pivot_idx = SIZE_MAX;
+    size_t pivot_idx = IDX_ERR;
     char *pivot = array[n - 1].key;
 
     for(size_t j = 0; j < n - 1; j++) {

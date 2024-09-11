@@ -31,7 +31,9 @@ typedef enum {
 	STX_EQUAL, STX_PLUS_EQUAL, STX_MINUS_EQUAL, STX_STAR_EQUAL, STX_DIV_EQUAL,
 	STX_MOD_EQUAL,
 
-	STX_INCREMENT, STX_DECREMENT, STX_ERR,
+	STX_INCREMENT, STX_DECREMENT,
+
+	STX_ERR,
 } SYNTAX_TYPE;
 
 typedef enum {
@@ -57,15 +59,17 @@ union u_TargetType {
 typedef struct s_SyntaxNode {
 	SYNTAX_TYPE type;
 
-	bool had_error;
-
+	bool is_token;
+	Token token;
+	
 	bool evaluated;
-	bool is_bool;
-	Object object;
+	Object *object;
 
 	size_t n_children;
 	struct s_SyntaxNode **children;
 	struct s_SyntaxNode *parent;
+
+	char *msg;
 } SyntaxNode;
 
 typedef struct s_RuleNode {
@@ -99,6 +103,11 @@ typedef struct s_GrammarParser {
 	MemPool pool;
 } GrammarParser;
 */
+typedef struct s_SyntaxParser {
+	RuleNode *current_rule;
+	Token *current_token;
+	//size_t token_idx;
+} SyntaxParser;
 
 typedef struct s_Chunk {
 	char *source;
@@ -121,6 +130,8 @@ void resetChunk(Chunk *chunk);
 void termChunk(Chunk *chunk);
 
 int scanTokensFromSource(Chunk *chunk, char *source);
+
+void initSyntaxNode(SyntaxNode *node);
 
 void initGrammarNode(RuleNode *node);
 
@@ -145,6 +156,8 @@ int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *array);
 int populateGrammarRuleArrayPointers(GrammarRuleArray *ruleArray);
 
 int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *pool);
+
+Token *matchGrammar(RuleNode *rnode, SyntaxNode **snode, Token *tokens, MemPool *pool);
 
 char *syntaxTypeLiteralLookup(SYNTAX_TYPE type);
 

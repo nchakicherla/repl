@@ -31,6 +31,8 @@ int termMemPool(MemPool *pool);
 
 void *palloc(MemPool *pool, size_t size);
 
+void *prealloc(MemPool *pool, size_t size);
+
 char *pStrCpy(char *str, MemPool *pool);
 
 size_t getBytesUsed(MemPool *pool);

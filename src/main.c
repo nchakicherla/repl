@@ -25,6 +25,7 @@ int main(void) {
 	printTokens(&vm);
 	printPoolInfo(&(vm.pool));
 
+	
 	// build grammar tree here
 	//initGrammarRuleArray(&(vm.chunk.ruleArray), "./resources/testgrammar.txt", &(vm.pool));
 

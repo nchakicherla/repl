@@ -2,6 +2,7 @@
 #include "scanner.h"
 #include "ast.h"
 #include "file.h"
+#include "vm.h"
 
 #include <stdio.h>
 
@@ -27,7 +28,9 @@ char *__syntaxTypeLiterals[] = {
 	"STX_EQUAL", "STX_PLUS_EQUAL", "STX_MINUS_EQUAL", "STX_STAR_EQUAL",
 	"STX_DIV_EQUAL", "STX_MOD_EQUAL",
 
-	"STX_INCREMENT", "STX_DECREMENT", "STX_ERR"
+	"STX_INCREMENT", "STX_DECREMENT",
+
+	"STX_ERR",
 };
 
 void initChunk(Chunk *chunk) {
@@ -84,8 +87,12 @@ int scanTokensFromSource(Chunk *chunk, char *source) {
 }
 
 void initSyntaxNode(SyntaxNode *node) {
+	node->is_token = false;
+	node->object = NULL;
+	node->n_children = 0;
 	node->children = NULL;
 	node->parent = NULL;
+	node->msg = NULL;
 }
 
 void initGrammarNode(RuleNode *node) {
@@ -418,6 +425,127 @@ int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *p
 	return 0;
 }
 
+Token *matchGrammar(RuleNode *rnode, SyntaxNode **snode, Token *tokens, MemPool *pool) {
+	if(tokens[0].type == TK_EOF) return tokens;
+
+	*snode = palloc(pool, sizeof(SyntaxNode));
+	initSyntaxNode(*snode);
+	Token *ptr = tokens;
+	//if(tokens[0].type == TK_EOF) return;
+	switch(rnode->node_type) {
+		case RULE_GRM: { // GRM nodes should disappear and STX nodes get promoted
+			switch(rnode->nested_type.g) {
+				case GRM_AND: {
+					/*
+					(*snode)->children = palloc(pool, rnode->n_children * sizeof(SyntaxNode *));
+
+					Token *base_ptr = ptr;
+					Token *inc_ptr = ptr;
+					for(size_t i = 0; i < rnode->n_children; i++) {
+						inc_ptr = matchGrammar(&rnode->children[i], &(*snode)->children[i], inc_ptr, pool);
+						if(inc_ptr == base_ptr) {
+							(*snode)->type = STX_ERR;
+							(*snode)->msg = "GRM_AND match failed";
+							return ptr;
+						}
+						base_ptr = inc_ptr;
+					}
+					memcpy(*snode, (*snode)->children[i], sizeof(SyntaxNode));
+					*/
+					break;
+				}
+				case GRM_OR: {
+					/*
+					(*snode)->children = palloc(pool, rnode->n_children * sizeof(SyntaxNode *));
+
+					Token *base_ptr = ptr;
+					Token *inc_ptr = ptr;
+					for(size_t i = 0; i < rnode->n_children; i++) {
+						inc_ptr = matchGrammar(&rnode->children[i], &(*snode)->children[i], inc_ptr, pool);
+						if(inc_ptr != base_ptr) {
+							memcpy(*snode, &(*snode)->children[i], sizeof(SyntaxNode));
+							ptr = inc_ptr;
+							return ptr;
+						}
+						base_ptr = inc_ptr;
+					}
+					(*snode)->type = STX_ERR;
+					(*snode)->msg = "GRM_OR match failed";
+					*/
+					break;
+				}
+				case GRM_GROUP: {
+					/*
+					(*snode)->children = palloc(pool, rnode->n_children * sizeof(SyntaxNode *));
+
+					Token *base_ptr = ptr;
+					Token *inc_ptr = ptr;
+					for(size_t i = 0; i < rnode->n_children; i++) {
+						inc_ptr = matchGrammar(&rnode->children[i], &(*snode)->children[i], inc_ptr, pool);
+						if(inc_ptr == base_ptr) {
+							(*snode)->type = STX_ERR;
+							(*snode)->msg = "GRM_GROUP match failed";
+							break;
+						}
+					}
+					memcpy(*snode, (*snode)->children[i], sizeof(SyntaxNode));
+					ptr = inc_ptr;
+					*/
+					break;
+				}
+				case GRM_IFONE: {
+					/*
+					(*snode)->children = palloc(pool, rnode->n_children * sizeof(SyntaxNode *));
+
+					Token *base_ptr = ptr;
+					Token *inc_ptr = ptr;
+					size_t n_matches;
+					for(size_t i = 0; i < rnode->n_children; i++) {
+						inc_ptr = matchGrammar(&rnode->children[i], &(*snode)->children[i], inc_ptr, pool);
+						if(inc_ptr != base_ptr) {
+							n_matches++;
+						}
+						base_ptr = inc_ptr;
+					}
+					if(n_matches == rnode->n_children) {
+						ptr = inc_ptr;	
+					}
+					*/
+					break;
+				}
+				case GRM_IFMANY: {
+					break;
+				}
+			}
+			break;
+		}
+		case RULE_STX: {
+			ptr = matchGrammar(rnode->rule_head, snode, tokens, pool);
+			if(ptr == tokens) {
+				(*snode)->type = STX_ERR;
+				(*snode)->msg = "STX match failed";
+			} else {
+				(*snode)->type = rnode->nested_type.s;
+			}
+			break;
+		}
+		case RULE_TK: {
+			if(tokens[0].type == rnode->nested_type.t) {
+				(*snode)->is_token = true;
+				memcpy(&(*snode)->token, ptr, sizeof(Token));
+				ptr++;
+			} else {
+				(*snode)->type = STX_ERR;
+				(*snode)->msg = "TK match failed";
+			}
+			break;
+		}
+		default:
+			break;
+	}
+	return ptr;	
+}
+
 char *syntaxTypeLiteralLookup(SYNTAX_TYPE type) {
 	return __syntaxTypeLiterals[type];
 }
@@ -483,9 +611,7 @@ void printGrammarRule(GrammarRule *rule) {
 	printf("RULE: %s\n", syntaxTypeLiteralLookup(rule->stype));
 	printf("-\n");
 	printGrammarNode(rule->head, 1);
-	putchar('\n');
-	printf("----\n");
-	printf("----\n\n");
+	printf("\n----\n----\n\n");
 	return;
 }
 
@@ -542,9 +668,8 @@ void fPrintGrammarRule(GrammarRule *rule, FILE *file) {
 	fprintf(file, "RULE: %s\n", syntaxTypeLiteralLookup(rule->stype));
 	fprintf(file, "-\n");
 	fPrintGrammarNode(rule->head, 1, file);
-	fputc('\n', file);
-	fprintf(file, "----\n");
-	fprintf(file, "----\n\n");
+	fprintf(file, "\n----\n----\n\n");
+
 	return;
 }
 

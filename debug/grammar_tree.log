@@ -249,6 +249,7 @@ RULE: STX_EXPR
 -
 	AND
 		OR
+			SYNTAX --- STX_STRING
 			GROUP
 				AND
 					IFONE
@@ -266,14 +267,13 @@ RULE: STX_EXPR
 						SYNTAX --- STX_NUM
 						SYNTAX --- STX_TRUE
 						SYNTAX --- STX_FALSE
-			SYNTAX --- STX_STRING
 		IFONE
 			AND
 				OR
 					SYNTAX --- STX_ARITHOP
 					SYNTAX --- STX_BOOLOP
 				OR
-					SYNTAX --- STX_ERR
+					SYNTAX --- STX_GEXPR
 					SYNTAX --- STX_EXPR
 
 ----
