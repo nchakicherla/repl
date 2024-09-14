@@ -66,7 +66,7 @@ typedef struct s_SyntaxNode {
 	Object *object;
 
 	size_t n_children;
-	struct s_SyntaxNode *children;
+	struct s_SyntaxNode **children;
 	struct s_SyntaxNode *parent;
 
 	char *msg;
@@ -121,6 +121,12 @@ typedef struct s_Chunk {
 	// int err;
 } Chunk;
 
+typedef struct s_TokenStream {
+	Token *tk;
+	size_t pos;
+	size_t n;
+} TokenStream;
+
 // int __growChunkTokens()
 
 void initChunk(Chunk *chunk);
@@ -157,7 +163,23 @@ int populateGrammarRuleArrayReferences(GrammarRuleArray *ruleArray);
 
 int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *pool);
 
-size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *pool);
+// size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *pool);
+
+void __addChild(SyntaxNode *parent, SyntaxNode *child, MemPool *pool);
+
+SyntaxNode *parseAnd(RuleNode *rule, TokenStream *stream, MemPool *pool);
+
+SyntaxNode *parseOr(RuleNode *rule, TokenStream *stream, MemPool *pool);
+
+SyntaxNode *parseGroup(RuleNode *rule, TokenStream *stream, MemPool *pool);
+
+SyntaxNode *parseIfOne(RuleNode *rule, TokenStream *stream, MemPool *pool);
+
+SyntaxNode *parseIfMany(RuleNode *rule, TokenStream *stream, MemPool *pool);
+
+SyntaxNode *parseSyntax(RuleNode *rule, TokenStream *stream, MemPool *pool);
+
+SyntaxNode *parseGrammar(RuleNode *rule, TokenStream *stream, MemPool *pool);
 
 char *syntaxTypeLiteralLookup(SYNTAX_TYPE type);
 
@@ -165,7 +187,7 @@ SYNTAX_TYPE getSNodeTypeFromLiteral(char *str);
 
 SYNTAX_TYPE getSNodeTypeFromNChars(char *str, size_t n);
 
-// void printSyntaxNode(SyntaxNode *node, unsigned int indent);
+void printSyntaxNode(SyntaxNode *node, unsigned int indent);
 
 void printGrammarNode(RuleNode *node, unsigned int indent);
 
