@@ -231,9 +231,9 @@ TOKEN_TYPE identifierType(void) {
 			}
 		}
 		case 'n': return checkKeyword(1, 2, "il", TK_NIL);
-		case 'o': return checkKeyword(1, 2, "r", TK_OR);
+		case 'o': return checkKeyword(1, 1, "r", TK_OR);
 		//case 'p': return checkKeyword(1, 2, "rint", TK_PRINT);
-		case 'r': return checkKeyword(1, 2, "eturn", TK_RETURN);
+		case 'r': return checkKeyword(1, 5, "eturn", TK_RETURN);
 		case 's': {
 			if (scanner.current - scanner.start > 1) {
 				switch (scanner.start[1]) {

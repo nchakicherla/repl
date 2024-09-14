@@ -22,11 +22,15 @@ int main(void) {
 
 	scanTokensFromSource(&(vm.chunk), vm.source);
 	printSource(&vm);
-	printTokens(&vm);
 	printPoolInfo(&(vm.pool));
 
 	vm.chunk.head = palloc(&(vm.pool), sizeof(SyntaxNode));
-	printf("ret: %zu\n", matchGrammar(vm.ruleArray.rules[STX_SCOPE].head, vm.chunk.tokens, vm.chunk.head, &(vm.pool)));
+	//printf("ret: %zu\n", matchGrammar(vm.ruleArray.rules[STX_INIT].head, vm.chunk.tokens, vm.chunk.head, &(vm.pool)));
+	//printTokens(&vm);
+	//printSyntaxNode(vm.chunk.head, 0);
+
+	
+
 	// build grammar tree here
 	//initGrammarRuleArray(&(vm.chunk.ruleArray), "./resources/testgrammar.txt", &(vm.pool));
 

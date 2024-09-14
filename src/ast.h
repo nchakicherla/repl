@@ -135,7 +135,7 @@ void initSyntaxNode(SyntaxNode *node);
 
 void initRuleNode(RuleNode *node);
 
-//void initGrammarParser(GrammarParser *parser);
+// void initGrammarParser(GrammarParser *parser);
 
 size_t getSemicolonOffset(Token *tokens);
 
@@ -164,6 +164,8 @@ char *syntaxTypeLiteralLookup(SYNTAX_TYPE type);
 SYNTAX_TYPE getSNodeTypeFromLiteral(char *str);
 
 SYNTAX_TYPE getSNodeTypeFromNChars(char *str, size_t n);
+
+// void printSyntaxNode(SyntaxNode *node, unsigned int indent);
 
 void printGrammarNode(RuleNode *node, unsigned int indent);
 

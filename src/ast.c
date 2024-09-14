@@ -353,7 +353,7 @@ int fillGrammarNode(RuleNode *node, Token *tokens, size_t n, MemPool *pool) {
 	return 0;
 }
 
-int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *array) {
+int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *ruleArray) {
 	switch(node->node_type) {
 		case RULE_GRM: {
 			switch(node->nested_type.g) {
@@ -363,7 +363,7 @@ int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *array) {
 				case GRM_IFONE:
 				case GRM_IFMANY:
 					for(size_t i = 0; i < node->n_children; i++) {
-						populateGrammarRulePointers(&(node->children[i]), array);
+						populateGrammarRulePointers(&(node->children[i]), ruleArray);
 					}
 					break;
 				default:
@@ -371,7 +371,7 @@ int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *array) {
 			}
 		}
 		case RULE_STX: {
-			node->rule_head = array->rules[node->nested_type.s].head;
+			node->rule_head = ruleArray->rules[node->nested_type.s].head;
 			break;
 		}
 		case RULE_TK:
@@ -422,7 +422,7 @@ int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *p
 		ruleArray->rules[i].head->parent = NULL;
 	}
 	populateGrammarRuleArrayReferences(ruleArray);
-	printGrammarRuleArray(ruleArray);
+	//printGrammarRuleArray(ruleArray);
 
 	FILE *rulesLog = checkFileOpen("./debug/grammar_tree.log", "w");
 	if(rulesLog) {
@@ -431,10 +431,13 @@ int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *p
 	fclose(rulesLog);
 	return 0;
 }
-
+/*
 size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *pool) {
 
-	if(tokens[0].type == TK_EOF) return IDX_ERR;
+	if(tokens[0].type == TK_EOF) {
+		printf("at EOF\n");
+		return IDX_ERR;
+	}
 
 	size_t n_children = rnode->n_children;
 	initSyntaxNode(snode);
@@ -442,26 +445,32 @@ size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *
 
 	switch(rnode->node_type) {
 		case RULE_GRM: {
-			
+			printf("is GRM\n");
+			//printGrammarNode(rnode, 0);
 			SyntaxNode *tempNodes = palloc(pool, n_children * sizeof(SyntaxNode));
 			//bool *successes = palloc(pool, rnode->n_children * sizeof(bool));
 			size_t *returns = palloc(pool, n_children * sizeof(size_t));
+			memset(returns, '\0', n_children * sizeof(size_t));
 			Token *current = tokens;
 
 			switch(rnode->nested_type.g) {
 				case GRM_AND: {
+					printf("is AND\n");
 					for(size_t i = 0; i < n_children; i++) {
+						printf("i: %zu\n", i);
+						//printGrammarNode(&rnode->children[i], 0);
 						returns[i] = matchGrammar(&rnode->children[i], current, &tempNodes[i], pool);
 						if(returns[i] == 0) {
 							if (GRM_IFONE == rnode->children[i].nested_type.g ||
 								GRM_IFMANY == rnode->children[i].nested_type.g) {
 
 								continue;
-							}							
+							}	
 							return ret;
 						} else if (returns[i] == IDX_ERR) {
 							return IDX_ERR;
 						}
+						current += returns[i];
 					}
 					for(size_t i = 0; i < n_children; i++) {
 						ret += returns[i];
@@ -471,10 +480,11 @@ size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *
 					break;
 				}
 				case GRM_OR: {
-					size_t success = 0;
+					printf("is OR\n");
+					size_t success = IDX_ERR;
 					for(size_t i = 0; i < n_children; i++) {
 						returns[i] = matchGrammar(&rnode->children[i], current, &tempNodes[i], pool);
-						if(returns[i] != 0 && returns[i] < IDX_ERR) {
+						if(returns[i] != 0 && returns[i] != IDX_ERR) {
 							success = i;
 							break;
 						}
@@ -484,6 +494,7 @@ size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *
 					break;
 				}
 				case GRM_GROUP: {
+					printf("is GROUP\n");
 					size_t num_skips = 0;
 					for(size_t i = 0; i < n_children; i++) {
 						returns[i] = matchGrammar(&rnode->children[i], current, &tempNodes[i], pool);
@@ -517,8 +528,12 @@ size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *
 					break;
 				}
 				case GRM_IFONE: {
+					printf("is IFONE\n");
 					for(size_t i = 0; i < n_children; i++) {
 						returns[i] = matchGrammar(&rnode->children[i], current, &tempNodes[i], pool);
+						if(returns[i] > 0 && returns[i] < IDX_ERR) {
+							current += returns[i];
+						}
 					}
 					for(size_t i = 0; i < n_children; i++) {
 						if(returns[i] == 0) {
@@ -530,17 +545,21 @@ size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *
 					break;
 				}
 				case GRM_IFMANY: {
+					printf("is IFMANY\n");
 					size_t total_ret = 0;
 					size_t repetitions = 0;
 					size_t tempNodesIndex = 0;
 					size_t currentTempNodesSize = n_children * sizeof(SyntaxNode);
 					bool failedRepetition = false;
 					while (true) {
+						printf("in while true\n");
 						size_t current_repeat_ret = 0;
 						for(size_t i = 0; i < n_children; i++) {
+
 							returns[tempNodesIndex] = matchGrammar(&rnode->children[i], current, 
 												&tempNodes[tempNodesIndex], pool);
 							tempNodesIndex++;
+							current += returns[tempNodesIndex];
 						}
 						for(size_t i = 0; i < n_children; i++) {
 							if(returns[i] == 0 || returns[i] == IDX_ERR) {
@@ -553,12 +572,16 @@ size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *
 						if(failedRepetition) {
 							break;
 						}
+						printf("successful repetition\n");
 						total_ret += current_repeat_ret;
 						current += current_repeat_ret;
 						repetitions++;
 						growPAlloc(tempNodes, currentTempNodesSize, currentTempNodesSize * 2, pool);
+						currentTempNodesSize *= 2;
 					}
+					printf("here3\n");
 					if(repetitions > 0) {
+						printf("%zu repetitions\n", repetitions);
 						snode->n_children = n_children * repetitions;
 						snode->children = tempNodes;
 						ret = total_ret;
@@ -571,17 +594,22 @@ size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *
 			break;
 		}
 		case RULE_STX: {
+			printf("is STX\n");
+			//printGrammarNode(rnode, 0);
 			ret = matchGrammar(rnode->rule_head, tokens, snode, pool);
 			if(ret > 0 && ret < IDX_ERR) {
+				printf("matched syntax %s\n", syntaxTypeLiteralLookup(rnode->nested_type.s));
 				snode->type = rnode->nested_type.s;
 			}
 			break;
 		}
 		case RULE_TK: {
+			printf("is TK\n");
 			if(rnode->nested_type.t == tokens[0].type) {
 				snode->terminal = true;
 				memcpy(&snode->token, tokens, sizeof(Token));
 				ret += 1;
+				printf("matched token %.*s, ret = %zu\n", (int)tokens[0].len, tokens[0].start, ret);
 			}
 			break;
 		}
@@ -590,7 +618,7 @@ size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *
 	}
 	return ret;
 }
-
+*/
 char *syntaxTypeLiteralLookup(SYNTAX_TYPE type) {
 	return __syntaxTypeLiterals[type];
 }
@@ -612,7 +640,21 @@ SYNTAX_TYPE getSNodeTypeFromNChars(char *str, size_t n) {
 	}
 	return STX_ERR;
 }
-
+/*
+void printSyntaxNode(SyntaxNode *node, unsigned int indent) {
+	if(node->terminal == true) {
+		__printNTabs(indent);
+		printf("TOKEN %*.s\n", (int)node->token.len, node->token.start);
+	} else {
+		__printNTabs(indent);
+		printf("SYNTAX: %s\n", syntaxTypeLiteralLookup(node->type));
+		for(size_t i = 0; i < node->n_children; i++) {
+			printSyntaxNode(&node->children[i], indent + 1);
+		}
+	}
+	return ;
+}
+*/
 void printGrammarNode(RuleNode *node, unsigned int indent) {
 	switch(node->node_type) {
 		case RULE_GRM: {

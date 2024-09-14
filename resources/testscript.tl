@@ -1,5 +1,1 @@
-scope main {
-	int a = 3;
-	print(a);
-	return 0;
-}
+int a = (3 * 4) + (5 / 2);
