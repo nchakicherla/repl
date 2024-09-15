@@ -116,7 +116,8 @@ void skipWhitespace(void) {
 					while (peek() != '\n' && !isAtEnd()) {
 						advance();
 					}
-				} else if (peekNext() == '*') {
+				} 
+				/*else if (peekNext() == '*') {
 					advance();
 					advance();
 					while ((peek() != '*' && peekNext() != '/') && !isAtEnd()) {
@@ -129,7 +130,7 @@ void skipWhitespace(void) {
 						advance();
 						advance();
 					}
-				} else {
+				}*/else {
 					return;
 				}
 				break;

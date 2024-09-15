@@ -22,8 +22,8 @@ char *__syntaxTypeLiterals[] = {
 
 	"STX_MULT", "STX_DIV", "STX_SUM", "STX_DIFF", "STX_MOD",
 
-	"STX_TRUE", "STX_FALSE", "STX_AND", "STX_OR", "STX_NOT", "STX_EQUAL_EQUAL",
-	"STX_NOT_EQUAL", "STX_GREATER_EQUAL", "STX_LESS_EQUAL",
+	"STX_TRUE", "STX_FALSE", "STX_AND", "STX_OR", "STX_NOT", "STX_GREATER", 
+	"STX_LESS", "STX_EQUAL_EQUAL", "STX_NOT_EQUAL", "STX_GREATER_EQUAL", "STX_LESS_EQUAL",
 
 	"STX_EQUAL", "STX_PLUS_EQUAL", "STX_MINUS_EQUAL", "STX_STAR_EQUAL",
 	"STX_DIV_EQUAL", "STX_MOD_EQUAL",
@@ -703,17 +703,13 @@ SyntaxNode *parseIfMany(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 		reset = stream->pos;
 		SyntaxNode *child = parseGrammar(rnode->children, stream, pool);
 		if(child) {
-			
-			if(rnode->children[0].node_type == RULE_GRM &&
-				rnode->children[0].nested_type.g == GRM_AND) {
+			if(rnode->children[0].node_type == RULE_GRM && rnode->children[0].nested_type.g == GRM_AND) {
 				for(size_t i = 0; i < child->n_children; i++) {
 					__addChild(node, child->children[i], pool);
 				}
 			} else {
 				__addChild(node, child, pool);
 			}
-			
-			//__addChild(node, child, pool);
 		} else {
 			stream->pos = reset;
 			break;
