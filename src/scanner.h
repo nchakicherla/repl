@@ -80,4 +80,6 @@ TOKEN_TYPE getTKTypeFromLiteral(char *str);
 
 TOKEN_TYPE tokenTypeValFromNChars(char* str, size_t n);
 
+void __printToken(Token *token);
+
 #endif // SCANNER_H

@@ -34,8 +34,9 @@ int main(void) {
 	stream.pos = 0;
 	stream.n = vm.chunk.n_tokens;
 
-	SyntaxNode *result = parseGrammar(vm.ruleArray.rules[STX_NOT].head, &stream, &vm.pool);
+	SyntaxNode *result = parseGrammar(vm.ruleArray.rules[STX_ARITHOP].head, &stream, &vm.pool);
 	printf("result: %p\n", (void *) result);
+	result->type = STX_ARITHOP;
 	printSyntaxNode(result, 0);
 	// build grammar tree here
 	//initGrammarRuleArray(&(vm.chunk.ruleArray), "./resources/testgrammar.txt", &(vm.pool));

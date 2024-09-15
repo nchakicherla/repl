@@ -334,3 +334,11 @@ TOKEN_TYPE tokenTypeValFromNChars(char* str, size_t n) {
 	}
 	return TK_ERROR;
 }
+
+void __printToken(Token *token) {
+	printf("LINE: %6zu TYPE: %16s - \"%.*s\"\n", 
+		token->line,
+		tokenTypeLiteralLookup(token->type), 
+		(int)token->len, token->start);
+	return;
+}
