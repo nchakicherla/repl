@@ -26,7 +26,7 @@ int main(void) {
 
 	vm.chunk.head = palloc(&(vm.pool), sizeof(SyntaxNode));
 	//printf("ret: %zu\n", matchGrammar(vm.ruleArray.rules[STX_INIT].head, vm.chunk.tokens, vm.chunk.head, &(vm.pool)));
-	printTokens(&vm);
+	//printTokens(&vm);
 	//printSyntaxNode(vm.chunk.head, 0);
 
 	TokenStream stream;
@@ -34,10 +34,8 @@ int main(void) {
 	stream.pos = 0;
 	stream.n = vm.chunk.n_tokens;
 
-	SyntaxNode *result = parseGrammar(vm.ruleArray.rules[STX_ARITHOP].head, &stream, &vm.pool);
-	printf("result: %p\n", (void *) result);
-	result->type = STX_ARITHOP;
-	printSyntaxNode(result, 0);
+	printTokenStream(&stream);
+
 	// build grammar tree here
 	//initGrammarRuleArray(&(vm.chunk.ruleArray), "./resources/testgrammar.txt", &(vm.pool));
 

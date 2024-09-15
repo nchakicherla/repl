@@ -167,25 +167,13 @@ int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *p
 
 void __addChild(SyntaxNode *parent, SyntaxNode *child, MemPool *pool);
 
-SyntaxNode *parseAnd(RuleNode *rule, TokenStream *stream, MemPool *pool);
-
-SyntaxNode *parseOr(RuleNode *rule, TokenStream *stream, MemPool *pool);
-
-SyntaxNode *parseGroup(RuleNode *rule, TokenStream *stream, MemPool *pool);
-
-SyntaxNode *parseIfOne(RuleNode *rule, TokenStream *stream, MemPool *pool);
-
-SyntaxNode *parseIfMany(RuleNode *rule, TokenStream *stream, MemPool *pool);
-
-SyntaxNode *parseSyntax(RuleNode *rule, TokenStream *stream, MemPool *pool);
-
-SyntaxNode *parseGrammar(RuleNode *rule, TokenStream *stream, MemPool *pool);
-
 char *syntaxTypeLiteralLookup(SYNTAX_TYPE type);
 
 SYNTAX_TYPE getSNodeTypeFromLiteral(char *str);
 
 SYNTAX_TYPE getSNodeTypeFromNChars(char *str, size_t n);
+
+void printTokenStream(TokenStream *stream);
 
 void printSyntaxNode(SyntaxNode *node, unsigned int indent);
 
