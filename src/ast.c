@@ -747,8 +747,8 @@ SyntaxNode *parseSyntax(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 		} else {
 			node->type = rnode->nested_type.s;
 		}
-		//printf("matched syntax: \n");
-		//printGrammarNode(rnode->rule_head, 0);
+		printf("matched syntax: \n");
+		printGrammarNode(rnode->rule_head, 0);
 	} else {
 		return NULL;
 	}
@@ -762,7 +762,7 @@ SyntaxNode *parseToken(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 		node->terminal = true;
 		memcpy(&node->token, &stream->tk[stream->pos], sizeof(Token));
 		stream->pos++;
-		//printf("made tk node: %.*s\n", (int)node->token.len, node->token.start);
+		printf("made tk node: %.*s\n", (int)node->token.len, node->token.start);
 		return node;
 	} else {
 		return NULL;

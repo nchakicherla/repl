@@ -1,4 +1,4 @@
-scope main {
+/*scope main {
 	flt a = 1 + (2 * 3) / 4; 
 	print(a);
 	flt b = a + 3;
@@ -13,7 +13,7 @@ scope main {
 	}
 	test.test2 = a + 3;
 	return 0;
-}
+}*/
 
 /*
 if (a > 3) {
@@ -29,4 +29,4 @@ if (a > 3) {
 
 // a.a = 3;
 
-//int a.test.test2 = 3;
+int a.test.test2 = 3;
