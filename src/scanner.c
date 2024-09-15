@@ -256,7 +256,7 @@ TOKEN_TYPE identifierType(void) {
 			}
 		}
 		//case 'v': return checkKeyword(1, 2, "ar", TK_VAR);
-		case 'w': return checkKeyword(1, 2, "hile", TK_AND);
+		case 'w': return checkKeyword(1, 4, "hile", TK_WHILE);
 	}
 	return TK_IDENTIFIER;
 }

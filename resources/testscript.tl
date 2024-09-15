@@ -1,4 +1,5 @@
-/*scope main {
+/*
+scope main {
 	flt a = 1 + (2 * 3) / 4; 
 	print(a);
 	flt b = a + 3;
@@ -8,12 +9,21 @@
 		print(i);
 	}
 	return 0;
-}*/
-
+}
+*/
+/*
 if (a > 3) {
 	print(a);
 } else if (a < 3) {
 	print(b);
 } else {
 	print(0);
+}
+*/
+
+// int a = (3.14 * 2);
+
+while (a > 3) {
+	print(a);
+	a = a - 1;
 }
