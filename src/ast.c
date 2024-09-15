@@ -665,7 +665,7 @@ SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 		}
 		if((child->terminal == false && rnode->children[i].node_type == RULE_GRM) && 
 			(	rnode->children[i].nested_type.g == GRM_GROUP ||
-				rnode->children[i].nested_type.g == GRM_IFONE || 
+				//rnode->children[i].nested_type.g == GRM_IFONE || 
 				rnode->children[i].nested_type.g == GRM_IFMANY))
 		{
 			for(size_t j = 0; j < child->n_children; j++) {
