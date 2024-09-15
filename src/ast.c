@@ -644,6 +644,17 @@ void __addChild(SyntaxNode *parent, SyntaxNode *child, MemPool *pool) {
 //
 //
 
+SyntaxNode *__wrapChild(SyntaxNode *child, SYNTAX_TYPE stype, MemPool *pool) {
+	SyntaxNode *parent = palloc(pool, sizeof(SyntaxNode));
+	initSyntaxNode(parent);
+
+	parent->type = stype;
+	parent->children = palloc(pool, sizeof(SyntaxNode*));
+	parent->children[0] = child;
+	parent->n_children++;
+	return parent;
+}
+
 SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 	SyntaxNode *node = palloc(pool, sizeof(SyntaxNode));
 	initSyntaxNode(node);
@@ -671,9 +682,10 @@ SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 		{
 			if(rnode->children[i].nested_type.g == GRM_IFONE) {
 				if((rnode->children[i].children[0].node_type == RULE_GRM &&
-					rnode->children[i].children[0].nested_type.g != GRM_AND)
+					rnode->children[i].children[0].nested_type.g == GRM_OR)
 
-					/*rnode->children[i].children[0].nested_type.g == GRM_OR*/) {
+					|| rnode->children[i].children[0].node_type == RULE_STX
+					/*|| (rnode->children[i].children[0].node_type == RULE_STX)*/) {
 					__addChild(node, child, pool);
 					continue;
 				}
@@ -729,9 +741,14 @@ SyntaxNode *parseIfMany(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 SyntaxNode *parseSyntax(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 	SyntaxNode *node = parseGrammar(rnode->rule_head, stream, pool);
 	if(node) {
-		node->type = rnode->nested_type.s;
-		printf("matched syntax: \n");
-		printGrammarNode(rnode->rule_head, 0);
+		if(node->terminal == true) {
+			SyntaxNode *wrap = __wrapChild(node, rnode->nested_type.s, pool);
+			return wrap;
+		} else {
+			node->type = rnode->nested_type.s;
+		}
+		//printf("matched syntax: \n");
+		//printGrammarNode(rnode->rule_head, 0);
 	} else {
 		return NULL;
 	}
@@ -828,7 +845,7 @@ void printTokenStream(TokenStream *stream) {
 void printSyntaxNode(SyntaxNode *node, unsigned int indent) {
 	if(node->terminal == true) {
 		__printNTabs(indent);
-		printf("TK \"%.*s\"\n", (int)node->token.len, node->token.start);
+		printf("%s \"%.*s\"\n", tokenTypeLiteralLookup(node->token.type), (int)node->token.len, node->token.start);
 	} else {
 		__printNTabs(indent);
 		printf("/%s\n", syntaxTypeLiteralLookup(node->type));

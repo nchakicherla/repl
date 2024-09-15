@@ -11,7 +11,7 @@ scope main {
 		print(a);
 		a = a - 1;
 	}
-	test.test2 = 3;
+	test.test2 = a + 3;
 	return 0;
 }
 
@@ -28,3 +28,5 @@ if (a > 3) {
 // int a = (3.14 * 2);
 
 // a.a = 3;
+
+//int a.test.test2 = 3;
