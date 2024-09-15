@@ -665,9 +665,28 @@ SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 		}
 		if((child->terminal == false && rnode->children[i].node_type == RULE_GRM) && 
 			(	rnode->children[i].nested_type.g == GRM_GROUP ||
-				rnode->children[i].nested_type.g == GRM_IFONE || 
-				rnode->children[i].nested_type.g == GRM_IFMANY))
+				rnode->children[i].nested_type.g == GRM_IFONE ||
+				rnode->children[i].nested_type.g == GRM_IFMANY)	
+		)
 		{
+			if(rnode->children[i].nested_type.g == GRM_IFONE) {
+				if((rnode->children[i].children[0].node_type == RULE_GRM &&
+					rnode->children[i].children[0].nested_type.g == GRM_OR) ||
+
+					rnode->children[i].children[0].node_type == RULE_STX) {
+					__addChild(node, child, pool);
+					continue;
+				}
+			}
+			/*
+			if(rnode->children[i].children[0].node_type == RULE_GRM) {
+				if(rnode->children[i].children[0].nested_type.g == GRM_OR) {
+					__addChild(node, child, pool);
+					continue;
+				}
+			}
+			*/
+
 			for(size_t j = 0; j < child->n_children; j++) {
 				//printf("here2\n");
 				//printf("appending children\n");

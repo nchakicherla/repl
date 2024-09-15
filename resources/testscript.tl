@@ -1,4 +1,3 @@
-/*
 scope main {
 	flt a = 1 + (2 * 3) / 4; 
 	print(a);
@@ -8,9 +7,13 @@ scope main {
 	for (int i = 3; i > 0; i--) {
 		print(i);
 	}
+	while (a > 3) {
+		print(a);
+		a = a - 1;
+	}
 	return 0;
 }
-*/
+
 /*
 if (a > 3) {
 	print(a);
@@ -23,7 +26,3 @@ if (a > 3) {
 
 // int a = (3.14 * 2);
 
-while (a > 3) {
-	print(a);
-	a = a - 1;
-}
