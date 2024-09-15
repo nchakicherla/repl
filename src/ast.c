@@ -704,7 +704,8 @@ SyntaxNode *parseIfMany(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 		SyntaxNode *child = parseGrammar(rnode->children, stream, pool);
 		if(child) {
 			
-			if((rnode->children[0].node_type == RULE_GRM)) {
+			if(rnode->children[0].node_type == RULE_GRM &&
+				rnode->children[0].nested_type.g == GRM_AND) {
 				for(size_t i = 0; i < child->n_children; i++) {
 					__addChild(node, child->children[i], pool);
 				}

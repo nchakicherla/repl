@@ -263,9 +263,7 @@ RULE: STX_EXPR
 				OR
 					SYNTAX --- STX_ARITHOP
 					SYNTAX --- STX_BOOLOP
-				OR
-					SYNTAX --- STX_GEXPR
-					SYNTAX --- STX_EXPR
+				SYNTAX --- STX_EXPR
 
 ----
 ----

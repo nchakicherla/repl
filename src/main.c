@@ -33,7 +33,7 @@ int main(void) {
 	stream.n = vm.chunk.n_tokens;
 
 
-#define TEST_STX STX_EXPR
+#define TEST_STX STX_SCOPE
 
 	printGrammarNode(vm.ruleArray.rules[TEST_STX].head, 0);
 
