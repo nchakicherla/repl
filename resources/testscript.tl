@@ -8,4 +8,9 @@
 
 for (int i = 0; i < 3; i++) {
 	print(i);
+	print(i + 1);
 }
+/*
+
+test multiline comments 
+*/

@@ -117,20 +117,27 @@ void skipWhitespace(void) {
 						advance();
 					}
 				} 
-				/*else if (peekNext() == '*') {
+				else if (peekNext() == '*') {
 					advance();
 					advance();
-					while ((peek() != '*' && peekNext() != '/') && !isAtEnd()) {
+					while (peek() != '*' && !isAtEnd()) {
 						if(peek() == '\n') {
 							scanner.line++;
 						}
+						if(peekNext() == '/') {
+							break;
+						}
 						advance();
 					}
+					advance();
+					advance();
+					/*
 					if(peek() == '*' && peekNext() == '/') {
 						advance();
 						advance();
 					}
-				}*/else {
+					*/
+				}else {
 					return;
 				}
 				break;
