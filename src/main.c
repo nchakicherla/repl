@@ -26,7 +26,6 @@ int main(void) {
 	vm.chunk.head = palloc(&(vm.pool), sizeof(SyntaxNode));
 	//printf("ret: %zu\n", matchGrammar(vm.ruleArray.rules[STX_INIT].head, vm.chunk.tokens, vm.chunk.head, &(vm.pool)));
 	//printTokens(&vm);
-	//printSyntaxNode(vm.chunk.head, 0);
 
 	TokenStream stream;
 	stream.tk = vm.chunk.tokens;
@@ -35,9 +34,17 @@ int main(void) {
 
 	printTokenStream(&stream);
 
-	SyntaxNode *node = parseGrammar(vm.ruleArray.rules[STX_EXPR].head, &stream, &vm.pool);
+#define TEST_STX STX_SCOPE
+
+	printGrammarNode(vm.ruleArray.rules[TEST_STX].head, 0);
+
+	SyntaxNode *node = parseGrammar(vm.ruleArray.rules[TEST_STX].head, &stream, &vm.pool);
 	if(node) {
-		printf("parsed\n");
+		printf("PARSED\n");
+		node->type = TEST_STX;
+		printSyntaxNode(node, 0);
+	} else {
+		printf("DIDN'T PARSE\n");
 	}
 
 	printPoolInfo(&(vm.pool));
