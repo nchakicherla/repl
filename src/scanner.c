@@ -124,13 +124,16 @@ void skipWhitespace(void) {
 						if(peek() == '\n') {
 							scanner.line++;
 						}
-						if(peekNext() == '/') {
-							break;
-						}
 						advance();
+						if(peek() == '*') {
+							if(peekNext() == '/') {
+								advance();
+								advance();
+								break;
+							}
+							advance();
+						}
 					}
-					advance();
-					advance();
 					/*
 					if(peek() == '*' && peekNext() == '/') {
 						advance();
