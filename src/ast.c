@@ -697,6 +697,7 @@ SyntaxNode *parseIfMany(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 		reset = stream->pos;
 		SyntaxNode *child = parseGrammar(rnode->children, stream, pool);
 		if(child) {
+			/*
 			if((rnode->children[0].node_type == RULE_GRM)) {
 				for(size_t i = 0; i < child->n_children; i++) {
 					__addChild(node, child->children[i], pool);
@@ -704,6 +705,8 @@ SyntaxNode *parseIfMany(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 			} else {
 				__addChild(node, child, pool);
 			}
+			*/
+			__addChild(node, child, pool);
 		} else {
 			stream->pos = reset;
 			break;
