@@ -671,29 +671,18 @@ SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 		{
 			if(rnode->children[i].nested_type.g == GRM_IFONE) {
 				if((rnode->children[i].children[0].node_type == RULE_GRM &&
-					rnode->children[i].children[0].nested_type.g == GRM_OR) ||
+					rnode->children[i].children[0].nested_type.g != GRM_AND)
 
-					rnode->children[i].children[0].node_type == RULE_STX) {
+					/*rnode->children[i].children[0].nested_type.g == GRM_OR*/) {
 					__addChild(node, child, pool);
 					continue;
 				}
 			}
-			/*
-			if(rnode->children[i].children[0].node_type == RULE_GRM) {
-				if(rnode->children[i].children[0].nested_type.g == GRM_OR) {
-					__addChild(node, child, pool);
-					continue;
-				}
-			}
-			*/
 
 			for(size_t j = 0; j < child->n_children; j++) {
-				//printf("here2\n");
-				//printf("appending children\n");
 				__addChild(node, child->children[j], pool);
 			}
 		} else {
-			//printf("adding child normally\n"); 
 			__addChild(node, child, pool);
 		}
 	}
@@ -756,7 +745,7 @@ SyntaxNode *parseToken(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 		node->terminal = true;
 		memcpy(&node->token, &stream->tk[stream->pos], sizeof(Token));
 		stream->pos++;
-		printf("made tk node: %.*s\n", (int)node->token.len, node->token.start);
+		//printf("made tk node: %.*s\n", (int)node->token.len, node->token.start);
 		return node;
 	} else {
 		return NULL;
