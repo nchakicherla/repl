@@ -342,7 +342,13 @@ int fillGrammarNode(RuleNode *node, Token *tokens, size_t n, MemPool *pool) {
 			break;
 		}
 		case RULE_STX: {
-			node->nested_type.s = getSNodeTypeFromNChars(tokens[0].start, tokens[0].len);
+			char *tmp_str = palloc(pool, tokens[0].len + 1);
+			for(size_t i = 0; i < tokens[0].len; i++) {
+				tmp_str[i] = tokens[0].start[i];
+			}
+			tmp_str[tokens[0].len] = '\0';
+			//node->nested_type.s = getSNodeTypeFromNChars(tokens[0].start, tokens[0].len);
+			node->nested_type.s = getSNodeTypeFromLiteral(tmp_str);
 			break;
 		}
 		case RULE_TK: {
