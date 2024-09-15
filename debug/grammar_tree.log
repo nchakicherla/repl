@@ -87,8 +87,8 @@ RULE: STX_IF
 		SYNTAX --- STX_SCOPE
 		IFMANY
 			AND
-				TOKEN --- TK_IF
 				TOKEN --- TK_ELSE
+				TOKEN --- TK_IF
 				TOKEN --- TK_LPAREN
 				SYNTAX --- STX_EXPR
 				TOKEN --- TK_RPAREN
@@ -96,9 +96,6 @@ RULE: STX_IF
 		IFONE
 			AND
 				TOKEN --- TK_ELSE
-				TOKEN --- TK_LPAREN
-				SYNTAX --- STX_EXPR
-				TOKEN --- TK_RPAREN
 				SYNTAX --- STX_SCOPE
 
 ----

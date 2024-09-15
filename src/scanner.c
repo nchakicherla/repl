@@ -134,13 +134,7 @@ void skipWhitespace(void) {
 							advance();
 						}
 					}
-					/*
-					if(peek() == '*' && peekNext() == '/') {
-						advance();
-						advance();
-					}
-					*/
-				}else {
+				} else {
 					return;
 				}
 				break;

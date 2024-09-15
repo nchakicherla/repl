@@ -820,10 +820,10 @@ void printTokenStream(TokenStream *stream) {
 void printSyntaxNode(SyntaxNode *node, unsigned int indent) {
 	if(node->terminal == true) {
 		__printNTabs(indent);
-		printf("TOKEN %.*s\n", (int)node->token.len, node->token.start);
+		printf("TK \"%.*s\"\n", (int)node->token.len, node->token.start);
 	} else {
 		__printNTabs(indent);
-		printf("SYNTAX: %s\n", syntaxTypeLiteralLookup(node->type));
+		printf("/%s\n", syntaxTypeLiteralLookup(node->type));
 		for(size_t i = 0; i < node->n_children; i++) {
 			printSyntaxNode(node->children[i], indent + 1);
 		}

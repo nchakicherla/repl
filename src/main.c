@@ -32,8 +32,7 @@ int main(void) {
 	stream.pos = 0;
 	stream.n = vm.chunk.n_tokens;
 
-
-#define TEST_STX STX_FOR
+#define TEST_STX STX_IF
 
 	printGrammarNode(vm.ruleArray.rules[TEST_STX].head, 0);
 
@@ -45,7 +44,7 @@ int main(void) {
 	} else {
 		printf("DIDN'T PARSE\n");
 	}
-	printTokenStream(&stream);
+	//printTokenStream(&stream);
 
 	printPoolInfo(&(vm.pool));
 	// build grammar tree here
