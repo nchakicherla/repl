@@ -178,6 +178,14 @@ Token number(void) {
 		}
 	}
 
+	if (peek() == 'e' && isDigit(peekNext())) {
+		advance();
+
+		while (isDigit(peek())) {
+			advance();
+		}
+	}
+
 	return makeToken(TK_NUM);
 }
 

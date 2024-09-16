@@ -11,31 +11,14 @@
 
 #include "random.h"
 
+#define INPUT_BUFFER_SIZE 512
+
 int main(void) {
 
-	//char *script1 = "./resources/test2.tl";
-	//char *script = "./resources/testscript.tl";
 	char *grammar = "./resources/grammar.txt";
 
 	VM vm;
-	initVM(&vm, grammar); // grammar build happens here
-
-	//scanTokensFromSource(&(vm.chunk), vm.source);
-	//printSource(&vm);
-
-	//vm.chunk.head = palloc(&(vm.chunk.pool), sizeof(SyntaxNode));
-	//printf("ret: %zu\n", matchGrammar(vm.ruleArray.rules[STX_INIT].head, vm.chunk.tokens, vm.chunk.head, &(vm.pool)));
-	//printTokens(&vm);
-
-	//TokenStream stream;
-	/*
-	stream.tk = vm.chunk.tokens;
-	stream.pos = 0;
-	stream.n = vm.chunk.n_tokens;
-	*/
-	//initTokenStream(&stream, &vm.chunk);
-#define TEST_STX STX_SCOPE
-#define INPUT_BUFFER_SIZE 512
+	initVM(&vm, grammar);
 
 	while(true) {
 		char *input_buffer = pzalloc(&vm.chunk.pool, INPUT_BUFFER_SIZE);
@@ -45,14 +28,11 @@ int main(void) {
 		}
 		input_buffer[INPUT_BUFFER_SIZE - 1] = '\0';
 		scanTokensFromSource(&vm.chunk, input_buffer);
-		//vm.chunk.head = palloc(&vm.chunk.pool, sizeof(SyntaxNode));
 
 		TokenStream stream;
-		//initTokenStream(&stream, &vm.chunk);
 
 		for(size_t i = 0; i < vm.ruleArray.n_rules; i++) {
 			initTokenStream(&stream, &vm.chunk);
-			//printf("testing type: %s\n", syntaxTypeLiteralLookup(i));
 			vm.chunk.head = parseGrammar(vm.ruleArray.rules[i].head, &stream, &vm.chunk.pool);
 			if(vm.chunk.head) {
 				if(stream.tk[stream.pos].type != TK_EOF) {
@@ -70,32 +50,12 @@ int main(void) {
 		if(0 == strncmp(input_buffer, ".exit", 5)) {
 			break;
 		}
+		printPoolInfo(&vm.chunk.pool);
 		resetChunk(&vm.chunk);
 	}
-
-	//printGrammarNode(vm.ruleArray.rules[TEST_STX].head, 0);
-	//printTokenStream(&stream);
-
-	printPoolInfo(&(vm.pool));
-	// build grammar tree here
-	//initGrammarRuleArray(&(vm.chunk.ruleArray), "./resources/testgrammar.txt", &(vm.pool));
+	printPoolInfo(&vm.pool);
 
 	termVM(&vm);
-
-/*
-	MemPool scratch;
-	initMemPool(&scratch);
-#define BIGNUM 10000000
-
-	int64_t *array = palloc(&scratch, BIGNUM * sizeof(int64_t));
-	for(size_t i = 0; i < BIGNUM; i++) {
-		array[i] = randI64(INT64_MAX);
-		// printf("num %zu: %" PRId64 "\n", i, array[i]);
-	}
-
-	printPoolInfo(&scratch);
-	termMemPool(&scratch);
-*/
 	return 0;
 }
 	/*
