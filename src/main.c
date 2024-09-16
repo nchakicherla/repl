@@ -55,8 +55,11 @@ int main(void) {
 			//printf("testing type: %s\n", syntaxTypeLiteralLookup(i));
 			vm.chunk.head = parseGrammar(vm.ruleArray.rules[i].head, &stream, &vm.chunk.pool);
 			if(vm.chunk.head) {
-				//vm.chunk.head = __wrapChild(vm.chunk.head, (SYNTAX_TYPE) i, &vm.chunk.pool);
-				vm.chunk.head->type = (SYNTAX_TYPE) i;
+				if(vm.ruleArray.rules[i].head->node_type == RULE_TK) {
+					vm.chunk.head = __wrapChild(vm.chunk.head, (SYNTAX_TYPE) i, &vm.chunk.pool);
+				} else {
+					vm.chunk.head->type = (SYNTAX_TYPE) i;
+				}
 				printSyntaxNode(vm.chunk.head, 0);
 				break;
 			}
