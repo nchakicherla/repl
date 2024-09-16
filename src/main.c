@@ -48,13 +48,16 @@ int main(void) {
 		//vm.chunk.head = palloc(&vm.chunk.pool, sizeof(SyntaxNode));
 
 		TokenStream stream;
-		initTokenStream(&stream, &vm.chunk);
+		//initTokenStream(&stream, &vm.chunk);
 
 		for(size_t i = 0; i < vm.ruleArray.n_rules; i++) {
 			initTokenStream(&stream, &vm.chunk);
 			//printf("testing type: %s\n", syntaxTypeLiteralLookup(i));
 			vm.chunk.head = parseGrammar(vm.ruleArray.rules[i].head, &stream, &vm.chunk.pool);
 			if(vm.chunk.head) {
+				if(stream.tk[stream.pos].type != TK_EOF) {
+					break;
+				}
 				if(vm.ruleArray.rules[i].head->node_type == RULE_TK) {
 					vm.chunk.head = __wrapChild(vm.chunk.head, (SYNTAX_TYPE) i, &vm.chunk.pool);
 				} else {
