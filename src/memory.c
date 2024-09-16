@@ -140,6 +140,14 @@ void *palloc(MemPool *pool, size_t size) {
 	return output;
 }
 
+void *pzalloc(MemPool *pool, size_t size) {
+	void* output = palloc(pool, size);
+	for(size_t i = 0; i < size; i++) {
+		((char *)output)[i] = '\0';
+	}
+	return output;
+}
+
 void *growPAlloc(void *ptr, size_t old_size, size_t new_size, MemPool *pool) {
 	void *output_ptr = palloc(pool, new_size);
 	memcpy(output_ptr, ptr, old_size);

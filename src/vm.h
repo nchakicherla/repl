@@ -11,17 +11,17 @@ typedef struct s_VM {
 	GrammarRuleArray ruleArray;
 	Table table;
 	MemPool pool;
-	char *name;
-	char *source;
+	//char *name;
+	//char *source;
 	char *grammar_name;
 } VM;
 
-void initVM(VM *vm, char *script, char *grammar);
+void initVM(VM *vm, char *grammar);
 
 void termVM(VM *vm);
 
 void printTokens(VM *vm);
 
-void printSource(VM *vm);
+// void printSource(VM *vm);
 
 #endif // VM_H

@@ -31,6 +31,8 @@ int termMemPool(MemPool *pool);
 
 void *palloc(MemPool *pool, size_t size);
 
+void *pzalloc(MemPool *pool, size_t size);
+
 void *growPAlloc(void *ptr, size_t old_size, size_t new_size, MemPool *pool);
 
 char *pStrCpy(char *str, MemPool *pool);

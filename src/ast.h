@@ -59,7 +59,7 @@ union u_TargetType {
 typedef struct s_SyntaxNode {
 	SYNTAX_TYPE type;
 
-	bool terminal;
+	bool is_token;
 	Token token;
 	
 	bool evaluated;
@@ -141,6 +141,8 @@ void initSyntaxNode(SyntaxNode *node);
 
 void initRuleNode(RuleNode *node);
 
+void initTokenStream(TokenStream *stream, Chunk *chunk);
+
 // void initGrammarParser(GrammarParser *parser);
 
 size_t getSemicolonOffset(Token *tokens);
@@ -166,6 +168,8 @@ int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *p
 // size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *pool);
 
 void __addChild(SyntaxNode *parent, SyntaxNode *child, MemPool *pool);
+
+SyntaxNode *__wrapChild(SyntaxNode *child, SYNTAX_TYPE stype, MemPool *pool);
 
 //
 SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool);

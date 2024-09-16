@@ -94,7 +94,7 @@ void __swapSyntaxNodes(SyntaxNode *node1, SyntaxNode *node2) {
 }
 
 void initSyntaxNode(SyntaxNode *node) {
-	node->terminal = false;
+	node->is_token = false;
 	node->object = NULL;
 	node->n_children = 0;
 	node->children = NULL;
@@ -107,6 +107,12 @@ void initRuleNode(RuleNode *node) {
 	node->n_children = 0;
 	node->children = NULL;
 	node->parent = NULL;
+}
+
+void initTokenStream(TokenStream *stream, Chunk *chunk) {
+	stream->tk = chunk->tokens;
+	stream->pos = 0;
+	stream->n = chunk->n_tokens;
 }
 /*
 void initGrammarParser(GrammarParser *parser) {
@@ -612,7 +618,7 @@ size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *
 		case RULE_TK: {
 			printf("is TK\n");
 			if(rnode->nested_type.t == tokens[0].type) {
-				snode->terminal = true;
+				snode->is_token = true;
 				memcpy(&snode->token, tokens, sizeof(Token));
 				ret += 1;
 				printf("matched token %.*s, ret = %zu\n", (int)tokens[0].len, tokens[0].start, ret);
@@ -626,7 +632,7 @@ size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *
 }
 */
 
-// rule which resolves to token means terminal node is created. nodes are returned upwards without type until calling fn from STX grammar node attaches type
+// rule which resolves to token means is_token node is created. nodes are returned upwards without type until calling fn from STX grammar node attaches type
 
 void __addChild(SyntaxNode *parent, SyntaxNode *child, MemPool *pool) {
 	//printf("in addchild\n");
@@ -651,7 +657,7 @@ SyntaxNode *__wrapChild(SyntaxNode *child, SYNTAX_TYPE stype, MemPool *pool) {
 	parent->type = stype;
 	parent->children = palloc(pool, sizeof(SyntaxNode*));
 	parent->children[0] = child;
-	parent->n_children++;
+	parent->n_children = 1;
 	return parent;
 }
 
@@ -674,11 +680,12 @@ SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 			stream->pos = start_pos;
 			return NULL;
 		}
-		if((child->terminal == false && rnode->children[i].node_type == RULE_GRM) && 
+		if((child->is_token == false && rnode->children[i].node_type == RULE_GRM) && 
 			(	rnode->children[i].nested_type.g == GRM_GROUP ||
 				rnode->children[i].nested_type.g == GRM_IFONE ||
 				rnode->children[i].nested_type.g == GRM_IFMANY)	
-		)
+		) 
+
 		{
 			if(rnode->children[i].nested_type.g == GRM_IFONE) {
 				if((rnode->children[i].children[0].node_type == RULE_GRM &&
@@ -690,7 +697,6 @@ SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 					continue;
 				}
 			}
-
 			for(size_t j = 0; j < child->n_children; j++) {
 				__addChild(node, child->children[j], pool);
 			}
@@ -741,14 +747,14 @@ SyntaxNode *parseIfMany(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 SyntaxNode *parseSyntax(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 	SyntaxNode *node = parseGrammar(rnode->rule_head, stream, pool);
 	if(node) {
-		if(node->terminal == true) {
+		if(node->is_token == true) {
 			SyntaxNode *wrap = __wrapChild(node, rnode->nested_type.s, pool);
 			return wrap;
 		} else {
 			node->type = rnode->nested_type.s;
 		}
-		printf("matched syntax: \n");
-		printGrammarNode(rnode->rule_head, 0);
+		//printf("matched syntax: \n");
+		//printGrammarNode(rnode->rule_head, 0);
 	} else {
 		return NULL;
 	}
@@ -759,10 +765,10 @@ SyntaxNode *parseToken(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 	if(stream->tk[stream->pos].type == rnode->nested_type.t) {
 		SyntaxNode *node = palloc(pool, sizeof(SyntaxNode));
 		initSyntaxNode(node);
-		node->terminal = true;
+		node->is_token = true;
 		memcpy(&node->token, &stream->tk[stream->pos], sizeof(Token));
 		stream->pos++;
-		printf("made tk node: %.*s\n", (int)node->token.len, node->token.start);
+		//printf("made tk node: %.*s\n", (int)node->token.len, node->token.start);
 		return node;
 	} else {
 		return NULL;
@@ -843,9 +849,9 @@ void printTokenStream(TokenStream *stream) {
 }
 
 void printSyntaxNode(SyntaxNode *node, unsigned int indent) {
-	if(node->terminal == true) {
+	if(node->is_token == true) {
 		__printNTabs(indent);
-		printf("%s \"%.*s\"\n", tokenTypeLiteralLookup(node->token.type), (int)node->token.len, node->token.start);
+		printf("%s %.*s\n", tokenTypeLiteralLookup(node->token.type), (int)node->token.len, node->token.start);
 	} else {
 		__printNTabs(indent);
 		printf("/%s\n", syntaxTypeLiteralLookup(node->type));
@@ -853,7 +859,6 @@ void printSyntaxNode(SyntaxNode *node, unsigned int indent) {
 			printSyntaxNode(node->children[i], indent + 1);
 		}
 	}
-	return ;
 }
 
 void printGrammarNode(RuleNode *node, unsigned int indent) {
@@ -892,7 +897,6 @@ void printGrammarNode(RuleNode *node, unsigned int indent) {
 			break;
 		}
 	}
-	return;
 }
 
 void printGrammarRule(GrammarRule *rule) {
@@ -900,19 +904,16 @@ void printGrammarRule(GrammarRule *rule) {
 	printf("-\n");
 	printGrammarNode(rule->head, 1);
 	printf("\n----\n----\n\n");
-	return;
 }
 
 void printGrammarRuleByIndex(GrammarRuleArray *array, int i) {
 	printGrammarRule(&(array->rules[i]));
-	return;
 }
 
 void printGrammarRuleArray(GrammarRuleArray *array) {
 	for(size_t i = 0; i < array->n_rules; i++) {
 		printGrammarRule(&(array->rules[i]));
 	}
-	return;
 }
 
 void fPrintGrammarNode(RuleNode *node, unsigned int indent, FILE *file) {
@@ -949,7 +950,6 @@ void fPrintGrammarNode(RuleNode *node, unsigned int indent, FILE *file) {
 			break;
 		}
 	}
-	return;
 }
 
 void fPrintGrammarRule(GrammarRule *rule, FILE *file) {
@@ -958,16 +958,13 @@ void fPrintGrammarRule(GrammarRule *rule, FILE *file) {
 	fPrintGrammarNode(rule->head, 1, file);
 	fprintf(file, "\n----\n----\n\n");
 
-	return;
 }
 
 void fPrintGrammarRuleByIndex(GrammarRuleArray *array, int i, FILE *file) {
 	fPrintGrammarRule(&(array->rules[i]), file);
-	return;
 }
 void fPrintGrammarRuleArray(GrammarRuleArray *array, FILE *file) {
 	for(size_t i = 0; i < array->n_rules; i++) {
 		fPrintGrammarRule(&(array->rules[i]), file);
 	}
-	return;
 }

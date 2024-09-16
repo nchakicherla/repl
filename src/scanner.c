@@ -15,7 +15,7 @@ char *__tokenNameLiterals[] = {
 	"TK_LESS", "TK_LESS_EQUAL",
 
 	// literals
-	"TK_IDENTIFIER", "TK_STRING", "TK_NUM",
+	"TK_IDENTIFIER", "TK_CHARS", "TK_NUM",
 
 	// keywords
 	"TK_AND", "TK_BOOL", "TK_BREAK", "TK_CLASS", "TK_FLT", "TK_ELSE", "TK_EXIT", "TK_FALSE", "TK_FN", "TK_FOR", "TK_IF", "TK_INT", "TK_NIL", 
@@ -158,7 +158,7 @@ Token string(void) {
 	}
 
 	advance();
-	return makeToken(TK_STRING);
+	return makeToken(TK_CHARS);
 }
 
 bool isDigit(char c) {

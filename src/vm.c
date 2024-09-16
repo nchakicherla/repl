@@ -3,13 +3,13 @@
 #include "ast.h"
 //#include "chunk.h"
 
-void initVM(VM *vm, char *script, char *grammarFile) {
+void initVM(VM *vm, char *grammarFile) {
 	initChunk(&(vm->chunk));
 	initMemPool(&(vm->pool));
 	initGrammarRuleArray(&(vm->ruleArray), grammarFile, &(vm->pool));
 	initTable(&(vm->table));
-	vm->name = pStrCpy(script, &(vm->pool));
-	vm->source = readFile(script, &(vm->pool));
+	//vm->name = pStrCpy(script, &(vm->pool));
+	//vm->source = readFile(script, &(vm->pool));
 	vm->grammar_name = pStrCpy(grammarFile, &(vm->pool));
 	return;
 }
@@ -32,8 +32,9 @@ void printTokens(VM *vm) {
 	}
 	return;
 }
-
+/*
 void printSource(VM *vm) {
 	printf("SOURCE:\n\"\n%s\n\"\n", vm->source);
 	return;
 }
+*/

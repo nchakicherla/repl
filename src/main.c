@@ -14,36 +14,60 @@
 int main(void) {
 
 	//char *script1 = "./resources/test2.tl";
-	char *script = "./resources/testscript.tl";
+	//char *script = "./resources/testscript.tl";
 	char *grammar = "./resources/grammar.txt";
 
 	VM vm;
-	initVM(&vm, script, grammar); // grammar build happens here
+	initVM(&vm, grammar); // grammar build happens here
 
-	scanTokensFromSource(&(vm.chunk), vm.source);
-	printSource(&vm);
+	//scanTokensFromSource(&(vm.chunk), vm.source);
+	//printSource(&vm);
 
-	vm.chunk.head = palloc(&(vm.pool), sizeof(SyntaxNode));
+	//vm.chunk.head = palloc(&(vm.chunk.pool), sizeof(SyntaxNode));
 	//printf("ret: %zu\n", matchGrammar(vm.ruleArray.rules[STX_INIT].head, vm.chunk.tokens, vm.chunk.head, &(vm.pool)));
 	//printTokens(&vm);
 
-	TokenStream stream;
+	//TokenStream stream;
+	/*
 	stream.tk = vm.chunk.tokens;
 	stream.pos = 0;
 	stream.n = vm.chunk.n_tokens;
+	*/
+	//initTokenStream(&stream, &vm.chunk);
+#define TEST_STX STX_SCOPE
+#define INPUT_BUFFER_SIZE 512
 
-#define TEST_STX STX_INIT
+	while(true) {
+		char *input_buffer = pzalloc(&vm.chunk.pool, INPUT_BUFFER_SIZE);
 
-	printGrammarNode(vm.ruleArray.rules[TEST_STX].head, 0);
+		while(!(strchr(input_buffer, '\n'))) {
+			fgets(input_buffer, INPUT_BUFFER_SIZE, stdin);
+		}
+		input_buffer[INPUT_BUFFER_SIZE - 1] = '\0';
+		scanTokensFromSource(&vm.chunk, input_buffer);
+		//vm.chunk.head = palloc(&vm.chunk.pool, sizeof(SyntaxNode));
 
-	SyntaxNode *node = parseGrammar(vm.ruleArray.rules[TEST_STX].head, &stream, &vm.pool);
-	if(node) {
-		printf("PARSED\n");
-		node->type = TEST_STX;
-		printSyntaxNode(node, 0);
-	} else {
-		printf("DIDN'T PARSE\n");
+		TokenStream stream;
+		initTokenStream(&stream, &vm.chunk);
+
+		for(size_t i = 0; i < vm.ruleArray.n_rules; i++) {
+			initTokenStream(&stream, &vm.chunk);
+			//printf("testing type: %s\n", syntaxTypeLiteralLookup(i));
+			vm.chunk.head = parseGrammar(vm.ruleArray.rules[i].head, &stream, &vm.chunk.pool);
+			if(vm.chunk.head) {
+				//vm.chunk.head = __wrapChild(vm.chunk.head, (SYNTAX_TYPE) i, &vm.chunk.pool);
+				vm.chunk.head->type = (SYNTAX_TYPE) i;
+				printSyntaxNode(vm.chunk.head, 0);
+				break;
+			}
+		}
+		if(0 == strncmp(input_buffer, ".exit", 5)) {
+			break;
+		}
+		resetChunk(&vm.chunk);
 	}
+
+	//printGrammarNode(vm.ruleArray.rules[TEST_STX].head, 0);
 	//printTokenStream(&stream);
 
 	printPoolInfo(&(vm.pool));
