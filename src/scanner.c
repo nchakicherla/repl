@@ -247,6 +247,8 @@ TOKEN_TYPE identifierType(void) {
 		case 'o': return checkKeyword(1, 1, "r", TK_OR);
 		//case 'p': return checkKeyword(1, 2, "rint", TK_PRINT);
 		case 'r': return checkKeyword(1, 5, "eturn", TK_RETURN);
+		case 's': return checkKeyword(1, 4, "cope", TK_SCOPE);
+			/*
 		case 's': {
 			if (scanner.current - scanner.start > 1) {
 				switch (scanner.start[1]) {
@@ -255,6 +257,7 @@ TOKEN_TYPE identifierType(void) {
 				}
 			}
 		}
+		*/
 		case 't': {
 			if (scanner.current - scanner.start > 1) {
 				switch (scanner.start[1]) {
@@ -265,6 +268,7 @@ TOKEN_TYPE identifierType(void) {
 		}
 		//case 'v': return checkKeyword(1, 2, "ar", TK_VAR);
 		case 'w': return checkKeyword(1, 4, "hile", TK_WHILE);
+		case 'S': return checkKeyword(1, 2, "tr", TK_STR);
 	}
 	return TK_IDENTIFIER;
 }
