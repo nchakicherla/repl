@@ -687,7 +687,7 @@ SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 				rnode->children[i].nested_type.g == GRM_IFMANY)	
 		)*/
 
-		if(child->type == STX_UNSPECIFIED)
+		if(child->type == STX_UNSPECIFIED && child->is_token == false)
 
 		{
 			if(rnode->children[i].nested_type.g == GRM_IFONE) {
