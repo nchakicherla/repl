@@ -16,7 +16,7 @@ char *__syntaxTypeLiterals[] = {
 	"STX_GEXPR", "STX_EXPR",
 
 	"STX_VTYPE", "STX_VAR", "STX_MEMBER", "STX_THIS", "STX_FNCALL", "STX_INDEX",
-	"STX_NUM", "STX_STRING",
+	"STX_NUM", "STX_STRLIT",
 
 	"STX_ARITHOP", "STX_BOOLOP", "STX_ASSIGNOP",
 
