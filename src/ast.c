@@ -30,7 +30,7 @@ char *__syntaxTypeLiterals[] = {
 
 	"STX_INCREMENT", "STX_DECREMENT",
 
-	"STX_ERR",
+	"STX_ERR", "STX_UNSPECIFIED",
 };
 
 void initChunk(Chunk *chunk) {
@@ -94,6 +94,7 @@ void __swapSyntaxNodes(SyntaxNode *node1, SyntaxNode *node2) {
 }
 
 void initSyntaxNode(SyntaxNode *node) {
+	node->type = STX_UNSPECIFIED;
 	node->is_token = false;
 	node->object = NULL;
 	node->n_children = 0;
@@ -588,7 +589,7 @@ size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *
 						total_ret += current_repeat_ret;
 						current += current_repeat_ret;
 						repetitions++;
-						growPAlloc(tempNodes, currentTempNodesSize, currentTempNodesSize * 2, pool);
+						pGrowAlloc(tempNodes, currentTempNodesSize, currentTempNodesSize * 2, pool);
 						currentTempNodesSize *= 2;
 					}
 					printf("here3\n");
@@ -639,7 +640,7 @@ void __addChild(SyntaxNode *parent, SyntaxNode *child, MemPool *pool) {
 	if(parent->n_children == 0) {
 		parent->children = palloc(pool, sizeof(SyntaxNode *));
 	} else {
-		SyntaxNode **new_array = growPAlloc(parent->children, parent->n_children * sizeof(SyntaxNode *), (parent->n_children + 1) * sizeof(SyntaxNode *), pool);
+		SyntaxNode **new_array = pGrowAlloc(parent->children, parent->n_children * sizeof(SyntaxNode *), (parent->n_children + 1) * sizeof(SyntaxNode *), pool);
 		parent->children = new_array;
 	}
 	parent->children[parent->n_children] = child;
@@ -680,11 +681,13 @@ SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 			stream->pos = start_pos;
 			return NULL;
 		}
-		if((child->is_token == false && rnode->children[i].node_type == RULE_GRM) && 
+		/*if((child->is_token == false && rnode->children[i].node_type == RULE_GRM) && 
 			(	rnode->children[i].nested_type.g == GRM_GROUP ||
 				rnode->children[i].nested_type.g == GRM_IFONE ||
 				rnode->children[i].nested_type.g == GRM_IFMANY)	
-		) 
+		)*/
+
+		if(child->type == STX_UNSPECIFIED)
 
 		{
 			if(rnode->children[i].nested_type.g == GRM_IFONE) {
@@ -787,7 +790,8 @@ SyntaxNode *parseGrammar(RuleNode* rnode, TokenStream *stream, MemPool *pool) {
 					return parseOr(rnode, stream, pool);
 				}
 				case GRM_GROUP: {
-					return parseAnd(rnode->children, stream, pool);
+					//return parseAnd(rnode->children, stream, pool);
+					return parseGrammar(rnode->children, stream, pool);
 				}
 				case GRM_IFONE: {
 					return parseIfOne(rnode, stream, pool);

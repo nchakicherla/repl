@@ -8,9 +8,9 @@ void initVM(VM *vm, char *grammarFile) {
 	initMemPool(&(vm->pool));
 	initGrammarRuleArray(&(vm->ruleArray), grammarFile, &(vm->pool));
 	initTable(&(vm->table));
-	//vm->name = pStrCpy(script, &(vm->pool));
+	//vm->name = pNewStr(script, &(vm->pool));
 	//vm->source = readFile(script, &(vm->pool));
-	vm->grammar_name = pStrCpy(grammarFile, &(vm->pool));
+	vm->grammar_name = pNewStr(grammarFile, &(vm->pool));
 	return;
 }
 

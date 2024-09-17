@@ -33,9 +33,9 @@ void *palloc(MemPool *pool, size_t size);
 
 void *pzalloc(MemPool *pool, size_t size);
 
-void *growPAlloc(void *ptr, size_t old_size, size_t new_size, MemPool *pool);
+void *pGrowAlloc(void *ptr, size_t old_size, size_t new_size, MemPool *pool);
 
-char *pStrCpy(char *str, MemPool *pool);
+char *pNewStr(char *str, MemPool *pool);
 
 size_t getBytesUsed(MemPool *pool);
 

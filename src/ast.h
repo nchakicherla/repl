@@ -33,7 +33,7 @@ typedef enum {
 
 	STX_INCREMENT, STX_DECREMENT,
 
-	STX_ERR,
+	STX_ERR, STX_UNSPECIFIED,
 } SYNTAX_TYPE;
 
 typedef enum {
