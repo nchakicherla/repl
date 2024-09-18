@@ -21,13 +21,14 @@ int main(void) {
 	initVM(&vm, grammar);
 
 	while(true) {
-		char *input_buffer = pzalloc(&vm.chunk.pool, INPUT_BUFFER_SIZE);
+		//char *input_buffer = pzalloc(&vm.chunk.pool, INPUT_BUFFER_SIZE);
+		vm.chunk.source = pzalloc(&vm.chunk.pool, INPUT_BUFFER_SIZE);
 
-		while(!(strchr(input_buffer, '\n'))) {
-			fgets(input_buffer, INPUT_BUFFER_SIZE, stdin);
+		while(!(strchr(vm.chunk.source, '\n'))) {
+			fgets(vm.chunk.source, INPUT_BUFFER_SIZE, stdin);
 		}
-		input_buffer[INPUT_BUFFER_SIZE - 1] = '\0';
-		scanTokensFromSource(&vm.chunk, input_buffer);
+		vm.chunk.source[INPUT_BUFFER_SIZE - 1] = '\0';
+		scanTokensFromSource(&vm.chunk, vm.chunk.source);
 
 		TokenStream stream;
 
@@ -35,12 +36,10 @@ int main(void) {
 			initTokenStream(&stream, &vm.chunk);
 			vm.chunk.head = parseGrammar(vm.rule_array.rules[i].head, &stream, &vm.chunk.pool);
 			if(vm.chunk.head) {
-				/*
 				if(stream.tk[stream.pos].type != TK_EOF) {
 					//break; // ignore match if didn't consume all tokens in line
 					continue;
 				}
-				*/
 				if(vm.rule_array.rules[i].head->node_type == RULE_TK) {
 					vm.chunk.head = __wrapChild(vm.chunk.head, (SYNTAX_TYPE) i, &vm.chunk.pool);
 				} else {
@@ -50,11 +49,14 @@ int main(void) {
 				break;
 			}
 		}
-		if(0 == strncmp(input_buffer, ".exit", 5)) {
+
+		if(0 == strncmp(vm.chunk.source, ".exit", 5)) {
 			break;
 		}
-		printTokens(&vm);
+
+		//printTokens(&vm);
 		printPoolInfo(&vm.chunk.pool);
+
 		resetChunk(&vm.chunk);
 	}
 	printPoolInfo(&vm.pool);
