@@ -24,7 +24,7 @@ union Value {
 typedef struct s_Object {
 	OBJ_TYPE type;
 	union Value val;
-	int prec;
+	int precision;
 } Object;
 
 #endif // OBJECT_H

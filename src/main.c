@@ -35,12 +35,12 @@ int main(void) {
 			initTokenStream(&stream, &vm.chunk);
 			vm.chunk.head = parseGrammar(vm.rule_array.rules[i].head, &stream, &vm.chunk.pool);
 			if(vm.chunk.head) {
-				
+				/*
 				if(stream.tk[stream.pos].type != TK_EOF) {
 					//break; // ignore match if didn't consume all tokens in line
 					continue;
 				}
-				
+				*/
 				if(vm.rule_array.rules[i].head->node_type == RULE_TK) {
 					vm.chunk.head = __wrapChild(vm.chunk.head, (SYNTAX_TYPE) i, &vm.chunk.pool);
 				} else {

@@ -18,8 +18,8 @@ char *__tokenNameLiterals[] = {
 	"TK_IDENTIFIER", "TK_CHARS", "TK_NUM",
 
 	// keywords
-	"TK_AND", "TK_BOOL", "TK_BREAK", "TK_CLASS", "TK_FLT", "TK_ELSE", "TK_EXIT", "TK_FALSE", "TK_FN", "TK_FOR", "TK_IF", "TK_INT", "TK_NIL", 
-	"TK_OR", "TK_RETURN", "TK_SCOPE", "TK_STR", "TK_THIS", "TK_TRUE", "TK_WHILE",
+	"TK_AND", "TK_BOOL", "TK_BREAK", "TK_CASE", "TK_CLASS", "TK_FLT", "TK_ELSE", "TK_EXIT", "TK_FALSE", "TK_FN", "TK_FOR", "TK_IF", "TK_INT", "TK_NIL", 
+	"TK_OR", "TK_RETURN", "TK_SCOPE", "TK_STR", "TK_SWITCH", "TK_THIS", "TK_TRUE", "TK_WHILE",
 
 	"TK_EOF", "TK_ERROR"
 };
@@ -208,7 +208,6 @@ TOKEN_TYPE identifierType(void) {
 
 	switch (scanner.start[0]) {
 		case 'a': return checkKeyword(1, 2, "nd", TK_AND);
-		// case 'b': return checkKeyword(1, 3, "ool", TK_BOOL);
 		case 'b':
 			if (scanner.current - scanner.start > 1) {
 				switch (scanner.start[1]) {
@@ -216,8 +215,14 @@ TOKEN_TYPE identifierType(void) {
 					case 'r': return checkKeyword(2, 3, "eak", TK_BREAK);
 				}
 			}
-		case 'c': return checkKeyword(1, 4, "lass", TK_CLASS);
-		// case 'e': return checkKeyword(1, 3, "lse", TK_ELSE);
+		case 'c': {
+			if (scanner.current - scanner.start > 1) {
+				switch (scanner.start[1]) {
+					case 'a': return checkKeyword(2, 2, "se", TK_CASE);
+					case 'l': return checkKeyword(2, 3, "ass", TK_CLASS);
+					}
+			}
+		}
 		case 'e':
 			if (scanner.current - scanner.start > 1) {
 				switch (scanner.start[1]) {
@@ -245,19 +250,15 @@ TOKEN_TYPE identifierType(void) {
 		}
 		case 'n': return checkKeyword(1, 2, "il", TK_NIL);
 		case 'o': return checkKeyword(1, 1, "r", TK_OR);
-		//case 'p': return checkKeyword(1, 2, "rint", TK_PRINT);
 		case 'r': return checkKeyword(1, 5, "eturn", TK_RETURN);
-		case 's': return checkKeyword(1, 4, "cope", TK_SCOPE);
-			/*
 		case 's': {
 			if (scanner.current - scanner.start > 1) {
 				switch (scanner.start[1]) {
 					case 'c': return checkKeyword(2, 3, "ope", TK_SCOPE);
-					case 't': return checkKeyword(2, 1, "r", TK_STR);
+					case 'w': return checkKeyword(2, 4, "itch", TK_SWITCH);
 				}
 			}
 		}
-		*/
 		case 't': {
 			if (scanner.current - scanner.start > 1) {
 				switch (scanner.start[1]) {
@@ -266,7 +267,6 @@ TOKEN_TYPE identifierType(void) {
 				}
 			}
 		}
-		//case 'v': return checkKeyword(1, 2, "ar", TK_VAR);
 		case 'w': return checkKeyword(1, 4, "hile", TK_WHILE);
 		case 'S': return checkKeyword(1, 2, "tr", TK_STR);
 	}
