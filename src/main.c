@@ -36,7 +36,7 @@ int main(void) {
 			vm.chunk.head = parseGrammar(vm.ruleArray.rules[i].head, &stream, &vm.chunk.pool);
 			if(vm.chunk.head) {
 				if(stream.tk[stream.pos].type != TK_EOF) {
-					break;
+					break; // ignore match if didn't consume all tokens in line
 				}
 				if(vm.ruleArray.rules[i].head->node_type == RULE_TK) {
 					vm.chunk.head = __wrapChild(vm.chunk.head, (SYNTAX_TYPE) i, &vm.chunk.pool);
