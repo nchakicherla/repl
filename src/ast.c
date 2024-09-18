@@ -366,7 +366,7 @@ int fillGrammarNode(RuleNode *node, Token *tokens, size_t n, MemPool *pool) {
 	return 0;
 }
 
-int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *ruleArray) {
+int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *rule_array) {
 	switch(node->node_type) {
 		case RULE_GRM: {
 			switch(node->nested_type.g) {
@@ -376,7 +376,7 @@ int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *ruleArray) {
 				case GRM_IFONE:
 				case GRM_IFMANY:
 					for(size_t i = 0; i < node->n_children; i++) {
-						populateGrammarRulePointers(&(node->children[i]), ruleArray);
+						populateGrammarRulePointers(&(node->children[i]), rule_array);
 					}
 					break;
 				default:
@@ -384,7 +384,7 @@ int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *ruleArray) {
 			}
 		}
 		case RULE_STX: {
-			node->rule_head = ruleArray->rules[node->nested_type.s].head;
+			node->rule_head = rule_array->rules[node->nested_type.s].head;
 			break;
 		}
 		case RULE_TK:
@@ -394,14 +394,14 @@ int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *ruleArray) {
 	return 0;
 }
 
-int populateGrammarRuleArrayReferences(GrammarRuleArray *ruleArray) {
-	for(size_t i = 0; i < ruleArray->n_rules; i++) {
-		populateGrammarRulePointers(ruleArray->rules[i].head, ruleArray);
+int populateGrammarRuleArrayReferences(GrammarRuleArray *rule_array) {
+	for(size_t i = 0; i < rule_array->n_rules; i++) {
+		populateGrammarRulePointers(rule_array->rules[i].head, rule_array);
 	}
 	return 0;
 }
 
-int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *pool) {
+int initGrammarRuleArray(GrammarRuleArray *rule_array, char *fileName, MemPool *pool) {
 
 	char *source = readFile(fileName, pool);
 	initScanner(source);
@@ -421,25 +421,25 @@ int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *p
 		tokens[i] = scanToken();
 	}
 
-	ruleArray->n_rules = STX_ERR - STX_SCOPE;
-	ruleArray->rules = palloc(pool, ruleArray->n_rules * sizeof(GrammarRule));
+	rule_array->n_rules = STX_ERR - STX_SCOPE;
+	rule_array->rules = palloc(pool, rule_array->n_rules * sizeof(GrammarRule));
 
-	for(size_t i = 0; i < ruleArray->n_rules; i++) {
-		ruleArray->rules[i].stype = i;
-		ruleArray->rules[i].head = palloc(pool, sizeof(RuleNode));
+	for(size_t i = 0; i < rule_array->n_rules; i++) {
+		rule_array->rules[i].stype = i;
+		rule_array->rules[i].head = palloc(pool, sizeof(RuleNode));
 
 		size_t ruleStart = getRuleStartIndex((SYNTAX_TYPE)i, tokens, n_tokens);
 		size_t semiOffset = getSemicolonOffset(&tokens[ruleStart]);
 
-		fillGrammarNode(ruleArray->rules[i].head, &tokens[ruleStart], semiOffset, pool);
-		ruleArray->rules[i].head->parent = NULL;
+		fillGrammarNode(rule_array->rules[i].head, &tokens[ruleStart], semiOffset, pool);
+		rule_array->rules[i].head->parent = NULL;
 	}
-	populateGrammarRuleArrayReferences(ruleArray);
-	//printGrammarRuleArray(ruleArray);
+	populateGrammarRuleArrayReferences(rule_array);
+	//printGrammarRuleArray(rule_array);
 
 	FILE *rulesLog = checkFileOpen("./debug/grammar_tree.log", "w");
 	if(rulesLog) {
-		fPrintGrammarRuleArray(ruleArray, rulesLog);
+		fPrintGrammarRuleArray(rule_array, rulesLog);
 	}
 	fclose(rulesLog);
 	return 0;

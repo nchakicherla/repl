@@ -6,7 +6,7 @@
 void initVM(VM *vm, char *grammarFile) {
 	initChunk(&(vm->chunk));
 	initMemPool(&(vm->pool));
-	initGrammarRuleArray(&(vm->ruleArray), grammarFile, &(vm->pool));
+	initGrammarRuleArray(&(vm->rule_array), grammarFile, &(vm->pool));
 	initTable(&(vm->table));
 	//vm->name = pNewStr(script, &(vm->pool));
 	//vm->source = readFile(script, &(vm->pool));

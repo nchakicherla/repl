@@ -161,9 +161,9 @@ int fillGrammarNode(RuleNode *node, Token *tokens, size_t n, MemPool *pool);
 
 int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *array);
 
-int populateGrammarRuleArrayReferences(GrammarRuleArray *ruleArray);
+int populateGrammarRuleArrayReferences(GrammarRuleArray *rule_array);
 
-int initGrammarRuleArray(GrammarRuleArray *ruleArray, char *fileName, MemPool *pool);
+int initGrammarRuleArray(GrammarRuleArray *rule_array, char *fileName, MemPool *pool);
 
 // size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *pool);
 

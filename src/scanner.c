@@ -230,7 +230,7 @@ TOKEN_TYPE identifierType(void) {
 				switch (scanner.start[1]) {
 					case 'a': return checkKeyword(2, 3, "lse", TK_FALSE);
 					case 'l': return checkKeyword(2, 1, "t", TK_FLT);
-					case 'n': return TK_FN;
+					case 'n': return checkKeyword(0, 2, "fn", TK_FN);;
 					case 'o': return checkKeyword(2, 1, "r", TK_FOR);
 				}
 			}
@@ -238,7 +238,7 @@ TOKEN_TYPE identifierType(void) {
 		case 'i': {
 			if (scanner.current - scanner.start > 1) {
 				switch (scanner.start[1]) {
-					case 'f': return TK_IF;
+					case 'f': return checkKeyword(0, 2, "if", TK_IF);
 					case 'n': return checkKeyword(2, 1, "t", TK_INT);
 				}
 			}
@@ -278,6 +278,7 @@ Token identifier(void) {
 		advance();
 	}
 	return makeToken(identifierType());
+
 }
 
 Token scanToken(void) {

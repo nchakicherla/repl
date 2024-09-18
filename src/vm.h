@@ -8,7 +8,7 @@
 
 typedef struct s_VM {
 	Chunk chunk;
-	GrammarRuleArray ruleArray;
+	GrammarRuleArray rule_array;
 	Table table;
 	MemPool pool;
 	//char *name;

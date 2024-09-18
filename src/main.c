@@ -31,14 +31,16 @@ int main(void) {
 
 		TokenStream stream;
 
-		for(size_t i = 0; i < vm.ruleArray.n_rules; i++) {
+		for(size_t i = 0; i < vm.rule_array.n_rules; i++) {
 			initTokenStream(&stream, &vm.chunk);
-			vm.chunk.head = parseGrammar(vm.ruleArray.rules[i].head, &stream, &vm.chunk.pool);
+			vm.chunk.head = parseGrammar(vm.rule_array.rules[i].head, &stream, &vm.chunk.pool);
 			if(vm.chunk.head) {
+				
 				if(stream.tk[stream.pos].type != TK_EOF) {
 					break; // ignore match if didn't consume all tokens in line
 				}
-				if(vm.ruleArray.rules[i].head->node_type == RULE_TK) {
+				
+				if(vm.rule_array.rules[i].head->node_type == RULE_TK) {
 					vm.chunk.head = __wrapChild(vm.chunk.head, (SYNTAX_TYPE) i, &vm.chunk.pool);
 				} else {
 					vm.chunk.head->type = (SYNTAX_TYPE) i;
@@ -50,6 +52,7 @@ int main(void) {
 		if(0 == strncmp(input_buffer, ".exit", 5)) {
 			break;
 		}
+		printTokens(&vm);
 		printPoolInfo(&vm.chunk.pool);
 		resetChunk(&vm.chunk);
 	}
