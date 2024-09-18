@@ -37,7 +37,8 @@ int main(void) {
 			if(vm.chunk.head) {
 				
 				if(stream.tk[stream.pos].type != TK_EOF) {
-					break; // ignore match if didn't consume all tokens in line
+					//break; // ignore match if didn't consume all tokens in line
+					continue;
 				}
 				
 				if(vm.rule_array.rules[i].head->node_type == RULE_TK) {
