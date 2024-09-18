@@ -22,5 +22,5 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ##
-## Parts of object.c/.h/, scanner.c/.h, and vm.c/.h are from Crafting Interpreters by Robert Nystrom.
+## Parts of object.c/.h, scanner.c/.h, and vm.c/.h are from Crafting Interpreters by Robert Nystrom.
 ##

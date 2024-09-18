@@ -1,6 +1,6 @@
 #include "file.h"
 
-char *readFile(char *name, MemPool *pool) {
+char *pReadFile(char *name, MemPool *pool) {
 	FILE *file = NULL;
 	char *output = NULL;
 	long size;

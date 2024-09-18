@@ -9,7 +9,7 @@ void initVM(VM *vm, char *grammarFile) {
 	initGrammarRuleArray(&(vm->rule_array), grammarFile, &(vm->pool));
 	initTable(&(vm->table));
 	//vm->name = pNewStr(script, &(vm->pool));
-	//vm->source = readFile(script, &(vm->pool));
+	//vm->source = pReadFile(script, &(vm->pool));
 	vm->grammar_name = pNewStr(grammarFile, &(vm->pool));
 	return;
 }

@@ -8,10 +8,10 @@
 
 char *__syntaxTypeLiterals[] = {
 
-	"STX_SCOPE", "STX_CASE", "STX_CLASS", "STX_FNDEF", "STX_IF", "STX_WHILE",
-	"STX_FOR", "STX_FORRANGE", "STX_SWITCH",
+	"STX_SCOPE", "STX_CLASS", "STX_FNDEF", "STX_IF", "STX_WHILE",
+	"STX_FOR", "STX_FORRANGE", "STX_SWITCH", "STX_CASE",
 
-	"STX_DECLARE", "STX_ASSIGN", "STX_INIT", "STX_ECHO", "STX_BREAK", 
+	"STX_INIT", "STX_DECLARE", "STX_ASSIGN", "STX_ECHO", "STX_BREAK", 
 	"STX_RETURN", "STX_EXIT",
 
 	"STX_GEXPR", "STX_EXPR",
@@ -118,18 +118,6 @@ void initTokenStream(TokenStream *stream, Chunk *chunk) {
 	stream->pos = 0;
 	stream->n = chunk->n_tokens;
 }
-/*
-void initGrammarParser(GrammarParser *parser) {
-	parser->n_tokens = 0;
-	parser->tokens = NULL;
-
-	parser->par_node = NULL;
-	parser->curr_node = NULL;
-
-	initMemPool(&(parser->pool));
-	return;
-}
-*/
 
 void __printNTabs(unsigned int n) {
 	for(unsigned int i = 0; i < n; i++) {
@@ -406,7 +394,7 @@ int populateGrammarRuleArrayReferences(GrammarRuleArray *rule_array) {
 
 int initGrammarRuleArray(GrammarRuleArray *rule_array, char *fileName, MemPool *pool) {
 
-	char *source = readFile(fileName, pool);
+	char *source = pReadFile(fileName, pool);
 	initScanner(source);
 
 	size_t n_tokens = 0;
@@ -636,10 +624,7 @@ size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *
 }
 */
 
-// rule which resolves to token means is_token node is created. nodes are returned upwards without type until calling fn from STX grammar node attaches type
-
 void __addChild(SyntaxNode *parent, SyntaxNode *child, MemPool *pool) {
-	//printf("in addchild\n");
 	if(parent->n_children == 0) {
 		parent->children = palloc(pool, sizeof(SyntaxNode *));
 	} else {
@@ -648,11 +633,7 @@ void __addChild(SyntaxNode *parent, SyntaxNode *child, MemPool *pool) {
 	}
 	parent->children[parent->n_children] = child;
 	parent->n_children++;
-	//printf("added child\n");
-	//printf("n_children: %zu\n", parent->n_children);
 }
-//
-//
 
 SyntaxNode *__wrapChild(SyntaxNode *child, SYNTAX_TYPE stype, MemPool *pool) {
 	SyntaxNode *parent = palloc(pool, sizeof(SyntaxNode));
@@ -670,9 +651,7 @@ SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 	initSyntaxNode(node);
 	size_t start_pos = stream->pos;
 
-	//printf("rnode->n_children: %zu\n", rnode->n_children);
 	for(size_t i = 0; i < rnode->n_children; i++) {
-		//printf("in parseAnd: %zu\n", i);
 		SyntaxNode *child = parseGrammar(&rnode->children[i], stream, pool);
 		if(!child) {
 			if(rnode->children[i].node_type == RULE_GRM && ( 
@@ -684,11 +663,6 @@ SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 			stream->pos = start_pos;
 			return NULL;
 		}
-		/*if((child->is_token == false && rnode->children[i].node_type == RULE_GRM) && 
-			(	rnode->children[i].nested_type.g == GRM_GROUP ||
-				rnode->children[i].nested_type.g == GRM_IFONE ||
-				rnode->children[i].nested_type.g == GRM_IFMANY)	
-		)*/
 
 		if(child->type == STX_UNSPECIFIED && child->is_token == false)
 
@@ -697,8 +671,7 @@ SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 				if((rnode->children[i].children[0].node_type == RULE_GRM &&
 					rnode->children[i].children[0].nested_type.g == GRM_OR)
 
-					|| rnode->children[i].children[0].node_type == RULE_STX
-					/*|| (rnode->children[i].children[0].node_type == RULE_STX)*/) {
+					|| rnode->children[i].children[0].node_type == RULE_STX) {
 					__addChild(node, child, pool);
 					continue;
 				}
@@ -782,7 +755,6 @@ SyntaxNode *parseToken(RuleNode *rnode, TokenStream *stream, MemPool *pool) {
 }
 
 SyntaxNode *parseGrammar(RuleNode* rnode, TokenStream *stream, MemPool *pool) {
-	//printf("in parseGrammar\n");
 	switch(rnode->node_type) {
 		case RULE_GRM: {
 			switch(rnode->nested_type.g) {
@@ -793,7 +765,6 @@ SyntaxNode *parseGrammar(RuleNode* rnode, TokenStream *stream, MemPool *pool) {
 					return parseOr(rnode, stream, pool);
 				}
 				case GRM_GROUP: {
-					//return parseAnd(rnode->children, stream, pool);
 					return parseGrammar(rnode->children, stream, pool);
 				}
 				case GRM_IFONE: {
@@ -821,8 +792,6 @@ SyntaxNode *parseGrammar(RuleNode* rnode, TokenStream *stream, MemPool *pool) {
 	return NULL;
 }
 
-//
-//
 char *syntaxTypeLiteralLookup(SYNTAX_TYPE type) {
 	return __syntaxTypeLiterals[type];
 }

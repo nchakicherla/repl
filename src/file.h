@@ -6,7 +6,7 @@
 
 #include "memory.h"
 
-char *readFile(char *name, MemPool *pool);
+char *pReadFile(char *name, MemPool *pool);
 
 int writeFileChars(char *name, char *source);
 

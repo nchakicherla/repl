@@ -11,10 +11,10 @@
 //#include "chunk.h"
 
 typedef enum {
-	STX_SCOPE, STX_CASE, STX_CLASS, STX_FNDEF, STX_IF, STX_WHILE,
-	STX_FOR, STX_FORRANGE, STX_SWITCH,
+	STX_SCOPE, STX_CLASS, STX_FNDEF, STX_IF, STX_WHILE,
+	STX_FOR, STX_FORRANGE, STX_SWITCH, STX_CASE,
 
-	STX_DECLARE, STX_ASSIGN, STX_INIT, STX_ECHO, STX_BREAK,
+	STX_INIT, STX_DECLARE, STX_ASSIGN, STX_ECHO, STX_BREAK,
 	STX_RETURN, STX_EXIT,
 
 	STX_GEXPR, STX_EXPR,
@@ -97,15 +97,7 @@ typedef struct s_GrammarRuleArray {
 	size_t n_rules;
 	GrammarRule *rules;
 } GrammarRuleArray;
-/*
-typedef struct s_GrammarParser {
-	size_t n_tokens;
-	Token *tokens;
-	RuleNode *par_node;
-	RuleNode *curr_node;
-	MemPool pool;
-} GrammarParser;
-*/
+
 typedef struct s_SyntaxParser {
 	RuleNode *current_rule;
 	Token *current_token;
@@ -130,8 +122,6 @@ typedef struct s_TokenStream {
 	size_t n;
 } TokenStream;
 
-// int __growChunkTokens()
-
 void initChunk(Chunk *chunk);
 
 void resetChunk(Chunk *chunk);
@@ -145,8 +135,6 @@ void initSyntaxNode(SyntaxNode *node);
 void initRuleNode(RuleNode *node);
 
 void initTokenStream(TokenStream *stream, Chunk *chunk);
-
-// void initGrammarParser(GrammarParser *parser);
 
 size_t getSemicolonOffset(Token *tokens);
 
@@ -168,13 +156,10 @@ int populateGrammarRuleArrayReferences(GrammarRuleArray *rule_array);
 
 int initGrammarRuleArray(GrammarRuleArray *rule_array, char *fileName, MemPool *pool);
 
-// size_t matchGrammar(RuleNode *rnode, Token *tokens, SyntaxNode *snode, MemPool *pool);
-
 void __addChild(SyntaxNode *parent, SyntaxNode *child, MemPool *pool);
 
 SyntaxNode *__wrapChild(SyntaxNode *child, SYNTAX_TYPE stype, MemPool *pool);
 
-//
 SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool);
 
 SyntaxNode *parseOr(RuleNode *rnode, TokenStream *stream, MemPool *pool);
@@ -188,8 +173,6 @@ SyntaxNode *parseSyntax(RuleNode *rnode, TokenStream *stream, MemPool *pool);
 SyntaxNode *parseToken(RuleNode *rnode, TokenStream *stream, MemPool *pool);
 
 SyntaxNode *parseGrammar(RuleNode* rnode, TokenStream *stream, MemPool *pool);
-
-//
 
 char *syntaxTypeLiteralLookup(SYNTAX_TYPE type);
 
