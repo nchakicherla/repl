@@ -313,14 +313,12 @@ RULE: STX_EXPR
 					SYNTAX --- STX_STRLIT
 					SYNTAX --- STX_TRUE
 					SYNTAX --- STX_FALSE
-		IFMANY
+		IFONE
 			AND
 				OR
 					SYNTAX --- STX_ARITHOP
 					SYNTAX --- STX_BOOLOP
-				OR
-					SYNTAX --- STX_GEXPR
-					SYNTAX --- STX_EXPR
+				SYNTAX --- STX_EXPR
 
 ----
 ----
