@@ -18,7 +18,7 @@ char *__tokenNameLiterals[] = {
 	"TK_IDENTIFIER", "TK_CHARS", "TK_NUM",
 
 	// keywords
-	"TK_AND", "TK_BOOL", "TK_BREAK", "TK_CASE", "TK_CLASS", "TK_FLT", "TK_ELSE", "TK_EXIT", "TK_FALSE", "TK_FN", "TK_FOR", "TK_IF", "TK_INT", "TK_NIL", 
+	"TK_AND", "TK_BOOL", "TK_BREAK", "TK_CASE", "TK_CLASS", "TK_FLT", "TK_ELSE", "TK_EXIT", "TK_FALSE", "TK_FN", "TK_FOR", "TK_IF", "TK_IN", "TK_INT", "TK_NIL", 
 	"TK_OR", "TK_RETURN", "TK_SCOPE", "TK_STR", "TK_SWITCH", "TK_THIS", "TK_TRUE", "TK_WHILE",
 
 	"TK_EOF", "TK_ERROR"
@@ -244,7 +244,12 @@ TOKEN_TYPE identifierType(void) {
 			if (scanner.current - scanner.start > 1) {
 				switch (scanner.start[1]) {
 					case 'f': return checkKeyword(0, 2, "if", TK_IF);
-					case 'n': return checkKeyword(2, 1, "t", TK_INT);
+					case 'n': {
+						if (scanner.current - scanner.start > 2) {
+							return checkKeyword(2, 1, "t", TK_INT);
+						}
+						return checkKeyword(0, 2, "in", TK_IN);
+					}
 				}
 			}
 		}
