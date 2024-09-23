@@ -28,7 +28,21 @@ int main(void) {
 			fgets(vm.chunk.source, INPUT_BUFFER_SIZE, stdin);
 		}
 		vm.chunk.source[INPUT_BUFFER_SIZE - 1] = '\0';
+
 		scanTokensFromSource(&vm.chunk, vm.chunk.source);
+
+		bool had_error = false;
+		for(size_t i = 0; i < vm.chunk.n_tokens; i++) {
+			if(vm.chunk.tokens[i].type == TK_ERROR) {
+				printf("tokenizer error\n");
+				had_error = true;
+			}
+		}
+
+		if(had_error) {
+			resetChunk(&vm.chunk);
+			continue;
+		}
 
 		TokenStream stream;
 
@@ -41,7 +55,7 @@ int main(void) {
 					continue;
 				}
 				if(vm.rule_array.rules[i].head->node_type == RULE_TK) {
-					vm.chunk.head = __wrapChild(vm.chunk.head, (SYNTAX_TYPE) i, &vm.chunk.pool);
+					vm.chunk.head = wrapNode(vm.chunk.head, (SYNTAX_TYPE) i, &vm.chunk.pool);
 				} else {
 					vm.chunk.head->type = (SYNTAX_TYPE) i;
 				}

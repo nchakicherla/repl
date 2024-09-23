@@ -64,6 +64,7 @@ typedef struct s_SyntaxNode {
 
 	bool is_token;
 	Token token;
+	size_t n_chars;
 	
 	bool evaluated;
 	Object *object;
@@ -72,6 +73,7 @@ typedef struct s_SyntaxNode {
 	struct s_SyntaxNode **children;
 	struct s_SyntaxNode *parent;
 
+	bool had_error;
 	char *msg;
 } SyntaxNode;
 
@@ -156,9 +158,9 @@ int populateGrammarRuleArrayReferences(GrammarRuleArray *rule_array);
 
 int initGrammarRuleArray(GrammarRuleArray *rule_array, char *fileName, MemPool *pool);
 
-void __addChild(SyntaxNode *parent, SyntaxNode *child, MemPool *pool);
+void addChild(SyntaxNode *parent, SyntaxNode *child, MemPool *pool);
 
-SyntaxNode *__wrapChild(SyntaxNode *child, SYNTAX_TYPE stype, MemPool *pool);
+SyntaxNode *wrapNode(SyntaxNode *child, SYNTAX_TYPE stype, MemPool *pool);
 
 SyntaxNode *parseAnd(RuleNode *rnode, TokenStream *stream, MemPool *pool);
 
