@@ -40,7 +40,7 @@ static Block *newInitBlock(size_t block_size) {
 
 int initMemPool(MemPool *pool) {
 	size_t block_size = DEF_BLOCK_INIT_SIZE;
-
+/*
 	pool->first_block = malloc(sizeof(Block));
 	// pool->first_block = calloc(1, sizeof(Block));
 	if(!pool->first_block) return 1;
@@ -51,6 +51,8 @@ int initMemPool(MemPool *pool) {
 
 	pool->first_block->data_size = DEF_BLOCK_INIT_SIZE;
 	pool->first_block->next = NULL;
+*/
+	pool->first_block = newInitBlock(block_size);
 
 	pool->bytes_used = 0;
 	pool->bytes_allocd = sizeof(MemPool) + sizeof(Block) + block_size;
@@ -103,7 +105,7 @@ void *palloc(MemPool *pool, size_t size) {
 	
 	// Block *last_block = getLastBlock(pool);
 
-	if(pool->next_free_size <= size) {
+	if(pool->next_free_size < size) {
 		Block *last_block = pool->last_block;
 		Block *new_block = NULL;
 

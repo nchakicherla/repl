@@ -158,6 +158,8 @@ int populateGrammarRuleArrayReferences(GrammarRuleArray *rule_array);
 
 int initGrammarRuleArray(GrammarRuleArray *rule_array, char *fileName, MemPool *pool);
 
+void defineParentPtrs(SyntaxNode *head);
+
 void addChild(SyntaxNode *parent, SyntaxNode *child, MemPool *pool);
 
 SyntaxNode *wrapNode(SyntaxNode *child, SYNTAX_TYPE stype, MemPool *pool);

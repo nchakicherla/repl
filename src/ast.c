@@ -3,6 +3,7 @@
 #include "ast.h"
 #include "file.h"
 #include "vm.h"
+#include "color.h"
 
 #include <stdio.h>
 
@@ -437,6 +438,15 @@ int initGrammarRuleArray(GrammarRuleArray *rule_array, char *fileName, MemPool *
 	return 0;
 }
 
+void defineParentPtrs(SyntaxNode *node) {
+	for(size_t i = 0; i < node->n_children; i++) {
+		node->children[i]->parent = node;
+		if(false == node->children[i]->is_token) {
+			defineParentPtrs(node->children[i]);
+		}
+	}
+}
+
 void addChild(SyntaxNode *parent, SyntaxNode *child, MemPool *pool) {
 	if(parent->n_children == 0) {
 		parent->children = palloc(pool, sizeof(SyntaxNode *));
@@ -640,10 +650,20 @@ void printTokenStream(TokenStream *stream) {
 void printSyntaxNode(SyntaxNode *node, unsigned int indent) {
 	if(node->is_token == true) {
 		__printNTabs(indent);
-		printf("%s %.*s\n", tokenTypeLiteralLookup(node->token.type), (int)node->token.len, node->token.start);
+		setColor(ANSI_GREEN);
+		printf("%s ", tokenTypeLiteralLookup(node->token.type));
+		resetColor();
+
+		setColor(ANSI_CYAN);
+		printf("%.*s\n", (int)node->token.len, node->token.start);
+		resetColor();
+		//printf("(par: %p)\n", (void *)node->parent);
 	} else {
 		__printNTabs(indent);
+		setColor(ANSI_YELLOW);
 		printf("/%s\n", syntaxTypeLiteralLookup(node->type));
+		resetColor();
+		//printf("(par: %p)\n", (void *)node->parent);
 		for(size_t i = 0; i < node->n_children; i++) {
 			printSyntaxNode(node->children[i], indent + 1);
 		}

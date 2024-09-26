@@ -168,8 +168,8 @@ int insertKey(Table *table, char *key, void *value, OBJ_TYPE type) {
         case STR_TYPE:
             new_entry->obj.val.str = (char *)value;
             break;
-        case ITR_TYPE:
-            new_entry->obj.val.itr = *(int64_t *)value;
+        case I64_TYPE:
+            new_entry->obj.val.i64 = *(int64_t *)value;
             break;
         case DBL_TYPE:
             new_entry->obj.val.dbl = *(double *)value;

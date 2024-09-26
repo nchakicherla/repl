@@ -10,6 +10,7 @@
 #include "ast.h"
 
 #include "random.h"
+#include "color.h"
 
 #define INPUT_BUFFER_SIZE 512
 
@@ -24,10 +25,12 @@ int main(void) {
 		//char *input_buffer = pzalloc(&vm.chunk.pool, INPUT_BUFFER_SIZE);
 		vm.chunk.source = pzalloc(&vm.chunk.pool, INPUT_BUFFER_SIZE);
 
+		setColor(ANSI_CYAN);
 		while(!(strchr(vm.chunk.source, '\n'))) {
 			fgets(vm.chunk.source, INPUT_BUFFER_SIZE, stdin);
 		}
 		vm.chunk.source[INPUT_BUFFER_SIZE - 1] = '\0';
+		resetColor();
 
 		scanTokensFromSource(&vm.chunk, vm.chunk.source);
 
@@ -36,6 +39,7 @@ int main(void) {
 			if(vm.chunk.tokens[i].type == TK_ERROR) {
 				printf("tokenizer error\n");
 				had_error = true;
+				break;
 			}
 		}
 
@@ -59,6 +63,7 @@ int main(void) {
 				} else {
 					vm.chunk.head->type = (SYNTAX_TYPE) i;
 				}
+				defineParentPtrs(vm.chunk.head);
 				printSyntaxNode(vm.chunk.head, 0);
 				break;
 			}

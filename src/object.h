@@ -7,7 +7,7 @@
 typedef enum {
 	NIL_TYPE,
 	STR_TYPE,
-	ITR_TYPE,
+	I64_TYPE,
 	DBL_TYPE,
 	BLN_TYPE,
 	PTR_TYPE,
@@ -15,7 +15,7 @@ typedef enum {
 
 union Value {
 	char *str;
-	int64_t itr;
+	int64_t i64;
 	double dbl;
 	bool bln;
 	void *ptr;

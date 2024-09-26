@@ -18,6 +18,7 @@ OBJS = 	./obj/file.o \
 		./obj/vm.o \
 		./obj/object.o \
 		./obj/array.o \
+		./obj/color.o \
 
 default: reset $(BIN)
 ifeq ($(OS),Darwin) 
