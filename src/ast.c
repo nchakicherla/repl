@@ -32,7 +32,7 @@ char *__syntaxTypeLiterals[] = {
 	"STX_EQUAL", "STX_PLUS_EQUAL", "STX_MINUS_EQUAL", "STX_STAR_EQUAL",
 	"STX_DIV_EQUAL", "STX_MOD_EQUAL",
 
-	"STX_INCREMENT", "STX_DECREMENT",
+	"STX_INCREMENT", "STX_DECREMENT", "STX_NEGATE",
 
 	"STX_ERR", "STX_UNSPECIFIED",
 };
@@ -650,6 +650,8 @@ void printTokenStream(TokenStream *stream) {
 void printSyntaxNode(SyntaxNode *node, unsigned int indent) {
 	if(node->is_token == true) {
 		__printNTabs(indent);
+		printf("- ");
+
 		setColor(ANSI_GREEN);
 		printf("%s ", tokenTypeLiteralLookup(node->token.type));
 		resetColor();
@@ -657,13 +659,14 @@ void printSyntaxNode(SyntaxNode *node, unsigned int indent) {
 		setColor(ANSI_CYAN);
 		printf("%.*s\n", (int)node->token.len, node->token.start);
 		resetColor();
-		//printf("(par: %p)\n", (void *)node->parent);
 	} else {
 		__printNTabs(indent);
+		printf("- ");
+
 		setColor(ANSI_YELLOW);
 		printf("/%s\n", syntaxTypeLiteralLookup(node->type));
 		resetColor();
-		//printf("(par: %p)\n", (void *)node->parent);
+
 		for(size_t i = 0; i < node->n_children; i++) {
 			printSyntaxNode(node->children[i], indent + 1);
 		}

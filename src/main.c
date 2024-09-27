@@ -37,7 +37,9 @@ int main(void) {
 		bool had_error = false;
 		for(size_t i = 0; i < vm.chunk.n_tokens; i++) {
 			if(vm.chunk.tokens[i].type == TK_ERROR) {
-				printf("tokenizer error\n");
+				setColor(ANSI_RED);
+				printf("%.*s\n", (int)vm.chunk.tokens[i].len, vm.chunk.tokens[i].start);
+				resetColor();
 				had_error = true;
 				break;
 			}

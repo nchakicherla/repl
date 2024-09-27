@@ -282,30 +282,19 @@ RULE: STX_EXPR
 -
 	AND
 		IFONE
-			SYNTAX --- STX_NOT
+			OR
+				SYNTAX --- STX_NOT
+				SYNTAX --- STX_NEGATE
 		OR
-			GROUP
-				AND
-					IFONE
-						TOKEN --- TK_MINUS
-					SYNTAX --- STX_NUM
-					OR
-						SYNTAX --- STX_GEXPR
-						SYNTAX --- STX_VAR
-			GROUP
-				AND
-					IFONE
-						TOKEN --- TK_MINUS
-					OR
-						SYNTAX --- STX_GEXPR
-						SYNTAX --- STX_MEMBER
-						SYNTAX --- STX_INDEX
-						SYNTAX --- STX_FNCALL
-						SYNTAX --- STX_VAR
-						SYNTAX --- STX_NUM
-						SYNTAX --- STX_STRLIT
-						SYNTAX --- STX_TRUE
-						SYNTAX --- STX_FALSE
+			SYNTAX --- STX_GEXPR
+			SYNTAX --- STX_MEMBER
+			SYNTAX --- STX_INDEX
+			SYNTAX --- STX_FNCALL
+			SYNTAX --- STX_VAR
+			SYNTAX --- STX_NUM
+			SYNTAX --- STX_STRLIT
+			SYNTAX --- STX_TRUE
+			SYNTAX --- STX_FALSE
 		IFONE
 			AND
 				OR
@@ -668,6 +657,13 @@ RULE: STX_DECREMENT
 			SYNTAX --- STX_MEMBER
 		TOKEN --- TK_MINUS
 		TOKEN --- TK_MINUS
+
+----
+----
+
+RULE: STX_NEGATE
+-
+	TOKEN --- TK_MINUS
 
 ----
 ----
