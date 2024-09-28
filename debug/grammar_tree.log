@@ -295,12 +295,25 @@ RULE: STX_EXPR
 			SYNTAX --- STX_STRLIT
 			SYNTAX --- STX_TRUE
 			SYNTAX --- STX_FALSE
-		IFONE
+		IFMANY
 			AND
 				OR
 					SYNTAX --- STX_ARITHOP
 					SYNTAX --- STX_BOOLOP
-				SYNTAX --- STX_EXPR
+				IFONE
+					OR
+						SYNTAX --- STX_NOT
+						SYNTAX --- STX_NEGATE
+				OR
+					SYNTAX --- STX_GEXPR
+					SYNTAX --- STX_MEMBER
+					SYNTAX --- STX_INDEX
+					SYNTAX --- STX_FNCALL
+					SYNTAX --- STX_VAR
+					SYNTAX --- STX_NUM
+					SYNTAX --- STX_STRLIT
+					SYNTAX --- STX_TRUE
+					SYNTAX --- STX_FALSE
 
 ----
 ----
