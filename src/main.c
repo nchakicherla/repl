@@ -12,6 +12,8 @@
 #include "random.h"
 #include "color.h"
 
+#include <time.h>
+
 #define INPUT_BUFFER_SIZE 512
 
 int main(void) {
@@ -201,4 +203,27 @@ int main(void) {
 
 	printf("IDX_MAX: %zu\n", IDX_MAX);
 	printf("IDX_ERROR: %zu\n", IDX_ERROR);
+
+
+size_t fib(size_t n) {
+	if(n == 0) return 0;
+	if(n == 1) return 1;
+	return fib(n - 2) + fib(n - 1);
+}
+
+size_t fibFast(size_t n) {
+	if(n == 0) return 0;
+	if(n == 1) return 1;
+	size_t *arr = malloc(n + 1 * sizeof(size_t));
+	size_t ret = 0;
+	arr[0] = 0;
+	arr[1] = 1;
+	for(size_t i = 2; i <= n; i++) {
+		arr[i] = arr[i - 2] + arr[i - 1];
+	}
+	ret = arr[n];
+	free(arr);
+	return ret;
+}
+
 	*/

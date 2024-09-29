@@ -66,8 +66,8 @@ typedef struct s_SyntaxNode {
 	Token token;
 	size_t n_chars;
 	
-	bool evaluated;
-	Object *object;
+	//bool evaluated;
+	//Object *object;
 
 	size_t n_children;
 	struct s_SyntaxNode **children;

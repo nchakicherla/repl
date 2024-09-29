@@ -100,7 +100,8 @@ void __swapSyntaxNodes(SyntaxNode *node1, SyntaxNode *node2) {
 void initSyntaxNode(SyntaxNode *node) {
 	node->type = STX_UNSPECIFIED;
 	node->is_token = false;
-	node->object = NULL;
+	//node->evaluated = false;
+	//node->object = NULL;
 	node->n_children = 0;
 	node->children = NULL;
 	node->parent = NULL;
