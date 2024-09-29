@@ -8,36 +8,8 @@
 #include "table.h"
 #include "scanner.h"
 #include "file.h"
-//#include "chunk.h"
-
-typedef enum {
-	STX_SCOPE, STX_CLASS, STX_FNDEF, STX_IF, STX_WHILE,
-	STX_FOR, STX_FORRANGE, STX_SWITCH, STX_CASE,
-
-	STX_INIT, STX_DECLARE, STX_ASSIGN, STX_ECHO, STX_BREAK,
-	STX_RETURN, STX_EXIT,
-
-	STX_GEXPR, STX_EXPR,
-
-	STX_VTYPE, STX_VAR, STX_MEMBER, STX_THIS,STX_INDEX, STX_FNCALL,
-	STX_NUM, STX_STRLIT, STX_NIL,
-
-	STX_ARITHOP, STX_BOOLOP, STX_ASSIGNOP,
-
-	STX_MULT, STX_DIV, STX_SUM, STX_DIFF, STX_MOD,
-
-	STX_TRUE, STX_FALSE, STX_AND, STX_OR, STX_NOT, STX_GREATER,
-	STX_LESS, STX_EQUAL_EQUAL, STX_NOT_EQUAL, STX_GREATER_EQUAL, STX_LESS_EQUAL,
-
-	STX_RARROW,
-
-	STX_EQUAL, STX_PLUS_EQUAL, STX_MINUS_EQUAL, STX_STAR_EQUAL, STX_DIV_EQUAL,
-	STX_MOD_EQUAL,
-
-	STX_INCREMENT, STX_DECREMENT, STX_NEGATE,
-
-	STX_ERR, STX_UNSPECIFIED,
-} SYNTAX_TYPE;
+#include "chunk.h"
+#include "syntax_types.h"
 
 typedef enum {
 	GRM_AND,
@@ -58,24 +30,6 @@ union u_TargetType {
 	SYNTAX_TYPE s;
 	TOKEN_TYPE t;
 };
-
-typedef struct s_SyntaxNode {
-	SYNTAX_TYPE type;
-
-	bool is_token;
-	Token token;
-	size_t n_chars;
-	
-	//bool evaluated;
-	//Object *object;
-
-	size_t n_children;
-	struct s_SyntaxNode **children;
-	struct s_SyntaxNode *parent;
-
-	bool had_error;
-	char *msg;
-} SyntaxNode;
 
 typedef struct s_RuleNode {
 
@@ -106,33 +60,13 @@ typedef struct s_SyntaxParser {
 	//size_t token_idx;
 } SyntaxParser;
 
-typedef struct s_Chunk {
-	char *source;
-
-	size_t n_tokens;
-	Token *tokens;
-
-	SyntaxNode *head;
-
-	MemPool pool;
-	// int err;
-} Chunk;
-
 typedef struct s_TokenStream {
 	Token *tk;
 	size_t pos;
 	size_t n;
 } TokenStream;
 
-void initChunk(Chunk *chunk);
-
-void resetChunk(Chunk *chunk);
-
-void termChunk(Chunk *chunk);
-
 int scanTokensFromSource(Chunk *chunk, char *source);
-
-void initSyntaxNode(SyntaxNode *node);
 
 void initRuleNode(RuleNode *node);
 

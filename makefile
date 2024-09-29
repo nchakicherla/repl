@@ -19,6 +19,8 @@ OBJS = 	./obj/file.o \
 		./obj/object.o \
 		./obj/array.o \
 		./obj/color.o \
+		./obj/chunk.o \
+		./obj/syntax_node.o \
 
 default: reset $(BIN)
 ifeq ($(OS),Darwin) 

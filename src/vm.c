@@ -1,7 +1,7 @@
 #include "vm.h"
 #include "file.h"
 #include "ast.h"
-//#include "chunk.h"
+#include "chunk.h"
 
 void initVM(VM *vm, char *grammarFile) {
 	initChunk(&(vm->chunk));

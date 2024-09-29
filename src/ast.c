@@ -37,32 +37,6 @@ char *__syntaxTypeLiterals[] = {
 	"STX_ERR", "STX_UNSPECIFIED",
 };
 
-void initChunk(Chunk *chunk) {
-	chunk->source = NULL;
-
-	chunk->n_tokens = 0;
-	chunk->tokens = NULL;
-
-	chunk->head = NULL;
-	initMemPool(&(chunk->pool));
-	return;
-}
-
-void resetChunk(Chunk *chunk) {
-	chunk->source = NULL;
-
-	chunk->n_tokens = 0;
-	chunk->tokens = NULL;
-	
-	chunk->head = NULL;
-	resetMemPool(&(chunk->pool));
-}
-
-void termChunk(Chunk *chunk) {
-	termMemPool(&(chunk->pool));
-	return;
-}
-
 int scanTokensFromSource(Chunk *chunk, char *source) {
 
 	size_t len = strlen(source);
@@ -95,18 +69,6 @@ void __swapSyntaxNodes(SyntaxNode *node1, SyntaxNode *node2) {
 	memcpy(&tmp, node1, sizeof(SyntaxNode));
 	memcpy(node1, node2, sizeof(SyntaxNode));
 	memcpy(node2, &tmp, sizeof(SyntaxNode));
-}
-
-void initSyntaxNode(SyntaxNode *node) {
-	node->type = STX_UNSPECIFIED;
-	node->is_token = false;
-	//node->evaluated = false;
-	//node->object = NULL;
-	node->n_children = 0;
-	node->children = NULL;
-	node->parent = NULL;
-	node->had_error = false;
-	node->msg = NULL;
 }
 
 void initRuleNode(RuleNode *node) {
