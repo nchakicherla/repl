@@ -1,5 +1,5 @@
-#ifndef MEMORY_H
-#define MEMORY_H
+#ifndef MEMPOOL_H
+#define MEMPOOL_H
 
 #include <stdlib.h>
 #include <string.h>
@@ -45,4 +45,4 @@ void printPoolInfo(MemPool *pool);
 
 // int memSwap(void *ptr1, void *ptr2, size_t size);
 
-#endif // MEMORY_H
+#endif // MEMPOOL_H

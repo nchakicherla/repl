@@ -5,7 +5,7 @@
 //#include "scanner.h"
 #include "file.h"
 #include "table.h"
-#include "memory.h"
+#include "mempool.h"
 #include "vm.h"
 #include "ast.h"
 
@@ -24,23 +24,23 @@ int main(void) {
 	initVM(&vm, grammar);
 
 	while(true) {
-		//char *input_buffer = pzalloc(&vm.chunk.pool, INPUT_BUFFER_SIZE);
-		vm.chunk.source = pzalloc(&vm.chunk.pool, INPUT_BUFFER_SIZE);
+		//char *input_buffer = pzalloc(&vm.parser.pool, INPUT_BUFFER_SIZE);
+		vm.parser.source = pzalloc(&vm.parser.pool, INPUT_BUFFER_SIZE);
 
 		setColor(ANSI_CYAN);
-		while(!(strchr(vm.chunk.source, '\n'))) {
-			fgets(vm.chunk.source, INPUT_BUFFER_SIZE, stdin);
+		while(0 == strchr(vm.parser.source, '\n')) {
+			fgets(vm.parser.source, INPUT_BUFFER_SIZE, stdin);
 		}
-		vm.chunk.source[INPUT_BUFFER_SIZE - 1] = '\0';
+		vm.parser.source[INPUT_BUFFER_SIZE - 1] = '\0';
 		resetColor();
 
-		scanTokensFromSource(&vm.chunk, vm.chunk.source);
+		scanTokensFromSource(&vm.parser, vm.parser.source);
 
 		bool had_error = false;
-		for(size_t i = 0; i < vm.chunk.n_tokens; i++) {
-			if(vm.chunk.tokens[i].type == TK_ERROR) {
+		for(size_t i = 0; i < vm.parser.n_tokens; i++) {
+			if(vm.parser.tokens[i].type == TK_ERROR) {
 				setColor(ANSI_RED);
-				printf("%.*s\n", (int)vm.chunk.tokens[i].len, vm.chunk.tokens[i].start);
+				printf("%.*s\n", (int)vm.parser.tokens[i].len, vm.parser.tokens[i].start);
 				resetColor();
 				had_error = true;
 				break;
@@ -48,39 +48,39 @@ int main(void) {
 		}
 
 		if(had_error) {
-			resetChunk(&vm.chunk);
+			resetParser(&vm.parser);
 			continue;
 		}
 
 		TokenStream stream;
 
 		for(size_t i = 0; i < vm.rule_array.n_rules; i++) {
-			initTokenStream(&stream, &vm.chunk);
-			vm.chunk.head = parseGrammar(vm.rule_array.rules[i].head, &stream, &vm.chunk.pool);
-			if(vm.chunk.head) {
+			initTokenStream(&stream, &vm.parser);
+			vm.parser.head = parseGrammar(vm.rule_array.rules[i].head, &stream, &vm.parser.pool);
+			if(vm.parser.head) {
 				if(stream.tk[stream.pos].type != TK_EOF) {
 					//break; // ignore match if didn't consume all tokens in line
 					continue;
 				}
 				if(vm.rule_array.rules[i].head->node_type == RULE_TK) {
-					vm.chunk.head = wrapNode(vm.chunk.head, (SYNTAX_TYPE) i, &vm.chunk.pool);
+					vm.parser.head = wrapNode(vm.parser.head, (SYNTAX_TYPE) i, &vm.parser.pool);
 				} else {
-					vm.chunk.head->type = (SYNTAX_TYPE) i;
+					vm.parser.head->type = (SYNTAX_TYPE) i;
 				}
-				defineParentPtrs(vm.chunk.head);
-				printSyntaxNode(vm.chunk.head, 0);
+				defineParentPtrs(vm.parser.head);
+				printSyntaxNode(vm.parser.head, 0);
 				break;
 			}
 		}
 
-		if(0 == strncmp(vm.chunk.source, ".exit", 5)) {
+		if(0 == strncmp(vm.parser.source, ".exit", 5)) {
 			break;
 		}
 
 		//printTokens(&vm);
-		printPoolInfo(&vm.chunk.pool);
+		printPoolInfo(&vm.parser.pool);
 
-		resetChunk(&vm.chunk);
+		resetParser(&vm.parser);
 	}
 	printPoolInfo(&vm.pool);
 

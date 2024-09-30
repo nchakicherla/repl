@@ -11,7 +11,7 @@ MAIN = 	./obj/main.o
 
 OBJS = 	./obj/file.o \
 		./obj/table.o \
-		./obj/memory.o \
+		./obj/mempool.o \
 		./obj/scanner.o \
 		./obj/ast.o \
 		./obj/random.o \
@@ -19,7 +19,7 @@ OBJS = 	./obj/file.o \
 		./obj/object.o \
 		./obj/array.o \
 		./obj/color.o \
-		./obj/chunk.o \
+		./obj/parser.o \
 		./obj/syntax_node.o \
 
 default: reset $(BIN)

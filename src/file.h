@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "memory.h"
+#include "mempool.h"
 
 char *pReadFile(char *name, MemPool *pool);
 

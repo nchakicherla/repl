@@ -4,11 +4,11 @@
 #include <string.h>
 #include "common.h"
 
-#include "memory.h"
+#include "mempool.h"
 #include "table.h"
 #include "scanner.h"
 #include "file.h"
-#include "chunk.h"
+#include "parser.h"
 #include "syntax_types.h"
 
 typedef enum {
@@ -66,11 +66,11 @@ typedef struct s_TokenStream {
 	size_t n;
 } TokenStream;
 
-int scanTokensFromSource(Chunk *chunk, char *source);
+int scanTokensFromSource(Parser *parser, char *source);
 
 void initRuleNode(RuleNode *node);
 
-void initTokenStream(TokenStream *stream, Chunk *chunk);
+void initTokenStream(TokenStream *stream, Parser *parser);
 
 size_t getSemicolonOffset(Token *tokens);
 

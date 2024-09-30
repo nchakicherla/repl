@@ -37,14 +37,14 @@ char *__syntaxTypeLiterals[] = {
 	"STX_ERR", "STX_UNSPECIFIED",
 };
 
-int scanTokensFromSource(Chunk *chunk, char *source) {
+int scanTokensFromSource(Parser *parser, char *source) {
 
 	size_t len = strlen(source);
-	chunk->source = palloc(&(chunk->pool), len + 1);
-	memcpy(chunk->source, source, len + 1);
-	chunk->source[len] = '\0';
+	parser->source = palloc(&(parser->pool), len + 1);
+	memcpy(parser->source, source, len + 1);
+	parser->source[len] = '\0';
 
-	initScanner(chunk->source);
+	initScanner(parser->source);
 
 	size_t n_tokens = 0;
 	while(true) {
@@ -53,13 +53,13 @@ int scanTokensFromSource(Chunk *chunk, char *source) {
 		if (token.type == TK_EOF) break;
 	}
 
-	chunk->n_tokens = n_tokens;
-	chunk->tokens = palloc(&(chunk->pool), (n_tokens * sizeof(Token)));
+	parser->n_tokens = n_tokens;
+	parser->tokens = palloc(&(parser->pool), (n_tokens * sizeof(Token)));
 
-	initScanner(chunk->source);
+	initScanner(parser->source);
 
 	for(size_t i = 0; i < n_tokens; i++) {
-		chunk->tokens[i] = scanToken();
+		parser->tokens[i] = scanToken();
 	}
 	return 0;
 }
@@ -78,10 +78,10 @@ void initRuleNode(RuleNode *node) {
 	node->parent = NULL;
 }
 
-void initTokenStream(TokenStream *stream, Chunk *chunk) {
-	stream->tk = chunk->tokens;
+void initTokenStream(TokenStream *stream, Parser *parser) {
+	stream->tk = parser->tokens;
 	stream->pos = 0;
-	stream->n = chunk->n_tokens;
+	stream->n = parser->n_tokens;
 }
 
 void __printNTabs(unsigned int n) {

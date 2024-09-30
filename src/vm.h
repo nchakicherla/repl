@@ -2,12 +2,12 @@
 #define VM_H
 
 #include "common.h"
-#include "memory.h"
+#include "mempool.h"
 //#include "scanner.h"
 #include "ast.h"
 
 typedef struct s_VM {
-	Chunk chunk;
+	Parser parser;
 	GrammarRuleArray rule_array;
 	Table table;
 	MemPool pool;

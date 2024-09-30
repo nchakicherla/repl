@@ -1,5 +1,5 @@
 #include "table.h"
-#include "memory.h"
+#include "mempool.h"
 #include "string.h"
 
 #define DEF_N_BUCKETS 512

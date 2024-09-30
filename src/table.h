@@ -2,7 +2,7 @@
 #define TABLE_H
 
 #include "common.h"
-#include "memory.h"
+#include "mempool.h"
 #include "object.h"
 
 #include <stdlib.h>
