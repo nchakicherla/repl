@@ -30,4 +30,9 @@ typedef enum {
 	STX_ERR, STX_UNSPECIFIED,
 } SYNTAX_TYPE;
 
+/*
+char *syntaxTypeLiteralLookup(SYNTAX_TYPE type) {
+	return __syntaxTypeLiterals[type];
+}
+*/
 #endif // SYNTAX_TYPES_H

@@ -21,6 +21,7 @@ OBJS = 	./obj/file.o \
 		./obj/color.o \
 		./obj/syntax_tree.o \
 		./obj/syntax_node.o \
+		./obj/grammar.o \
 
 default: reset $(BIN)
 ifeq ($(OS),Darwin) 

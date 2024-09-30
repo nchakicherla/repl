@@ -27,7 +27,7 @@ void printTokens(VM *vm) {
 		printf("LINE: %6zu TK%6zu: TYPE: %16s - \"%.*s\"\n", 
 			vm->tree.tokens[i].line,
 			i,
-			tokenTypeLiteralLookup(vm->tree.tokens[i].type), 
+			tokenLabelLookup(vm->tree.tokens[i].type), 
 			(int)vm->tree.tokens[i].len, vm->tree.tokens[i].start);
 	}
 	return;
