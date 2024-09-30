@@ -8,7 +8,7 @@
 #include "table.h"
 #include "scanner.h"
 #include "file.h"
-#include "parser.h"
+#include "syntax_tree.h"
 #include "syntax_types.h"
 
 typedef enum {
@@ -54,11 +54,11 @@ typedef struct s_GrammarRuleArray {
 	GrammarRule *rules;
 } GrammarRuleArray;
 
-typedef struct s_SyntaxParser {
+typedef struct s_SyntaxSyntaxTree {
 	RuleNode *current_rule;
 	Token *current_token;
 	//size_t token_idx;
-} SyntaxParser;
+} SyntaxSyntaxTree;
 
 typedef struct s_TokenStream {
 	Token *tk;
@@ -66,11 +66,11 @@ typedef struct s_TokenStream {
 	size_t n;
 } TokenStream;
 
-int scanTokensFromSource(Parser *parser, char *source);
+int scanTokensFromSource(SyntaxTree *tree, char *source);
 
 void initRuleNode(RuleNode *node);
 
-void initTokenStream(TokenStream *stream, Parser *parser);
+void initTokenStream(TokenStream *stream, SyntaxTree *tree);
 
 size_t getSemicolonOffset(Token *tokens);
 

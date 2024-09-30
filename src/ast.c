@@ -37,14 +37,14 @@ char *__syntaxTypeLiterals[] = {
 	"STX_ERR", "STX_UNSPECIFIED",
 };
 
-int scanTokensFromSource(Parser *parser, char *source) {
+int scanTokensFromSource(SyntaxTree *tree, char *source) {
 
 	size_t len = strlen(source);
-	parser->source = palloc(&(parser->pool), len + 1);
-	memcpy(parser->source, source, len + 1);
-	parser->source[len] = '\0';
+	tree->source = palloc(&(tree->pool), len + 1);
+	memcpy(tree->source, source, len + 1);
+	tree->source[len] = '\0';
 
-	initScanner(parser->source);
+	initScanner(tree->source);
 
 	size_t n_tokens = 0;
 	while(true) {
@@ -53,13 +53,13 @@ int scanTokensFromSource(Parser *parser, char *source) {
 		if (token.type == TK_EOF) break;
 	}
 
-	parser->n_tokens = n_tokens;
-	parser->tokens = palloc(&(parser->pool), (n_tokens * sizeof(Token)));
+	tree->n_tokens = n_tokens;
+	tree->tokens = palloc(&(tree->pool), (n_tokens * sizeof(Token)));
 
-	initScanner(parser->source);
+	initScanner(tree->source);
 
 	for(size_t i = 0; i < n_tokens; i++) {
-		parser->tokens[i] = scanToken();
+		tree->tokens[i] = scanToken();
 	}
 	return 0;
 }
@@ -78,10 +78,10 @@ void initRuleNode(RuleNode *node) {
 	node->parent = NULL;
 }
 
-void initTokenStream(TokenStream *stream, Parser *parser) {
-	stream->tk = parser->tokens;
+void initTokenStream(TokenStream *stream, SyntaxTree *tree) {
+	stream->tk = tree->tokens;
 	stream->pos = 0;
-	stream->n = parser->n_tokens;
+	stream->n = tree->n_tokens;
 }
 
 void __printNTabs(unsigned int n) {
@@ -108,7 +108,7 @@ void __printTokens(Token *tokens, size_t n) {
 	}
 	return;
 }
-
+s
 size_t getSemicolonOffset(Token *tokens) {
 	size_t ret = 0;
 	while(tokens[ret].type != TK_SEMICOLON) {

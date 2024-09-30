@@ -19,7 +19,7 @@ OBJS = 	./obj/file.o \
 		./obj/object.o \
 		./obj/array.o \
 		./obj/color.o \
-		./obj/parser.o \
+		./obj/syntax_tree.o \
 		./obj/syntax_node.o \
 
 default: reset $(BIN)

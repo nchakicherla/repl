@@ -7,7 +7,7 @@
 #include "ast.h"
 
 typedef struct s_VM {
-	Parser parser;
+	SyntaxTree tree;
 	GrammarRuleArray rule_array;
 	Table table;
 	MemPool pool;

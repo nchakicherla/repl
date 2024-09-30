@@ -24,23 +24,23 @@ int main(void) {
 	initVM(&vm, grammar);
 
 	while(true) {
-		//char *input_buffer = pzalloc(&vm.parser.pool, INPUT_BUFFER_SIZE);
-		vm.parser.source = pzalloc(&vm.parser.pool, INPUT_BUFFER_SIZE);
+		//char *input_buffer = pzalloc(&vm.tree.pool, INPUT_BUFFER_SIZE);
+		vm.tree.source = pzalloc(&vm.tree.pool, INPUT_BUFFER_SIZE);
 
 		setColor(ANSI_CYAN);
-		while(0 == strchr(vm.parser.source, '\n')) {
-			fgets(vm.parser.source, INPUT_BUFFER_SIZE, stdin);
+		while(0 == strchr(vm.tree.source, '\n')) {
+			fgets(vm.tree.source, INPUT_BUFFER_SIZE, stdin);
 		}
-		vm.parser.source[INPUT_BUFFER_SIZE - 1] = '\0';
+		vm.tree.source[INPUT_BUFFER_SIZE - 1] = '\0';
 		resetColor();
 
-		scanTokensFromSource(&vm.parser, vm.parser.source);
+		scanTokensFromSource(&vm.tree, vm.tree.source);
 
 		bool had_error = false;
-		for(size_t i = 0; i < vm.parser.n_tokens; i++) {
-			if(vm.parser.tokens[i].type == TK_ERROR) {
+		for(size_t i = 0; i < vm.tree.n_tokens; i++) {
+			if(vm.tree.tokens[i].type == TK_ERROR) {
 				setColor(ANSI_RED);
-				printf("%.*s\n", (int)vm.parser.tokens[i].len, vm.parser.tokens[i].start);
+				printf("%.*s\n", (int)vm.tree.tokens[i].len, vm.tree.tokens[i].start);
 				resetColor();
 				had_error = true;
 				break;
@@ -48,39 +48,39 @@ int main(void) {
 		}
 
 		if(had_error) {
-			resetParser(&vm.parser);
+			resetSyntaxTree(&vm.tree);
 			continue;
 		}
 
 		TokenStream stream;
 
 		for(size_t i = 0; i < vm.rule_array.n_rules; i++) {
-			initTokenStream(&stream, &vm.parser);
-			vm.parser.head = parseGrammar(vm.rule_array.rules[i].head, &stream, &vm.parser.pool);
-			if(vm.parser.head) {
+			initTokenStream(&stream, &vm.tree);
+			vm.tree.head = parseGrammar(vm.rule_array.rules[i].head, &stream, &vm.tree.pool);
+			if(vm.tree.head) {
 				if(stream.tk[stream.pos].type != TK_EOF) {
 					//break; // ignore match if didn't consume all tokens in line
 					continue;
 				}
 				if(vm.rule_array.rules[i].head->node_type == RULE_TK) {
-					vm.parser.head = wrapNode(vm.parser.head, (SYNTAX_TYPE) i, &vm.parser.pool);
+					vm.tree.head = wrapNode(vm.tree.head, (SYNTAX_TYPE) i, &vm.tree.pool);
 				} else {
-					vm.parser.head->type = (SYNTAX_TYPE) i;
+					vm.tree.head->type = (SYNTAX_TYPE) i;
 				}
-				defineParentPtrs(vm.parser.head);
-				printSyntaxNode(vm.parser.head, 0);
+				defineParentPtrs(vm.tree.head);
+				printSyntaxNode(vm.tree.head, 0);
 				break;
 			}
 		}
 
-		if(0 == strncmp(vm.parser.source, ".exit", 5)) {
+		if(0 == strncmp(vm.tree.source, ".exit", 5)) {
 			break;
 		}
 
 		//printTokens(&vm);
-		printPoolInfo(&vm.parser.pool);
+		printPoolInfo(&vm.tree.pool);
 
-		resetParser(&vm.parser);
+		resetSyntaxTree(&vm.tree);
 	}
 	printPoolInfo(&vm.pool);
 

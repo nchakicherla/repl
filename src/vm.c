@@ -1,10 +1,10 @@
 #include "vm.h"
 #include "file.h"
 #include "ast.h"
-#include "parser.h"
+#include "syntax_tree.h"
 
 void initVM(VM *vm, char *grammarFile) {
-	initParser(&(vm->parser));
+	initSyntaxTree(&(vm->tree));
 	initMemPool(&(vm->pool));
 	initGrammarRuleArray(&(vm->rule_array), grammarFile, &(vm->pool));
 	initTable(&(vm->table));
@@ -15,7 +15,7 @@ void initVM(VM *vm, char *grammarFile) {
 }
 
 void termVM(VM *vm) {
-	termParser(&(vm->parser));
+	termSyntaxTree(&(vm->tree));
 	termTable(&(vm->table));
 	termMemPool(&(vm->pool));
 	return;
@@ -23,12 +23,12 @@ void termVM(VM *vm) {
 
 void printTokens(VM *vm) {
 
-	for(size_t i = 0; i < vm->parser.n_tokens; i++) {
+	for(size_t i = 0; i < vm->tree.n_tokens; i++) {
 		printf("LINE: %6zu TK%6zu: TYPE: %16s - \"%.*s\"\n", 
-			vm->parser.tokens[i].line,
+			vm->tree.tokens[i].line,
 			i,
-			tokenTypeLiteralLookup(vm->parser.tokens[i].type), 
-			(int)vm->parser.tokens[i].len, vm->parser.tokens[i].start);
+			tokenTypeLiteralLookup(vm->tree.tokens[i].type), 
+			(int)vm->tree.tokens[i].len, vm->tree.tokens[i].start);
 	}
 	return;
 }
