@@ -280,7 +280,7 @@ int fillGrammarNode(RuleNode *node, Token *tokens, size_t n, MemPool *pool) {
 	return 0;
 }
 
-int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *rule_array) {
+int populateCyclicalReferences(RuleNode *node, GrammarRuleArray *rule_array) {
 	switch(node->node_type) {
 		case RULE_GRM: {
 			switch(node->nested_type.g) {
@@ -290,7 +290,7 @@ int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *rule_array) {
 				case GRM_IFONE:
 				case GRM_IFMANY:
 					for(size_t i = 0; i < node->n_children; i++) {
-						populateGrammarRulePointers(&(node->children[i]), rule_array);
+						populateCyclicalReferences(&(node->children[i]), rule_array);
 					}
 					break;
 				default:
@@ -307,14 +307,12 @@ int populateGrammarRulePointers(RuleNode *node, GrammarRuleArray *rule_array) {
 	}
 	return 0;
 }
+/*
+int populateCyclicalReferences(GrammarRuleArray *rule_array) {
 
-int populateGrammarRuleArrayReferences(GrammarRuleArray *rule_array) {
-	for(size_t i = 0; i < rule_array->n_rules; i++) {
-		populateGrammarRulePointers(rule_array->rules[i].head, rule_array);
-	}
 	return 0;
 }
-
+*/
 int initGrammarRuleArray(GrammarRuleArray *rule_array, char *fileName, MemPool *pool) {
 
 	char *source = pReadFile(fileName, pool);
@@ -348,7 +346,10 @@ int initGrammarRuleArray(GrammarRuleArray *rule_array, char *fileName, MemPool *
 		fillGrammarNode(rule_array->rules[i].head, &tokens[ruleStart], semiOffset, pool);
 		rule_array->rules[i].head->parent = NULL;
 	}
-	populateGrammarRuleArrayReferences(rule_array);
+	for(size_t i = 0; i < rule_array->n_rules; i++) {
+		populateCyclicalReferences(rule_array->rules[i].head, rule_array);
+	}
+	//populateCyclicalReferences(rule_array);
 	//printGrammarRuleArray(rule_array);
 
 	FILE *rulesLog = checkFileOpen("./debug/grammar_tree.log", "w");

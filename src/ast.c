@@ -30,7 +30,7 @@ void __fPrintNTabs(unsigned int n, FILE *file) {
 	return;
 }
 
-char *syntaxTypeLiteralLookup(SYNTAX_TYPE type) {
+static char *syntaxTypeLiteralLookup(SYNTAX_TYPE type) {
 	return __syntaxTypeLiterals[type];
 }
 
