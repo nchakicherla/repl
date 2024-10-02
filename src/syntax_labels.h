@@ -1,7 +1,7 @@
 #ifndef SYNTAX_LABELS_H
 #define SYNTAX_LABELS_H
 
-static char *__syntaxTypeLiterals[] = {
+static char *syntax_labels[] = {
 
 	"STX_SCOPE", "STX_CLASS", "STX_FNDEF", "STX_IF", "STX_WHILE",
 	"STX_FOR", "STX_FORRANGE", "STX_SWITCH", "STX_CASE",

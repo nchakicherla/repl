@@ -10,8 +10,8 @@
 #include <stdio.h>
 
 static SYNTAX_TYPE getSNodeTypeFromLiteral(char *str) {
-	for (size_t i = 0; i < (sizeof(__syntaxTypeLiterals) / sizeof(char *)); i++) {
-		if(0 == strcmp(str, __syntaxTypeLiterals[i])) {
+	for (size_t i = 0; i < (sizeof(syntax_labels) / sizeof(char *)); i++) {
+		if(0 == strcmp(str, syntax_labels[i])) {
 			return i;
 		}
 	}
@@ -34,8 +34,8 @@ static TOKEN_TYPE tokenTypeValFromNChars(char* str, size_t n) {
 
 /*
 static SYNTAX_TYPE getSNodeTypeFromNChars(char *str, size_t n) {
-	for (size_t i = 0; i < (sizeof(__syntaxTypeLiterals) / sizeof(char *)); i++) {
-		if(0 == strncmp(str, __syntaxTypeLiterals[i], n)) {
+	for (size_t i = 0; i < (sizeof(syntax_labels) / sizeof(char *)); i++) {
+		if(0 == strncmp(str, syntax_labels[i], n)) {
 			return i;
 		}
 	}
@@ -57,7 +57,7 @@ static void __fPrintNTabs(unsigned int n, FILE *file) {
 }
 
 static char *syntaxTypeLiteralLookup(SYNTAX_TYPE type) {
-	return __syntaxTypeLiterals[type];
+	return syntax_labels[type];
 }
 
 void initRuleNode(RuleNode *node) {

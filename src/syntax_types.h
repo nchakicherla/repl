@@ -32,7 +32,7 @@ typedef enum {
 
 /*
 char *syntaxTypeLiteralLookup(SYNTAX_TYPE type) {
-	return __syntaxTypeLiterals[type];
+	return syntax_labels[type];
 }
 */
 #endif // SYNTAX_TYPES_H
