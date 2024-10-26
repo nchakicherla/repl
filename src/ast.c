@@ -293,19 +293,19 @@ void printSyntaxNode(SyntaxNode *node, unsigned int indent) {
 		printf("%s ", tokenLabelLookup(node->token.type));
 		resetColor();
 
-		setColor(ANSI_CYAN);
+		setColor(ANSI_YELLOW);
 		printf("%.*s\n", (int)node->token.len, node->token.start);
 		resetColor();
-	} else {
-		__printNTabs(indent);
-		printf("- ");
+		return;
+	}
+	__printNTabs(indent);
+	printf("- ");
 
-		setColor(ANSI_YELLOW);
-		printf("/%s\n", syntaxTypeLiteralLookup(node->type));
-		resetColor();
+	setColor(ANSI_CYAN);
+	printf("/%s\n", syntaxTypeLiteralLookup(node->type));
+	resetColor();
 
-		for(size_t i = 0; i < node->n_children; i++) {
-			printSyntaxNode(node->children[i], indent + 1);
-		}
+	for(size_t i = 0; i < node->n_children; i++) {
+		printSyntaxNode(node->children[i], indent + 1);
 	}
 }
