@@ -27,7 +27,8 @@ int main(void) {
 		//char *input_buffer = pzalloc(&vm.tree.pool, INPUT_BUFFER_SIZE);
 		vm.tree.source = pzalloc(&vm.tree.pool, INPUT_BUFFER_SIZE);
 
-		setColor(ANSI_CYAN);
+		setColor(ANSI_GREEN);
+		puts("\n");
 		while(0 == strchr(vm.tree.source, '\n')) {
 			fgets(vm.tree.source, INPUT_BUFFER_SIZE, stdin);
 		}

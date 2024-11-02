@@ -84,10 +84,9 @@ bool areStrsInOrder(char *str1, char *str2) {
             return true;
         } else if (*it2 < *it1) {
             return false;
-        } else {
-            it1++;
-            it2++;
         }
+        it1++;
+        it2++;
     }
     if(*it1 < *it2) {
         return true;
